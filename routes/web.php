@@ -2006,6 +2006,8 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth'])->group(function
         Route::post('/store', [ResellerNIRequestController::class, 'store'])->name('store');
         Route::get('/show/{optimize:id}', [ResellerNIRequestController::class, 'show'])->name('show');
         Route::get('/update/{optimize:id}', [ResellerNIRequestController::class, 'update'])->name('update');
+        Route::get('/confirm/sale/{nireq:id}', [ResellerNIRequestController::class, 'confirmsale'])->name('confirmsale');
+        Route::post('/confirm/sale/store/{nireq:id}', [ResellerNIRequestController::class, 'confirmsalestore'])->name('confirmsale.store');
     });
 
 
@@ -2056,6 +2058,7 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth'])->group(function
         Route::get('/approve/{optimize:id}/confirm', [NIRequestLevel3Controller::class, 'confirm'])->name('confirm');
         Route::post('/edit/gateway/{optimize:id}/updatestore', [NIRequestLevel3Controller::class, 'updatestore'])->name('updatestore');
     });
+
 
 
     Route::name('nirequest_confrim_billing.')->prefix('nirequest-confrim-billing')->group(function () {

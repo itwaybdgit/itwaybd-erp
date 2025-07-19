@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BandwidthCustomer;
 use App\Models\Box;
+use App\Models\Employee;
+use App\Models\Project;
 use App\Models\Splitter;
 use App\Models\Subzone;
+use App\Models\Supplier;
 use App\Models\Tj;
 use App\Models\Zone;
 use Illuminate\Http\Request;
@@ -249,4 +253,27 @@ class ApiController extends Controller
 
         return $options;
     }
+    public function getDependentData(Request $request)
+    {
+        $type = $request->type;
+        $data = [];
+
+        switch ($type) {
+            case 'customer':
+                $data = BandwidthCustomer::pluck('company_name', 'id');
+                break;
+            case 'supplier':
+                $data = Supplier::pluck('name', 'id');
+                break;
+            case 'employee':
+                $data = Employee::pluck('name', 'id');
+                break;
+            case 'project':
+                $data = Project::pluck('name', 'id');
+                break;
+        }
+
+        return response()->json($data);
+    }
+
 }

@@ -10,6 +10,9 @@ class Expense extends Model
     use HasFactory;
 
     protected $fillable = [
+        'against',
+        'employee_id',
+        'project_id',
         'customer_id',
         'supplier_id',
         'account_id',

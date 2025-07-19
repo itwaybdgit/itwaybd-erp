@@ -54,6 +54,7 @@
                                     </th>
                                     <th>
                                       <a href="{{route('upgradation.show', $item->id)}}" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>
+                                      <a href="{{route('upgradation.confirmsale', $item->id)}}" class="btn btn-success btn-sm"><i class="fa fa-check"></i></a>
                                     </th>
                                 </tr>
                                 @endforeach

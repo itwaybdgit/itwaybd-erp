@@ -20,6 +20,8 @@ class AccountTransaction extends Model
         'table_id',
         'supplier_id',
         'customer_id',
+        'employee_id',
+        'project_id',
         'created_by',
     ];
 

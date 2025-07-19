@@ -131,14 +131,15 @@ class NIRequestBillingController extends Controller
         $billingApprove = ResellerNIRequest::findOrFail($id);
         $customer = BandwidthCustomer::find($billingApprove->customer_id);
         $billingApprove->bill_head_approve = '2';
-        if(($customer->connectionport->type ?? "lb") == 'nb'){
-            $billingApprove->tx_pluning_head_approve = '1';
-        }else{
-            $billingApprove->transmission_head_approve = '1';
-        }
+        $billingApprove->confirm_bill_approve = '1';
+//        if(($customer->connectionport->type ?? "lb") == 'nb'){
+//            $billingApprove->tx_pluning_head_approve = '1';
+//        }else{
+//            $billingApprove->transmission_head_approve = '1';
+//        }
         $billingApprove->bill_head_by = auth()->id();
         $billingApprove->save();
 
-        return response()->json(['code' => 200, 'message' => 'Billing approved successfully', 'redirect_url' => route('optimize_billing.index')]);
+        return response()->json(['code' => 200, 'message' => 'Billing approved successfully', 'redirect_url' => route('nirequest_billing.index')]);
     }
 }

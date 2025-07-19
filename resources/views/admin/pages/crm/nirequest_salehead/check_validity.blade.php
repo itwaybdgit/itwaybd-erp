@@ -161,7 +161,7 @@
                             <div class="container">
                                     <div class="col-md-6">
                                         <button type="button" class="btn btn-primary confirm"
-                                        approve-route="{{ route('optimize_salehead.approve', $optimize->id) }}">{{ __('Confirm') }}</button>
+                                        approve-route="{{ route('nirequest_salehead.approve', $optimize->id) }}">{{ __('Confirm') }}</button>
                                     </div>
                             </div>
                         </div>
@@ -183,6 +183,9 @@
                                             </th>
                                             <th scope="col">
                                                 <small class="text-secondary">Asking price</small>
+                                            </th>
+                                            <th scope="col">
+                                                <small class="text-secondary">Billing Frequency</small>
                                             </th>
                                             {{-- <th scope="col">
                                                 <small class="text-secondary">Price</small>
@@ -212,6 +215,7 @@
                                             {{-- <td>{{ abs($package->old_quantity[$key] - $package->total_quantity[$key]) }}</td> --}}
                                             {{-- <td>{{ $package->quantity[$key] ?? '' }}</td> --}}
                                             <td>{{ $package->asking_price[$key] ?? '' }}</td>
+                                            <td>{{ $bcp[$key]->billing_frequency ?? '' }}</td>
                                             {{-- @php
                                              $oldtotal += $oldsubtotal = $package->old_quantity[$key]  *  $package->asking_price[$key];
                                              $total += $package->total[$key] ?? 0;

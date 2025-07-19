@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\ApprovalRemarks;
 use App\Models\BandwidthCustomer;
+use App\Models\BandwidthCustomerPackage;
 use App\Models\Device;
 use App\Models\GatewayNoc;
 use App\Models\Pop;
 use App\Models\PopConnection;
 use App\Models\ResellerDowngradation;
+use App\Models\ResellerNIRequest;
 use App\Models\ResellerOptimize;
 use App\Models\Router;
 use Illuminate\Http\Request;
@@ -27,7 +29,7 @@ class NIRequestTConfrimBillingController extends Controller
 
     protected function getModel()
     {
-        return new ResellerOptimize();
+        return new ResellerNIRequest();
     }
 
     protected function tableColumnNames()
@@ -55,6 +57,13 @@ class NIRequestTConfrimBillingController extends Controller
                 'data' => 'company_owner_phone',
                 'searchable' => false,
                 'relation' => 'customer',
+            ],
+            [
+                'label' => 'Package',
+                'data' => 'package',
+                'class' => 'text-nowrap',
+                'orderable' => false,
+                'searchable' => false,
             ],
 
             [
@@ -87,6 +96,14 @@ class NIRequestTConfrimBillingController extends Controller
         $page_heading = "Customer List";
         $ajax_url = route($this->routeName . '.dataProcessing');
         $is_show_checkbox = false;
+        $list = ResellerNIRequest::where('confirm_bill_approve' , 1)->select('id', 'package')->get();
+
+        foreach ($list as $ls) {
+            $bcp = [];
+            foreach ($ls->package->item_id as $ii) {
+                $bcp[] = BandwidthCustomerPackage::where('item_id', $ii)->where('bandwidht_customer_id', $customer->id)->select('id', 'billing_frequency')->first();
+            }
+        }
         $columns = $this->reformatForRelationalColumnName(
             $this->tableColumnNames()
         );
@@ -102,7 +119,7 @@ class NIRequestTConfrimBillingController extends Controller
     {
         return $this->getDataResponse(
             //Model Instance
-            $this->getModel()->where('tx_pluning_head_approve' , 1),
+            $this->getModel()->where('confirm_bill_approve' , 1),
             //Table Columns Name
             $this->tableColumnNames(),
             //Route name
@@ -111,7 +128,7 @@ class NIRequestTConfrimBillingController extends Controller
             true,
             [
                 [
-                    'method_name' => 'updatedata',
+                    'method_name' => 'check_validity',
                     'class' => 'btn-warning btn-sm',
                     'fontawesome' => 'fa fa-edit',
                     'text' => '',
@@ -140,7 +157,7 @@ class NIRequestTConfrimBillingController extends Controller
         return view($this->viewName.'.check_validity',get_defined_vars());
     }
 
-    function updatedata(ResellerOptimize $optimize) {
+    function updatedata(ResellerNIRequest $optimize) {
         $page_heading = "NOC Approve";
         $back_url = route($this->routeName . '.index');
         $store_url = route($this->routeName . '.index');

@@ -20,3 +20,6 @@ Route::post('/splitter-for-new-client', [ApiController::class, 'get_splitters_fo
 Route::get('/box', [ApiController::class, 'get_box'])->name('api.box');
 
 Route::get('/splitter', [ApiController::class, 'get_splitter'])->name('api.splitter');
+
+Route::get('/get-dependent-data', [ApiController::class, 'getDependentData']);
+

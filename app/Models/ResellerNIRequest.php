@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class ResellerNIRequest extends Model
 {
     use HasFactory;
+//    protected $casts = [
+//        'package' => 'array',
+//    ];
 
     protected $table = 'reseller_nirequests'; // Correct table name specified
     protected $guarded = ['id'];

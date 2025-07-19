@@ -160,7 +160,7 @@
                             <div class="container">
                                     <div class="col-md-6">
                                         <button type="button" class="btn btn-primary confirm"
-                                        approve-route="{{ route('optimize_billing.approve', $optimize->id) }}">{{ __('Confirm') }}</button>
+                                        approve-route="{{ route('nirequest_billing.approve', $optimize->id) }}">{{ __('Confirm') }}</button>
                                     </div>
                             </div>
                         </div>
@@ -176,23 +176,23 @@
                                             <th scope="col">
                                                 <small class="text-secondary">Item</small>
                                             </th>
-                                            <th scope="col">
-                                                <small class="text-secondary">Old Quantity</small>
-                                            </th>
-                                            <th scope="col">
-                                                <small class="text-secondary">Optimize Quantity</small>
-                                            </th>
-                                            <th scope="col">
-                                                <small class="text-secondary">New Quantity</small>
-                                            </th>
+{{--                                            <th scope="col">--}}
+{{--                                                <small class="text-secondary">Old Quantity</small>--}}
+{{--                                            </th>--}}
+{{--                                            <th scope="col">--}}
+{{--                                                <small class="text-secondary">Optimize Quantity</small>--}}
+{{--                                            </th>--}}
+{{--                                            <th scope="col">--}}
+{{--                                                <small class="text-secondary">New Quantity</small>--}}
+{{--                                            </th>--}}
                                             <th scope="col">
                                                 <small class="text-secondary">Price</small>
                                             </th>
                                             <th scope="col">
-                                                <small class="text-secondary">Old Amount</small>
+                                                <small class="text-secondary">Qty</small>
                                             </th>
                                             <th scope="col">
-                                                <small class="text-secondary">New Amount</small>
+                                                <small class="text-secondary">Amount</small>
                                             </th>
                                         </tr>
                                     </thead>
@@ -210,19 +210,22 @@
                                             @endphp
                                         <tr>
                                             <td>{{ $item->name ?? '' }}</td>
-                                            <td>{{ $package->old_quantity[$key] ?? '' }}</td>
-                                            <td>{{ abs($package->old_quantity[$key] - $package->total_quantity[$key]) }}</td>
-                                            <td>{{ $package->total_quantity[$key] ?? '' }}</td>
+{{--                                            <td>{{ $package->old_quantity[$key] ?? '' }}</td>--}}
+{{--                                            <td>{{ abs($package->old_quantity[$key] - $package->total_quantity[$key]) }}</td>--}}
+{{--                                            <td>{{ $package->total_quantity[$key] ?? '' }}</td>--}}
                                             <td>{{ $package->asking_price[$key] ?? '' }}</td>
+                                            <td>{{ $package->quantity[$key] ?? '' }}</td>
                                             @php
-                                             $oldtotal += $oldsubtotal = $package->old_quantity[$key]  *  $package->asking_price[$key];
+//                                             $oldtotal += $oldsubtotal = $package->old_quantity[$key]  *  $package->asking_price[$key];
+                                             $oldtotal += $oldsubtotal =  $package->asking_price[$key];
                                              $total += $package->total[$key] ?? 0;
-                                             $oldqty += $package->old_quantity[$key];
-                                             $newqty += $package->total_quantity[$key];
+                                             $oldqty += 0;
+                                             $newqty += 0;
                                              $qty +=$package->quantity[$key];
                                             @endphp
-                                            <td>{{ $package->old_total[$key] ?? '' }}</td>
-                                            <td>{{ $package->total[$key] ?? '' }}</td>
+{{--                                            <td>{{ $package->old_total[$key] ?? '' }}</td>--}}
+{{--                                            <td>{{ $package->total[$key] ?? '' }}</td>--}}
+                                            <td>{{ $package->asking_price[$key] ?? '' }}</td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -230,12 +233,9 @@
                                     <tfoot>
                                         <tr>
                                             <td>Total:</td>
-                                            <td>{{$oldqty}}</td>
-                                            <td></td>
-                                            <td>{{$newqty}}</td>
-                                            <td></td>
                                             <td>{{$oldtotal}}</td>
-                                            <td>{{ $total }}</td>
+                                            <td>{{ $qty }}</td>
+                                            <td>{{$oldtotal}}</td>
                                         </tr>
                                     </tfoot>
                                 </table>

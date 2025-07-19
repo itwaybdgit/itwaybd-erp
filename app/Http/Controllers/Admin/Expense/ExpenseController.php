@@ -163,6 +163,8 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         $valideted = $this->validate($request, [
+            'against' => ['nullable'],
+            'dependent_id' => ['nullable'],
             'customer_id' => ['nullable'],
             'account_id' => ['required'],
             'payment_id' => ['required'],
@@ -171,6 +173,23 @@ class ExpenseController extends Controller
             'amount' => ['nullable'],
             'note' => ['nullable'],
         ]);
+        if ($valideted['against']=='customer'){
+            $valideted['customer_id'] = $valideted['dependent_id'];
+            $transaction['customer_id'] = $valideted['dependent_id'];
+            $transactionPay['customer_id'] = $valideted['dependent_id'];
+        }elseif ($valideted['against']=='supplier'){
+            $valideted['supplier_id'] = $valideted['dependent_id'];
+            $transaction['supplier_id'] = $valideted['dependent_id'];
+            $transactionPay['supplier_id'] = $valideted['dependent_id'];
+        }elseif ($valideted['against']=='project'){
+            $valideted['project_id'] = $valideted['dependent_id'];
+            $transaction['project_id'] = $valideted['dependent_id'];
+            $transactionPay['project_id'] = $valideted['dependent_id'];
+        }else{
+            $valideted['employee_id'] = $valideted['dependent_id'];
+            $transaction['employee_id'] = $valideted['dependent_id'];
+            $transactionPay['employee_id'] = $valideted['dependent_id'];
+        }
 
         try {
             DB::beginTransaction();
@@ -262,6 +281,8 @@ class ExpenseController extends Controller
     public function update(Request $request, Expense $expense)
     {
         $valideted = $this->validate($request, [
+            'against' => ['nullable'],
+            'dependent_id' => ['nullable'],
             'customer_id' => ['nullable'],
             'account_id' => ['required'],
             'payment_id' => ['required'],
@@ -270,6 +291,23 @@ class ExpenseController extends Controller
             'amount' => ['nullable'],
             'note' => ['nullable'],
         ]);
+        if ($valideted['against']=='customer'){
+            $valideted['customer_id'] = $valideted['dependent_id'];
+            $transaction['customer_id'] = $valideted['dependent_id'];
+            $transactionPay['customer_id'] = $valideted['dependent_id'];
+        }elseif ($valideted['against']=='supplier'){
+            $valideted['supplier_id'] = $valideted['dependent_id'];
+            $transaction['supplier_id'] = $valideted['dependent_id'];
+            $transactionPay['supplier_id'] = $valideted['dependent_id'];
+        }elseif ($valideted['against']=='project'){
+            $valideted['project_id'] = $valideted['dependent_id'];
+            $transaction['project_id'] = $valideted['dependent_id'];
+            $transactionPay['project_id'] = $valideted['dependent_id'];
+        }else{
+            $valideted['employee_id'] = $valideted['dependent_id'];
+            $transaction['employee_id'] = $valideted['dependent_id'];
+            $transactionPay['employee_id'] = $valideted['dependent_id'];
+        }
 
         try {
             DB::beginTransaction();

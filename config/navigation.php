@@ -380,19 +380,19 @@ $menus =  [
                 'label' => 'Billing Approve',
                 'route' => 'nirequest_billing.index',
             ],
-            [
-                'label' => 'Tx Planning',
-                'route' => 'nirequest_tx.index',
-            ],
-            [
-                'label' => 'Transmission ',
-                'route' => 'nirequest_transmission.index',
-            ],
-
-            [
-                'label' => 'Level 3 Approve',
-                'route' => 'nirequest_level3.index',
-            ],
+//            [
+//                'label' => 'Tx Planning',
+//                'route' => 'nirequest_tx.index',
+//            ],
+//            [
+//                'label' => 'Transmission ',
+//                'route' => 'nirequest_transmission.index',
+//            ],
+//
+//            [
+//                'label' => 'Level 3 Approve',
+//                'route' => 'nirequest_level3.index',
+//            ],
             [
                 'label' => 'Confirm Billing',
                 'route' => 'nirequest_confrim_billing.index',

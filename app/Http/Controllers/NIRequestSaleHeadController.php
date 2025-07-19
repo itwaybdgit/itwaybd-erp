@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\ApprovalRemarks;
 use App\Models\BandwidthCustomer;
+use App\Models\BandwidthCustomerPackage;
 use App\Models\Employee;
 use App\Models\ResellerNIRequest;
 use App\Models\ResellerOptimize;
@@ -131,7 +132,11 @@ class NIRequestSaleHeadController extends Controller
         $store_url = route($this->routeName . '.index');
         $customer = $optimize->customer;
         $package = json_decode($optimize->package);
-        // dd( $package);
+        $bcp = [];
+        foreach ($package->item_id as $ii){
+            $bcp[] = BandwidthCustomerPackage::where('item_id',$ii)->where('bandwidht_customer_id',$customer->id)->select('id', 'billing_frequency')->first();
+        }
+//         dd($bcp);
 
         return view($this->viewName.'.check_validity',get_defined_vars());
     }
@@ -160,6 +165,6 @@ class NIRequestSaleHeadController extends Controller
         $salesApprove->sale_head_by = Auth::user()->id;
         $salesApprove->save();
         // return redirect()->route('admin_approv.index')->with('success', 'Lead approved successfully!');
-        return response()->json(['code' => 200, 'message' => 'Sale approved successfully', 'redirect_url' => route('optimize_salehead.index')]);
+        return response()->json(['code' => 200, 'message' => 'Sale approved successfully', 'redirect_url' => route('nirequest_salehead.index')]);
     }
 }

@@ -17,26 +17,19 @@
                             @csrf
                             <div class="row">
                                 <div class="col-md-6 mb-1">
-                                    <label>Select Customer</label>
-                                    <select name="customer_id" class="select2 default-select form-control wide">
-                                        <option selected="selected" disabled>Select Customer</option>
-                                        @foreach ($customers as $key => $value)
-                                            <option {{ $Expense->customer_id == $value->id ? 'selected' : '' }}
-                                                value="{{ $value->id }}">
-                                                {{ $value->company_name }}
-                                            </option>
-                                        @endforeach
+                                    <label>Against?</label>
+                                    <select id="against" name="against" class="select2 default-select form-control wide">
+                                        <option disabled {{ !$Expense->against ? 'selected' : '' }}>Select</option>
+                                        <option value="customer" {{ $Expense->against === 'customer' ? 'selected' : '' }}>customer</option>
+                                        <option value="supplier" {{ $Expense->against === 'supplier' ? 'selected' : '' }}>supplier</option>
+                                        <option value="employee" {{ $Expense->against === 'employee' ? 'selected' : '' }}>employee</option>
+                                        <option value="project" {{ $Expense->against === 'project' ? 'selected' : '' }}>project</option>
                                     </select>
                                 </div>
-                                <div class="col-md-6 mb-1">
-                                    <label>Select Supplier</label>
-                                    <select name="supplier_id" class="select2 default-select form-control wide">
-                                        <option selected="selected" disabled>Select Supplier</option>
-                                        @foreach ($suppliers as $key => $value)
-                                            <option {{ $Expense->supplier_id == $value->id ? 'selected' : '' }}
-                                                value="{{ $value->id }}">
-                                                {{ $value->name }}</option>
-                                        @endforeach
+                                <div class="col-md-6 mb-1" id="dependent-dropdown" style="display:none;">
+                                    <label>Select <span id="against-type-label"></span></label>
+                                    <select id="dependent-select" name="dependent_id" class="select2 default-select form-control wide">
+                                        <option disabled selected>Loading...</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 col-12 mb-1">
@@ -200,5 +193,76 @@
         var today = new Date();
         var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
         document.getElementById("date").value = date;
+
+        @php
+            $against = old('against', $Expense->against ?? '');
+            switch ($against) {
+                case 'employee':
+                    $dependentId = $Expense->employee_id ?? '';
+                    break;
+                case 'project':
+                    $dependentId = $Expense->project_id ?? '';
+                    break;
+                case 'supplier':
+                    $dependentId = $Expense->supplier_id ?? '';
+                    break;
+                case 'customer':
+                    $dependentId = $Expense->customer_id ?? '';
+                    break;
+                default:
+                    $dependentId = '';
+            }
+        @endphp
+
+    $(document).ready(function() {
+            let existingAgainst = '{{ old('against', $Expense->against ?? '') }}';
+            let existingDependentId = '{{ $dependentId }}';
+
+            if (existingAgainst) {
+                $('#against').val(existingAgainst).trigger('change');
+
+                // Wait for AJAX to complete before selecting the dependent value
+                $.ajax({
+                    url: '/api/get-dependent-data',
+                    type: 'GET',
+                    data: { type: existingAgainst },
+                    success: function(response) {
+                        $('#dependent-dropdown').show();
+                        $('#against-type-label').text(existingAgainst);
+                        $('#dependent-select').empty().append('<option disabled>Select</option>');
+
+                        $.each(response, function(key, value) {
+                            let selected = (key == existingDependentId) ? 'selected' : '';
+                            $('#dependent-select').append('<option value="' + key + '" ' + selected + '>' + value + '</option>');
+                        });
+                    }
+                });
+            }
+
+        });
+    $(document).ready(function() {
+            $('#against').change(function() {
+                let selected = $(this).val();
+
+                if (selected) {
+                    $('#dependent-dropdown').show();
+                    $('#against-type-label').text(selected);
+
+                    $.ajax({
+                        url: '/api/get-dependent-data', // Laravel route
+                        type: 'GET',
+                        data: { type: selected },
+                        success: function(response) {
+                            $('#dependent-select').empty().append('<option disabled selected>Select</option>');
+                            $.each(response, function(key, value) {
+                                $('#dependent-select').append('<option value="' + key + '">' + value + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#dependent-dropdown').hide();
+                }
+            });
+        });
     </script>
 @endpush

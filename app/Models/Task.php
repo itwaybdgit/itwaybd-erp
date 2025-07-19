@@ -31,7 +31,7 @@ class Task extends Model
     // Relationships
     public function getProject()
     {
-        return $this->belongsTo(Project::class, 'project_id');
+        return $this->belongsTo(Project::class);
     }
 
     public function getUser()

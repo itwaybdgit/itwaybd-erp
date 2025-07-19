@@ -758,6 +758,64 @@ $menus =  [
             ],
         ]
     ],
+    // [
+    //     'label' => 'HR & PAYROLL',
+    //     'route' => null,
+    //     'access' => 'hrpayroll',
+    //     'icon' => 'fas fa-users-cog',
+    //     'parent_id' => 0,
+    //     'submenu' => [
+    //         [
+    //             'label' => 'Team',
+    //             'route' => 'team.index',
+    //         ],
+    //         [
+    //             'label' => 'Department',
+    //             'route' => 'department.index',
+    //         ],
+    //         [
+    //             'label' => 'Designation',
+    //             'route' => 'designation.index',
+    //         ],
+    //         [
+    //             'label' => 'Employee',
+    //             'route' => 'employees.index',
+    //         ],
+    //         [
+    //             'label' => 'Attendance Form',
+    //             'route' => 'hrm.attendance.create',
+    //         ],
+    //         [
+    //             'label' => 'Attendance Log',
+    //             'route' => 'hrm.attendancelog.index',
+    //         ],
+
+    //         [
+    //             'label' => 'Salary Sheet',
+    //             'route' => 'hrm.salarysheetlog.index',
+    //         ],
+    //         [
+    //             'label' => 'Leave Application',
+    //             'route' => 'leaveApplication.index',
+    //         ],
+
+    //         [
+    //             'label' => 'Leave Approve',
+    //             'route' => 'leaveApplicationApprove.index',
+    //         ],
+
+    //         [
+    //             'label' => 'loan Application',
+    //             'route' => 'loneApplication.index',
+    //         ],
+
+    //         [
+    //             'label' => 'loan Approve',
+    //             'route' => 'loneApplicationApprove.index',
+    //         ],
+    //     ]
+    // ],
+
     [
         'label' => 'HR & PAYROLL',
         'route' => null,
@@ -766,56 +824,73 @@ $menus =  [
         'parent_id' => 0,
         'submenu' => [
             [
-                'label' => 'Team',
-                'route' => 'team.index',
-            ],
-            [
-                'label' => 'Department',
-                'route' => 'department.index',
-            ],
-            [
-                'label' => 'Designation',
-                'route' => 'designation.index',
+                'label' => 'Position',
+                'route' => 'hrm.position.index',
             ],
             [
                 'label' => 'Employee',
-                'route' => 'employees.index',
+                'route' => 'hrm.employee.index',
             ],
+            // [
+            //     'label' => 'Award',
+            //     'route' => null,
+            // ],
             [
-                'label' => 'Attendance Form',
-                'route' => 'hrm.attendance.create',
+                'label' => 'Attendance',
+                'route' => 'hrm.attendance.index',
             ],
+
             [
                 'label' => 'Attendance Log',
                 'route' => 'hrm.attendancelog.index',
             ],
-
+            [
+                'label' => 'Absence Log',
+                'route' => 'hrm.absencelog.index',
+            ],
+            [
+                'label' => 'Attendance Mark',
+                'route' => 'hrm.attendance.mark',
+            ],
+            [
+                'label' => 'Holiday',
+                'route' => 'hrm.holiday.index',
+            ],
             [
                 'label' => 'Salary Sheet',
-                'route' => 'hrm.salarysheetlog.index',
+                'route' => 'hrm.paysheet.index',
+            ],
+            [
+                'label' => 'Payroll',
+                'route' => 'hrm.payroll.index',
             ],
             [
                 'label' => 'Leave Application',
-                'route' => 'leaveApplication.index',
+                'route' => "hrm.leave.index",
             ],
-
             [
-                'label' => 'Leave Approve',
-                'route' => 'leaveApplicationApprove.index',
+                'label' => 'Leave Application Approve',
+                'route' => "hrm.leaveapprove.index",
             ],
-
             [
-                'label' => 'loan Application',
-                'route' => 'loneApplication.index',
+                'label' => 'Cash Requisition',
+                'route' => 'hrm.cash-req.index',
             ],
-
             [
-                'label' => 'loan Approve',
-                'route' => 'loneApplicationApprove.index',
+                'label' => 'Cash Application Approve',
+                'route' => 'hrm.cashapplicaon.index',
             ],
+            [
+                'label' => 'Loan Application',
+                'route' => 'hrm.lone.index',
+            ],
+            [
+                'label' => 'Loan Application Approve',
+                'route' => "hrm.leaveapprove.index",
+            ]
+
         ]
     ],
-
     //
 
 

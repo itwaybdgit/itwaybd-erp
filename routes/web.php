@@ -2064,9 +2064,9 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth'])->group(function
     Route::name('nirequest_confrim_billing.')->prefix('nirequest-confrim-billing')->group(function () {
         Route::get('/list', [NIRequestTConfrimBillingController::class, 'index'])->name('index');
         Route::get('/dataProcessing', [NIRequestTConfrimBillingController::class, 'dataProcessing'])->name('dataProcessing');
-        Route::get('/check/validity/{optimize:id}', [NIRequestTConfrimBillingController::class, 'check_validity'])->name('check_validity');
-        Route::post('/check/validity/{optimize:id}/store', [NIRequestTConfrimBillingController::class, 'store'])->name('store');
-        Route::post('/confirm/billing/{optimize:id}', [NIRequestTConfrimBillingController::class, 'confirm'])->name('confirm');
+        Route::get('/check/validity/{customer:id}', [NIRequestTConfrimBillingController::class, 'check_validity'])->name('check_validity');
+        Route::post('/check/validity/{customer:id}/store', [NIRequestTConfrimBillingController::class, 'store'])->name('store');
+        Route::post('/confirm/billing/{customer:id}', [NIRequestTConfrimBillingController::class, 'confirm'])->name('confirm');
         Route::get('/check/validity/{optimize:id}/approve', [NIRequestTConfrimBillingController::class, 'approve'])->name('approve');
     });
 

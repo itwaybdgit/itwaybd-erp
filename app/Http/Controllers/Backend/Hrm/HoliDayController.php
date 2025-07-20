@@ -15,9 +15,9 @@ class HoliDayController extends Controller
      public function index(Request $request)
 {
     $title = 'Add New HoliDay';
-  
 
-   
+
+
     return view('backend.pages.hrm.holi_day.index', compact('title'));
 }
 
@@ -27,7 +27,7 @@ class HoliDayController extends Controller
         $month = $request->get('month');
 
         $query = Holiday::whereYear('date', $year);
-        
+
         if ($month) {
             $query->whereMonth('date', $month);
         }
@@ -43,7 +43,7 @@ class HoliDayController extends Controller
      public function getByDate(Request $request): JsonResponse
     {
         $date = $request->get('date');
-        
+
         if (!$date) {
             return response()->json([
                 'success' => false,
@@ -69,7 +69,7 @@ class HoliDayController extends Controller
                 'title' => 'nullable|string|max:255',
             ]);
 
-            $days = $validated['day']; 
+            $days = $validated['day'];
             $year = $validated['year'];
             $title = $validated['title'];
 
@@ -166,6 +166,6 @@ class HoliDayController extends Controller
         ]);
     }
 
-    
+
 
 }

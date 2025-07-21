@@ -16,7 +16,11 @@ class MytaskController extends Controller
     public function index()
     {
 
-        $tasks = Task::where('user_id', auth()->user()->id)->get();
+        $tasks = Task::with('subtasks')
+    ->whereHas('subtasks', function ($query) {
+        $query->where('user_id', auth()->id());
+    })
+    ->get();
         return view('admin.pages.ProjectManagement.mytask.mytask', get_defined_vars());
     }
 

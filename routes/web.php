@@ -2213,6 +2213,8 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth'])->group(function
         route::get('/show/{id}', [TaskController::class, 'show'])->name('show');
         route::put('/update/{id}', [TaskController::class, 'update'])->name('update');
         route::delete('/destroy/{id}', [TaskController::class, 'destroy'])->name('destroy');
+        Route::get('/get-project-users/{projectId}', [TaskController::class, 'getProjectUsers'])->name('get.project.users');
+
         Route::delete('task-message/{id}', [TaskController::class, 'taskmessage_destory'])->name('task-message.destroy');
 
         route::get('/mytasks', [MytaskController::class, 'index'])->name('mytask');

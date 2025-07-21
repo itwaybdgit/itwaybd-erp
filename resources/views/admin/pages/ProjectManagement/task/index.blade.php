@@ -127,16 +127,14 @@
                                                     </span> --}}
                                                 </td>
                                                 <td>
-                                                    <span class="badge bg-info">{{ $task->getProject->name ?? '' }}</span>
+                                                    <span class="badge bg-info">{{ $task->project->name ?? '' }}</span>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-                                                        {{-- <img src="https://ui-avatars.com/api/?name={{ urlencode($task->getUser->name) }}&background=007bff&color=fff&size=32"
-                                                        class="rounded-circle me-2" width="32" height="32"> --}}
-                                                        <div>
-                                                            <div class="fw-bold">{{ $task->getUser->name }}</div>
-                                                            <small class="text-muted">{{ $task->getUser->email }}</small>
-                                                        </div>
+                                                             @foreach($task->assignedUsers as $user)
+            <span class="badge bg-primary me-1">{{ $user->name }}</span>
+        @endforeach
+                                                     
                                                     </div>
                                                 </td>
                                                 <td>
@@ -160,15 +158,15 @@
                                                 </td>
                                                 <td>
                                                     <div class="btn-group" role="group">
-                                                        <a href="{{ route('task.show', $task) }}"
+                                                        {{-- <a href="{{ route('task.show', $task) }}"
                                                             class="btn btn-sm btn-outline-info" title="View">
                                                             <i class="fas fa-eye"></i>
-                                                        </a>
-                                                        <a href="{{ route('task.edit', $task) }}"
+                                                        </a> --}}
+                                                        <a href="{{ route('task.edit', $task->id) }}"
                                                             class="btn btn-sm btn-outline-primary" title="Edit">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <form action="{{ route('task.destroy', $task) }}" method="POST"
+                                                        <form action="{{ route('task.destroy', $task->id) }}" method="POST"
                                                             class="d-inline"
                                                             onsubmit="return confirm('Are you sure you want to delete this task?')">
                                                             @csrf

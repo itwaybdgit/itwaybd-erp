@@ -48,11 +48,15 @@ class Task extends Model
      */
     public static function getStatuses()
     {
+<<<<<<< HEAD
         return [
             self::STATUS_PENDING,
             self::STATUS_IN_PROGRESS,
             self::STATUS_COMPLETED,
         ];
+=======
+        return $this->belongsTo(Project::class);
+>>>>>>> de80c12affb56f767abfb0f8893ceec75432f1e5
     }
 
     /**

@@ -24,8 +24,13 @@
                     $table->dateTime('end_date_time');
                     $table->enum('status', ['Pending', 'In Progress', 'Completed'])->default('Pending');
                     $table->enum('priority', ['Low', 'Medium', 'High', 'Critical'])->default('Low');
+<<<<<<< HEAD
                     $table->integer('project_id')->nullable();
                     $table->integer('user_id')->nullable();
+=======
+                    $table->foreignId('projects_id')->constrained()->onDelete('cascade');
+                    $table->foreignId('users_id')->constrained()->onDelete('cascade');
+>>>>>>> de80c12affb56f767abfb0f8893ceec75432f1e5
                     $table->string('image_path')->nullable();
                     $table->json('message_ids')->nullable();
                     $table->timestamps();

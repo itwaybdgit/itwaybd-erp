@@ -98,6 +98,7 @@ class LeadGenerationController extends Controller
         $columns = $this->reformatForRelationalColumnName(
             $this->tableColumnNames()
         );
+
         // dd(get_defined_vars());
         return view('admin.pages.index', get_defined_vars());
     }

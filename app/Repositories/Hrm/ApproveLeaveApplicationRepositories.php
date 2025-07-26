@@ -86,8 +86,8 @@ class ApproveLeaveApplicationRepositories
         if ($LeaveApplication) {
             foreach ($LeaveApplication as $key => $value) {
                 $nestedData['id'] = $key + 1;
-                $nestedData['employee_id'] = $value->employee->name;
-                $nestedData['branch_id'] = $value->branch->name;
+                $nestedData['employee_id'] = $value->employee->name ?? "";
+                $nestedData['branch_id'] = $value->branch->name ?? "";
                 $nestedData['apply_date'] = $value->apply_date;
                 $nestedData['end_date'] = $value->end_date;
                 $nestedData['reason'] = $value->reason;

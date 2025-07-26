@@ -19,8 +19,12 @@
                 "orderable": true
             },
             {
-                "data": "branch_id",
+                "data": "employee_name",
                 "orderable": true
+            },
+            {
+                "data": "department_id",
+                "orderable": false
             },
             {
                 "data": "apply_date",
@@ -34,10 +38,10 @@
                 "data": "reason",
                 "orderable": true
             },
-            {
-                "data": "payment_status",
-                "orderable": true
-            },
+            // {
+            //     "data": "payment_status",
+            //     "orderable": true
+            // },
             {
                 "data": "status",
                 "orderable": true

@@ -51,14 +51,13 @@
                             <tbody>
                                 <tr>
                                     <td>{{ $leave->employee->name }}</td>
-                                    <td>{{ $leave->branch->name }}</td>
+                                    <td>{{ $leave->department->name }}</td>
                                     <td>{{ $leave->apply_date }}</td>
                                     <td>{{ $leave->end_date }}</td>
                                     <td>{{ $leave->reason }}</td>
                                     <td>{{ $leave->payment_status }}</td>
                                     <td>{{ $leave->status }}</td>
                                 </tr>
-
                             </tbody>
                         </table>
                     </div>

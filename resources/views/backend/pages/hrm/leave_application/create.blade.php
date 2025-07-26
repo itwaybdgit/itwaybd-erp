@@ -54,15 +54,17 @@
                                 @enderror
                             </div>
                             <div class="col-md-6 mb-1">
-                                <label for=""> BRANCH NAME <span class="text-danger">*</span></label>
+                                <label for="">Department<span class="text-danger">*</span></label>
                                 <select class="select2 form-control select2-lg" aria-label=".select2-lg example"
-                                    name="branch_id">
-                                    <option selected disabled>Select employee</option>
-                                    @foreach ($branches as $branch)
-                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                    name="department_id">
+                                    <option selected disabled>Select Department</option>
+
+
+                                    @foreach ($departments as $department)
+                                        <option value="{{ $department->id }}">{{ $department->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('branch_id')
+                                @error('department_id')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
                             </div>

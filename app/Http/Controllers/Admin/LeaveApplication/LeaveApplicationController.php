@@ -89,6 +89,7 @@ class LeaveApplicationController extends Controller
         $columns = $this->reformatForRelationalColumnName(
             $this->tableColumnNames()
         );
+
         return view('admin.pages.index', get_defined_vars());
     }
 
@@ -99,6 +100,7 @@ class LeaveApplicationController extends Controller
      */
     public function dataProcessing(Request $request)
     {
+
         return $this->getDataResponse(
             //Model Instance
             $this->getModel(),

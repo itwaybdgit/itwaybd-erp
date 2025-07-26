@@ -61,33 +61,41 @@ class ApproveLeaveApplicationRepositories
         $order = $columns[$request->input('order.0.column')];
         $dir = $request->input('order.0.dir');
 
-        if (empty($request->input('search.value'))) {
-            $LeaveApplication = $this->model::offset($start)
-                ->where('status', 'pending')
-                ->limit($limit)
-                ->orderBy($order, $dir)
-                //->orderBy('status', 'desc')
-                ->get();
-            $totalFiltered = $this->model::count();
-        } else {
-            $search = $request->input('search.value');
-            $LeaveApplication = $this->model::where('name', 'like', "%{$search}%")
-                ->where('status', 'pending')
-                ->offset($start)
-                ->limit($limit)
-                ->orderBy($order, $dir)
-                // ->orderBy('status', 'desc')
-                ->get();
-            $totalFiltered = $this->model::where('name', 'like', "%{$search}%")->count();
+
+        $search = $request->input('search.value');
+
+        $query = $this->model->with(['employee', 'department']);
+
+        if ($search) {
+            $query = $query->whereHas('employee', function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('id_card', 'like', "%{$search}%")
+                        ->orWhere('personal_phone', 'like', "%{$search}%");
+                });
+            });
         }
+
+        // Uncomment if you want to restrict for non-admins
+        if (auth()->user()->is_admin != 1) {
+            $query = $query->where("employee_id", (auth()->user()->employee->id ?? 0));
+        }
+
+        $totalFiltered = $query->count();
+
+        $LeaveApplication = $query->offset($start)
+            ->limit($limit)
+            ->orderBy($order, $dir)
+            ->get();
 
 
         $data = array();
         if ($LeaveApplication) {
             foreach ($LeaveApplication as $key => $value) {
                 $nestedData['id'] = $key + 1;
-                $nestedData['employee_id'] = $value->employee->name ?? "";
-                $nestedData['branch_id'] = $value->branch->name ?? "";
+                $nestedData['employee_id'] = $value->employee->id_card ?? '';
+                $nestedData['employee_name'] = $value->employee->name ?? "";
+                $nestedData['department_id'] = $value->department->name ?? "";
                 $nestedData['apply_date'] = $value->apply_date;
                 $nestedData['end_date'] = $value->end_date;
                 $nestedData['reason'] = $value->reason;

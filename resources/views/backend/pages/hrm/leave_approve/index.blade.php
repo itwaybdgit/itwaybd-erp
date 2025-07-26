@@ -41,13 +41,15 @@
 
                                 <tr>
                                     <th>SL</th>
+                                    <th>ID Card</th>
                                     <th>Employe</th>
-                                    <th>Branch</th>
+                                    <th>Department</th>
+                                    <th>Days</th>
                                     <th>Applicaion Date</th>
                                     <th>Applicaion End Date</th>
                                     <th>Reason</th>
-                                    <th>Payment Status</th>
-                                    <th>Status</th>
+                                    {{-- <th>Payment Status</th>
+                                    <th>Status</th> --}}
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -57,13 +59,15 @@
                             <tfoot>
                                 <tr>
                                     <th>SL</th>
+                                    <th>ID Card</th>
                                     <th>Employe</th>
-                                    <th>Branch</th>
+                                    <th>Department</th>
+                                    <th>Days</th>
                                     <th>Applicaion Date</th>
                                     <th>Applicaion End Date</th>
                                     <th>Reason</th>
-                                    <th>Payment Status</th>
-                                    <th>Status</th>
+                                    {{-- <th>Payment Status</th>
+                                    <th>Status</th> --}}
                                     <th>Action</th>
                                 </tr>
                             </tfoot>

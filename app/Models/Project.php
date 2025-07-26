@@ -10,13 +10,20 @@ class Project extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+ protected $fillable = [
         'name',
         'starting_date',
         'ending_date',
         'description',
-        'hypercare',
         'hypercare_months',
+        'client_id',
+        'status',
+        'priority',
+        'estimated_hours',
+        'progress',
+        'budget',
+        'tags',
+        'notes',
     ];
 
     public function getTasks()

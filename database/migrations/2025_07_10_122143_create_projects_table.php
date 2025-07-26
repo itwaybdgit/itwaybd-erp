@@ -15,11 +15,18 @@ class CreateProjectsTable extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
+            $table->integer('client_id')->nullable();
             $table->string('name');
             $table->string('description')->nullable();
             $table->date('starting_date');
             $table->date('ending_date');
-            $table->boolean('status')->default(false);
+            $table->string('priority')->nullable();
+            $table->double('estimated_hours')->nullable();
+            $table->double('progress')->nullable();
+            $table->double('budget')->nullable();
+            $table->json('tags')->nullable();
+            $table->longText('notes')->nullable();
+            $table->string('status')->nullable();
             $table->integer('hypercare_months')->nullable();
             $table->timestamps();
         });

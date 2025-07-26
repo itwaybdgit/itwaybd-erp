@@ -31,7 +31,7 @@ class AddApproveTobandwidthToBandwidthCustomers extends Migration
     public function down()
     {
         Schema::table('bandwidth_customers', function (Blueprint $table) {
-            //
+          $table->dropColumn('item');
         });
     }
 }

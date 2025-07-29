@@ -248,9 +248,9 @@
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="col-md-4 mb-1">
+                            {{-- <div class="col-md-4 mb-1">
                                 <x-branch :type="'selectbox'"></x-branch>
-                            </div>
+                            </div> --}}
                             <div class="col-md-4 mb-1">
                                 <label for="">Department <span class="text-danger">*</span></label>
                                 <select name="department_id" class="form-control">

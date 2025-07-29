@@ -285,8 +285,8 @@ class EmployeeRepositories
         $employee->email = $request->email;
         $employee->last_in_time = $request->last_in_time;
         $employee->reference = $request->reference;
-        $employee->department = $request->department;
-        $employee->position_id = $request->position_id;
+        $employee->department_id = $request->department_id;
+        // $employee->position_id = $request->position_id;
         $employee->experience = $request->experience;
         $employee->present_address = $request->present_address;
         $employee->permanent_address = $request->permanent_address;

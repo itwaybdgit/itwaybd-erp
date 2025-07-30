@@ -52,8 +52,6 @@ class ApproveLeaveApplicationRepositories
             1 => 'name',
         );
 
-
-
         $totalData = $this->model::count();
 
         $limit = $request->input('length');

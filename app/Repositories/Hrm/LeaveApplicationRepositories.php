@@ -33,7 +33,7 @@ class LeaveApplicationRepositories
     public function getAllList()
     {
 
-        $result = $this->model::latest()->get();
+        $result = $this->model::with(['employee', 'department'])->latest()->get();
         return $result;
     }
 
@@ -45,84 +45,76 @@ class LeaveApplicationRepositories
 
     public function getList($request)
     {
-        $columns = array(
+        $columns = [
             0 => 'id',
-            1 => 'name',
-        );
-
-
+            1 => 'apply_date',
+            2 => 'department_id',
+            3 => 'employee_id',
+        ];
 
         $totalData = $this->model::count();
 
         $limit = $request->input('length');
         $start = $request->input('start');
-        $order = $columns[$request->input('order.0.column')];
-        $dir = $request->input('order.0.dir');
+        $orderIndex = $request->input('order.0.column', 0);
+        $dir = $request->input('order.0.dir', 'asc');
+        $order = $columns[$orderIndex] ?? 'id';
 
-        if (empty($request->input('search.value'))) {
-            $LeaveApplication = $this->model::offset($start)
-                ->limit($limit)
-                ->orderBy($order, $dir);
+        $search = $request->input('search.value');
 
-            if (auth()->user()->type != "Admin") {
-                $LeaveApplication = $LeaveApplication->where("employee_id", (auth()->user()->employee->id ?? 0));
-            }
+        $query = $this->model->with(['employee', 'department']);
 
-            $LeaveApplication = $LeaveApplication->get();
-            $totalFiltered = $this->model::count();
-        } else {
-            $search = $request->input('search.value');
-            $LeaveApplication = $this->model::where('name', 'like', "%{$search}%")
-                ->offset($start)
-                ->limit($limit)
-                ->orderBy($order, $dir);
-
-            if (auth()->user()->type != "Admin") {
-                $LeaveApplication = $LeaveApplication->where("employee_id", (auth()->user()->employee->id ?? 0));
-            }
-
-            $LeaveApplication = $LeaveApplication->get();
-            $totalFiltered = $this->model::where('name', 'like', "%{$search}%")->count();
+        if ($search) {
+            $query = $query->whereHas('employee', function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('id_card', 'like', "%{$search}%")
+                        ->orWhere('personal_phone', 'like', "%{$search}%");
+                });
+            });
         }
 
-
-        $data = array();
-        if ($LeaveApplication) {
-            foreach ($LeaveApplication as $key => $value) {
-                $to = \Carbon\Carbon::parse($value->end_date);
-                $from = \Carbon\Carbon::parse($value->apply_date);
-                $days = $to->diffInDays($from);
-                $nestedData['id'] = $key + 1;
-                $nestedData['employee_id'] = $value->employee->name ?? '';
-                $nestedData['branch_id'] = $value->branch->name;
-                $nestedData['days'] = $days;
-                $nestedData['apply_date'] = $value->apply_date;
-                $nestedData['end_date'] = $value->end_date;
-                $nestedData['reason'] = $value->reason;
-                $nestedData['payment_status'] = $value->payment_status;
-                $nestedData['status'] = $value->status;
-
-
-                $edit_data = '<a href="' . route('hrm.leave.edit', $value->id) . '" class="btn btn-xs btn-success"><i class="fa fa-edit" aria-hidden="true"></i></a>';
-
-                $view_data = '<a href="' . route('hrm.leave.show', $value->id) . '" class="btn btn-xs btn-primary"><i class="fa fa-eye" aria-hidden="true"></i></a>';
-
-                $delete_data = '<a delete_route="' . route('hrm.leave.destroy', $value->id) . '" delete_id="' . $value->id . '" title="Delete" class="btn btn-xs btn-danger delete_row uniqueid' . $value->id . '"><i class="fa fa-times"></i></a>';
-
-                $nestedData['action'] = $edit_data . ' ' . $view_data . ' ' . $delete_data;
-
-                $data[] = $nestedData;
-            }
+        // Uncomment if you want to restrict for non-admins
+        if (auth()->user()->is_admin != 1) {
+            $query = $query->where("employee_id", (auth()->user()->employee->id ?? 0));
         }
-        $json_data = array(
+
+        $totalFiltered = $query->count();
+
+        $LeaveApplication = $query->offset($start)
+            ->limit($limit)
+            ->orderBy($order, $dir)
+            ->get();
+
+        $data = [];
+        foreach ($LeaveApplication as $key => $value) {
+            $to = \Carbon\Carbon::parse($value->end_date);
+            $from = \Carbon\Carbon::parse($value->apply_date);
+            $days = $to->diffInDays($from);
+
+            $data[] = [
+                'id' => $key + 1,
+                'employee_id' => $value->employee->id_card ?? '',
+                'employee_name' => $value->employee->name ?? '',
+                'department_id' => $value->department->name ?? '',
+                'days' => $days ?? '',
+                'apply_date' => $value->apply_date,
+                'end_date' => $value->end_date,
+                'reason' => $value->reason,
+                'action' => '<a href="' . route('hrm.leave.edit', $value->id) . '" class="btn btn-xs btn-success"><i class="fa fa-edit"></i></a> ' .
+                    '<a href="' . route('hrm.leave.show', $value->id) . '" class="btn btn-xs btn-primary"><i class="fa fa-eye"></i></a> ' .
+                    '<a delete_route="' . route('hrm.leave.destroy', $value->id) . '" delete_id="' . $value->id . '" class="btn btn-xs btn-danger delete_row"><i class="fa fa-times"></i></a>'
+            ];
+        }
+
+        return [
             "draw" => intval($request->input('draw')),
             "recordsTotal" => intval($totalData),
             "recordsFiltered" => intval($totalFiltered),
             "data" => $data
-        );
-
-        return $json_data;
+        ];
     }
+
     /**
      * @param $request
      * @return mixed
@@ -135,9 +127,10 @@ class LeaveApplicationRepositories
 
     public function store($request)
     {
+
         $LeaveApplication = new $this->model;
         $LeaveApplication->employee_id = $request->employee_id;
-        $LeaveApplication->branch_id = $request->branch_id;
+        $LeaveApplication->department_id = $request->department_id;
         $LeaveApplication->apply_date = $request->apply_date;
         $LeaveApplication->end_date = $request->end_date;
         $LeaveApplication->reason = $request->reason;
@@ -150,7 +143,6 @@ class LeaveApplicationRepositories
             if (!Storage::disk('public')->exists('leave')) {
                 Storage::disk('public')->makeDirectory('leave');
             }
-
 
             $file->storeAs('leave', $fileName, 'public');
         } else {

@@ -183,7 +183,6 @@
             </div>
         @endif
 
-
         @if (check_access('Sales'))
             <div class="col-4">
                 <div class="card gr_1_color">

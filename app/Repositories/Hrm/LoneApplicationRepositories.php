@@ -32,7 +32,7 @@ class LoneApplicationRepositories
      */
     public function getAllList()
     {
-        dd('hhj');
+
         $result = $this->model::latest()->get();
         return $result;
     }

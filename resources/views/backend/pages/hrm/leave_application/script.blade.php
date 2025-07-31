@@ -19,33 +19,37 @@
                 "orderable": true
             },
             {
-                "data": "branch_id",
+                "data": "employee_name",
                 "orderable": true
+            },
+            {
+                "data": "department_id",
+                "orderable": false
             },
             {
                 "data": "days",
-                "orderable": true
+                "orderable": false
             },
             {
                 "data": "apply_date",
-                "orderable": true
+                "orderable": false
             },
             {
                 "data": "end_date",
-                "orderable": true
+                "orderable": false
             },
             {
                 "data": "reason",
-                "orderable": true
+                "orderable": false
             },
-            {
-                "data": "payment_status",
-                "orderable": true
-            },
-            {
-                "data": "status",
-                "orderable": true
-            },
+            // {
+            //     "data": "payment_status",
+            //     "orderable": false
+            // },
+            // {
+            //     "data": "status",
+            //     "orderable": false
+            // },
 
             {
                 "data": "action",

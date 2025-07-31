@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Hrm;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
+use App\Models\Department;
 use App\Models\Employee;
 use App\Models\LeaveApplication;
 use App\Transformers\AdjustTransformer;
@@ -44,13 +45,16 @@ class LeaveApplicationController extends Controller
     public function index(Request $request)
     {
         $title = 'Leave application List';
+        $leaveAplications = LeaveApplication::get();
         return view('backend.pages.hrm.leave_application.index', get_defined_vars());
     }
 
 
     public function dataProcessingLeaveApplication(Request $request)
     {
+
         $json_data = $this->systemService->getList($request);
+
         return json_encode($this->systemTransformer->dataTable($json_data));
     }
 
@@ -63,7 +67,7 @@ class LeaveApplicationController extends Controller
     {
         $title = 'Add New Leave application ';
         $employees = Employee::get();
-        $branches = Branch::get();
+        $departments = Department::get();
         return view('backend.pages.hrm.leave_application.create', get_defined_vars());
     }
     /**
@@ -72,13 +76,13 @@ class LeaveApplicationController extends Controller
      */
     public function store(Request $request)
     {
-
         try {
             $this->validate($request, $this->systemService->storeValidation($request));
         } catch (ValidationException $e) {
             session()->flash('error', 'Validation error !!');
             return redirect()->back()->withErrors($e->errors())->withInput();
         }
+
         $this->systemService->store($request);
         session()->flash('success', 'Data successfully save!!');
         return redirect()->route('hrm.leave.index');

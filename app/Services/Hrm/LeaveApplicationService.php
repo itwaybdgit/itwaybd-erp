@@ -73,7 +73,7 @@ class LeaveApplicationService
 
         return [
             'employee_id' => 'required',
-            'branch_id' => 'required',
+            'department_id' => 'required',
             'apply_date' => 'required',
             'end_date' => 'required',
             'reason' => 'required',

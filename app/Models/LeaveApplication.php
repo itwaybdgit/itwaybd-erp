@@ -12,6 +12,7 @@ class LeaveApplication extends Model
     protected $fillable = [
         'employee_id',
         'company_id',
+        'department_id',
         'apply_date',
         'end_date',
         'payment_status',
@@ -29,5 +30,15 @@ class LeaveApplication extends Model
     public function company()
     {
         return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 }

@@ -20,6 +20,7 @@ use App\Models\Designation;
 use App\Services\Hrm\EmployeeService;
 use App\Services\InventorySetup\AdjustService;
 use App\Helpers\ZktecoMatching;
+use App\Models\Account;
 use App\Models\Box;
 use App\Models\Device;
 use App\Models\Splitter;
@@ -27,6 +28,7 @@ use App\Models\Tj;
 use App\Transformers\Transformers;
 use Illuminate\Validation\ValidationException;
 use Auth;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class EmployeeController extends Controller
 {
@@ -75,7 +77,6 @@ class EmployeeController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-
     public function create()
     {
         $title = 'Add New Employee';
@@ -92,8 +93,10 @@ class EmployeeController extends Controller
         } else {
             $area = [];
         }
+
         return view('backend.pages.hrm.employee.create', get_defined_vars());
     }
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -227,12 +230,12 @@ class EmployeeController extends Controller
         $skipped = 0;
 
         foreach ($employees as $employee) {
-            $existingAccount = Accounts::where('accountable_id', $employee->id)
+            $existingAccount = Account::where('accountable_id', $employee->id)
                 ->where('accountable_type', "App\Models\Employee")
                 ->first();
 
             if (!$existingAccount) {
-                $account = new Accounts();
+                $account = new Account();
                 $account->account_name = $employee->name ?? 'Employee';
                 $account->parent_id = 16;
                 $account->accountable_id = $employee->id;
@@ -240,7 +243,7 @@ class EmployeeController extends Controller
                 $account->bill_by_bill = 1;
                 $account->branch_id = $request->branch_id ?? 1; // default branch_id if not sent
                 $account->status = 'Active';
-                $account->created_by = Auth::id();
+                $account->created_by = auth()->user()->id;
                 $account->save();
 
                 $created++;

@@ -15,9 +15,16 @@
         }
 
         .gr_1_color {
-            background: linear-gradient(150deg, #f731db, #4600f1 100%);
+            /* background: linear-gradient(150deg, #f731db, #4600f1 100%); */
             color: #fff;
+            background-image: linear-gradient(135deg, #10223d 0%, #1b3344 50%, #0e414d 100%) !important;
+            transition: background-image 0.5s ease;
         }
+
+        .gr_1_color:hover {
+            background-image: linear-gradient(135deg, #0e414d 0%, #1b3344 50%, #10223d 100%) !important;
+        }
+
 
         .gr_2_color {
             background: linear-gradient(150deg, #39ef74, #4600f1 100%);
@@ -72,13 +79,12 @@
 @endsection
 @section('content')
     <div class="row">
-
         @if (check_access('team_leader'))
             <div class="col-4">
                 <div class="card gr_1_color">
                     <div class="card-header ">
                         <div>
-                            <p class="card-text">Active Clients</p>
+                            <p class="card-text">Active lients</p>
                             <h3 class="font-weight-bolder mb-0 h3_title">{{ $bandwith_clients }}</h3>
                         </div>
 
@@ -309,6 +315,8 @@
             </div>
     </div>
     @endif
+
+
     @if (check_access('billing_department'))
         <div class="col-4">
             <div class="card gr_1_color">
@@ -710,7 +718,140 @@
             <div class="card gr_1_color">
                 <div class="card-header ">
                     <div>
-                        <p class="card-text">Active Clients</p>
+                        <p class="card-text">Today Lead</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $pendingcustomer }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">This Month Lead</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $pendingcustomer }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Today Follow Up</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $pendingcustomer }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">This Month Follow Up </p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $pendingcustomer }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Today Meeting </p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $pendingcustomer }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">This Month Meeting</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $pendingcustomer }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-12" id="lead_html">
+        </div>
+
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Today Quotation</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $bandwith_clients }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">This Month Quotation</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $bandwith_clients }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">High Priority Lead</p>
                         <h3 class="font-weight-bolder mb-0 h3_title">{{ $bandwith_clients }}</h3>
                     </div>
 
@@ -727,8 +868,40 @@
             <div class="card gr_1_color">
                 <div class="card-header ">
                     <div>
-                        <p class="card-text">Pending Clients</p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $pendingcustomer }}</h3>
+                        <p class="card-text">All Tasks</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '200' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Pending Tasks</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '20' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Ongoing Tasks</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
                     </div>
 
                     <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
@@ -744,9 +917,149 @@
             <div class="card gr_1_color">
                 <div class="card-header ">
                     <div>
-                        <p class="card-text"> Discontinue </p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ count($disconnect) }}</h3>
+                        <p class="card-text">Complate Tasks</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
                     </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Upcoming Sales</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Today Sales</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- chart  start --}}
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="card shadow border-0">
+                <div class="card-header" style="background: linear-gradient(135deg, #110d2e, #0faeb8); color:#fff">
+                    <h5 class="text-center text-white">Monthly Sales</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="text-center"></h5>
+                            <canvas id="newCustomerChart" style="width: 100%; height: 250px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="card shadow border-0">
+                <div class="card-header" style="background: linear-gradient(135deg, #110d2e, #0faeb8); color:#fff">
+                    <h5 class="text-center text-white">Recent Sales</h5>
+                </div>
+                <div class="card-body p-0" style="max-height: 278px; overflow-y: auto; overflow-x: auto;">
+                    <table class="unPaidClientTable table table-bordered table-striped"
+                        style="width: 100%;     height: 280px;">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Phone</th>
+                                <th>Billing Amount</th>
+                                <th>Due Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {{-- chart  end --}}
+
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">This Month Sales</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Pending Sales</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Sales Cancel</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Retrive</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
                     <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
                         <div class="avatar-content">
                             <i data-feather="user" class="font-medium-5"></i>
@@ -760,9 +1073,10 @@
             <div class="card gr_1_color">
                 <div class="card-header ">
                     <div>
-                        <p class="card-text"> {{ date('F') }} Generate Bill </p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $monthbillgenerate }}</h3>
+                        <p class="card-text">New sales from Lead </p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
                     </div>
+
                     <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
                         <div class="avatar-content">
                             <i data-feather="user" class="font-medium-5"></i>
@@ -772,248 +1086,415 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-4">
             <div class="card gr_1_color">
                 <div class="card-header ">
                     <div>
-                        <p class="card-text"> {{ date('F') }} Month Due </p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $differencedeu }}</h3>
+                        <p class="card-text">New sales from Lead </p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
                     </div>
+
                     <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
                         <div class="avatar-content">
-                            <i data-feather="navigation-2" class="font-medium-5"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card gr_1_color">
-                <div class="card-header ">
-                    <div>
-                        <p class="card-text"> {{ date('F') }} Month Collected </p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $differencecollected }}</h3>
-                    </div>
-                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
-                        <div class="avatar-content">
-                            <i data-feather="navigation-2" class="font-medium-5"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card gr_1_color">
-                <div class="card-header ">
-                    <div>
-                        <p class="card-text"> Pending Optimize Request </p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $optimizelist }}</h3>
-                    </div>
-                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
-                        <div class="avatar-content">
-                            <i data-feather="bell" class="font-medium-5"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card gr_1_color">
-                <div class="card-header ">
-                    <div>
-                        <p class="card-text"> Pending Upgradtion Request </p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $upgradtionlist }}</h3>
-                    </div>
-                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
-                        <div class="avatar-content">
-                            <i data-feather="corner-left-up" class="font-medium-5"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card gr_1_color">
-                <div class="card-header ">
-                    <div>
-                        <p class="card-text"> Pending Downgradtion Request </p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $downgradtionlist }}</h3>
-                    </div>
-                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
-                        <div class="avatar-content">
-                            <i data-feather="corner-right-down" class="font-medium-5"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card gr_1_color">
-                <div class="card-header ">
-                    <div>
-                        <p class="card-text"> Pending Discontinue Request </p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $discontinuelist }}</h3>
-                    </div>
-                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
-                        <div class="avatar-content">
-                            <i data-feather="corner-right-down" class="font-medium-5"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card gr_1_color">
-                <div class="card-header ">
-                    <div>
-                        <p class="card-text"> Reseller uncap request</p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $reselleruncap }}</h3>
-                    </div>
-                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
-                        <div class="avatar-content">
-                            <i data-feather="navigation-2" class="font-medium-5"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card gr_1_color">
-                <div class="card-header ">
-                    <div>
-                        <p class="card-text">ONETIME</p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $reselleruncap }}</h3>
-                    </div>
-                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
-                        <div class="avatar-content">
-                            <i data-feather="navigation-2" class="font-medium-5"></i>
+                            <i data-feather="user" class="font-medium-5"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-4">
             <div class="card gr_1_color">
-                <form id="billingForm" action="{{ route('report.billingperiod') }}" method="post"
-                    onclick="this.submit()">
-                    @csrf
-                    <input type="hidden" name="month" value="{{ date('Y-m') }}" class="form-control">
-                    <input type="hidden" name="billing_frequency" value="MONTHLY" class="form-control">
-                    <div class="card-header">
-                        <div>
-                            <p class="card-text">MONTHLY</p>
-                            <h3 class="font-weight-bolder mb-0 h3_title">{{ $monthlyAmount }}</h3>
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">New sales from Lead </p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
                         </div>
-                        <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
-                            <div class="avatar-content">
-                                <i data-feather="navigation-2" class="font-medium-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">New sales from Lead </p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Sales Achievement</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Best seller</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        {{-- tech --}}
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">All Projects</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Pending Projects</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Ongoing Projects</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Completed Projects</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="col-4">
+            <div class="card gr_1_color">
+                <div class="card-header ">
+                    <div>
+                        <p class="card-text">Projects Summary</p>
+                        <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                    </div>
+
+                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                        <div class="avatar-content">
+                            <i data-feather="user" class="font-medium-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="ticketid">
+            </div>
+        </div>
+
+
+        <div class="col-12">
+            <h1 class="mb-2">
+                Finance
+            </h1>
+            <div class="row">
+                <div class="col-4">
+                    <div class="card gr_1_color">
+                        <div class="card-header ">
+                            <div>
+                                <p class="card-text">Today Scheduled Receivable</p>
+                                <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                            </div>
+
+                            <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                                <div class="avatar-content">
+                                    <i data-feather="user" class="font-medium-5"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </form>
-            </div>
-        </div>
+                </div>
+                <div class="col-4">
+                    <div class="card gr_1_color">
+                        <div class="card-header ">
+                            <div>
+                                <p class="card-text">This Month Scheduled Receivable</p>
+                                <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                            </div>
 
-
-        <div class="col-md-4">
-            <div class="card gr_1_color">
-                <form id="billingForm" action="{{ route('report.billingperiod') }}" method="post"
-                    onclick="this.submit()">
-                    @csrf
-                    <input type="hidden" name="month" value="{{ date('Y-m') }}" class="form-control">
-                    <input type="hidden" name="billing_frequency" value="YEARLY" class="form-control">
-                    <div class="card-header">
-                        <div>
-                            <p class="card-text">YEARLY</p>
-                            <h3 class="font-weight-bolder mb-0 h3_title">{{ $yearAmount }}</h3>
-                        </div>
-                        <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
-                            <div class="avatar-content">
-                                <i data-feather="navigation-2" class="font-medium-5"></i>
+                            <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                                <div class="avatar-content">
+                                    <i data-feather="user" class="font-medium-5"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </form>
-            </div>
-        </div>
+                </div>
 
-        <div class="col-md-4">
-            <div class="card gr_1_color">
-                <div class="card-header ">
-                    <div>
-                        <p class="card-text"> Total Task</p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ count($tasks) }}</h3>
-                    </div>
-                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
-                        <div class="avatar-content">
-                            <i data-feather="corner-right-down" class="font-medium-5"></i>
+                <div class="col-4">
+                    <div class="card gr_1_color">
+                        <div class="card-header ">
+                            <div>
+                                <p class="card-text">This Month all Receivable </p>
+                                <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                            </div>
+
+                            <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                                <div class="avatar-content">
+                                    <i data-feather="user" class="font-medium-5"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+                <div class="col-4">
+                    <div class="card gr_1_color">
+                        <div class="card-header ">
+                            <div>
+                                <p class="card-text">This Month Subscriber Receivable </p>
+                                <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                            </div>
 
-        <div class="col-md-4">
-            <div class="card gr_1_color">
-                <div class="card-header ">
-                    <div>
-                        <p class="card-text"> Pandding Task</p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $tasks->where('status', 'Pandding')->count() }}
-                        </h3>
-                    </div>
-                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
-                        <div class="avatar-content">
-                            <i data-feather="corner-right-down" class="font-medium-5"></i>
+                            <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                                <div class="avatar-content">
+                                    <i data-feather="user" class="font-medium-5"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+                <div class="col-4">
+                    <div class="card gr_1_color">
+                        <div class="card-header ">
+                            <div>
+                                <p class="card-text">This Month Project Receivable </p>
+                                <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                            </div>
 
-        <div class="col-md-4">
-            <div class="card gr_1_color">
-                <div class="card-header ">
-                    <div>
-                        <p class="card-text"> In Progress Task</p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $tasks->where('status', 'in_progress')->count() }}
-                        </h3>
-                    </div>
-                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
-                        <div class="avatar-content">
-                            <i data-feather="corner-right-down" class="font-medium-5"></i>
+                            <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                                <div class="avatar-content">
+                                    <i data-feather="user" class="font-medium-5"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+                <div class="col-4">
+                    <div class="card gr_1_color">
+                        <div class="card-header ">
+                            <div>
+                                <p class="card-text">This Month Yearly Renewal Receivable </p>
+                                <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                            </div>
 
-        <div class="col-md-4">
-            <div class="card gr_1_color">
-                <div class="card-header ">
-                    <div>
-                        <p class="card-text"> Completed Task</p>
-                        <h3 class="font-weight-bolder mb-0 h3_title">{{ $tasks->where('status', 'Completed')->count() }}
-                        </h3>
-                    </div>
-                    <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
-                        <div class="avatar-content">
-                            <i data-feather="corner-right-down" class="font-medium-5"></i>
+                            <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                                <div class="avatar-content">
+                                    <i data-feather="user" class="font-medium-5"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="col-4">
+                    <div class="card gr_1_color">
+                        <div class="card-header ">
+                            <div>
+                                <p class="card-text">Today Scheduled Payment </p>
+                                <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                            </div>
+
+                            <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                                <div class="avatar-content">
+                                    <i data-feather="user" class="font-medium-5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card gr_1_color">
+                        <div class="card-header ">
+                            <div>
+                                <p class="card-text">This Month Scheduled Payment </p>
+                                <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                            </div>
+
+                            <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                                <div class="avatar-content">
+                                    <i data-feather="user" class="font-medium-5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card gr_1_color">
+                        <div class="card-header ">
+                            <div>
+                                <p class="card-text"> This Month All Payment </p>
+                                <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                            </div>
+
+                            <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                                <div class="avatar-content">
+                                    <i data-feather="user" class="font-medium-5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
 
         <div class="col-md-12" id="lead_html">
         </div>
+
+
+        <!--task start -->
+        <div class="col-12">
+            <h1 class="mb-2 mt-2">Task</h1>
+            <div class="row">
+                <div class="col-4">
+                    <div class="card gr_1_color">
+                        <div class="card-header ">
+                            <div>
+                                <p class="card-text"> Total Tasks </p>
+                                <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                            </div>
+
+                            <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                                <div class="avatar-content">
+                                    <i data-feather="user" class="font-medium-5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card gr_1_color">
+                        <div class="card-header ">
+                            <div>
+                                <p class="card-text"> Pending Tasks </p>
+                                <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                            </div>
+
+                            <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                                <div class="avatar-content">
+                                    <i data-feather="user" class="font-medium-5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card gr_1_color">
+                        <div class="card-header ">
+                            <div>
+                                <p class="card-text"> Ongoing Tasks </p>
+                                <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                            </div>
+
+                            <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                                <div class="avatar-content">
+                                    <i data-feather="user" class="font-medium-5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card gr_1_color">
+                        <div class="card-header ">
+                            <div>
+                                <p class="card-text"> Completed Tasks </p>
+                                <h3 class="font-weight-bolder mb-0 h3_title">{{ '0' }}</h3>
+                            </div>
+
+                            <div class="avatar bg-light-primary p-50 m-0" style="color:#fff !important">
+                                <div class="avatar-content">
+                                    <i data-feather="user" class="font-medium-5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     @endif
     </div>
 
     @if (check_access('level_4') || check_access('level_1') || check_access('level_2') || check_access('level_3'))
         <div class="row ticketid">
-
         </div>
     @endif
 @endsection

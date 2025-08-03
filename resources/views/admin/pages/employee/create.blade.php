@@ -111,9 +111,9 @@
                             </div>
 
                             <div class="col-md-4 mb-1">
-                                <label for="">Present Address</label>
-                                <textarea value="{{ old('present_address') }}" name="present_address" class="form-control input-rounded"></textarea>
-                                @error('present_address')
+                                <label for="">Active Address</label>
+                                <textarea value="{{ old('Active_address') }}" name="Active_address" class="form-control input-rounded"></textarea>
+                                @error('Active_address')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -145,15 +145,16 @@
                             </div>
                             <div class="col-md-4 mb-1">
                                 <label for="">Received Documents Checkbox</label>
-                                <select name="received_documents_checkbox[]"  class="form-control js-example-tokenizer" multiple="multiple">
-                                  <option value="CV">CV</option>
+                                <select name="received_documents_checkbox[]" class="form-control js-example-tokenizer"
+                                    multiple="multiple">
+                                    <option value="CV">CV</option>
                                 </select>
                                 @error('received_documents_checkbox')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="col-md-4 mb-1">
-                              <label for="">Type </label>
+                                <label for="">Type </label>
                                 <select name="type[]" class="form-control js-example-tokenizer" multiple="multiple">
                                     <option value="team_leader">Team Leader</option>
                                     <option value="Sales">Sales</option>
@@ -221,7 +222,8 @@
                             </div>
                             <div class="col-md-4 mb-1">
                                 <label for="">Professional Experiences</label>
-                                <textarea value="{{ old('professional_experiences') }}" name="professional_experiences" class="form-control input-rounded"></textarea>
+                                <textarea value="{{ old('professional_experiences') }}" name="professional_experiences"
+                                    class="form-control input-rounded"></textarea>
                                 @error('professional_experiences')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
@@ -247,14 +249,14 @@
                             </div>
                             <div class="col-md-4 mb-1">
                                 <label for="tin">Taxpayer Identification Number (TIN)</label>
-                                 <input type="text" name="tin" class="form-control">
+                                <input type="text" name="tin" class="form-control">
                                 @error('tin')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="col-md-4 mb-1">
                                 <label for="bank_account_information">Bank Account Information</label>
-                                 <input type="text" name="bank_account_information" class="form-control">
+                                <input type="text" name="bank_account_information" class="form-control">
                                 @error('bank_account_information')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
@@ -287,16 +289,16 @@
 
                             <div class="col-md-4 mb-1">
                                 <label for="">Official E-mail</label>
-                                <input type="text" class="form-control input-rounded" value="{{ old('official_email') }}"
-                                    name="official_email">
+                                <input type="text" class="form-control input-rounded"
+                                    value="{{ old('official_email') }}" name="official_email">
                                 @error('official_email')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="col-md-4 mb-1">
                                 <label for="">Office Number</label>
-                                <input type="number" class="form-control input-rounded" value="{{ old('office_phone') }}"
-                                    name="office_phone">
+                                <input type="number" class="form-control input-rounded"
+                                    value="{{ old('office_phone') }}" name="office_phone">
                                 @error('office_phone')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
@@ -313,10 +315,10 @@
                                 <label for="">Choose Team </label>
                                 <select name="team" class="form-control">
                                     @php
-                                      use App\Models\Team;
-                                      $teams = Team::all();
+                                        use App\Models\Team;
+                                        $teams = Team::all();
                                     @endphp
-                                     <option selected value="0">Non Team </option>
+                                    <option selected value="0">Non Team </option>
                                     @foreach ($teams as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
                                     @endforeach
@@ -441,8 +443,8 @@
         isLogin();
 
         $(".js-example-tokenizer").select2({
-           tags: true,
-           tokenSeparators: [',', ' ']
-       })
+            tags: true,
+            tokenSeparators: [',', ' ']
+        })
     </script>
 @endpush

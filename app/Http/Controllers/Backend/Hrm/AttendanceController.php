@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Hrm;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Account;
 //use App\Transformers\AdjustTransformer;
 use App\Transformers\Transformers;
 use App\Models\Branch;
@@ -65,10 +66,10 @@ class AttendanceController extends Controller
     public function create()
     {
         $title = 'Add New Adjust';
-        $branch = Branch::get()->where('status', 'Active');
+        // $branch = Branch::get()->where('status', 'Active');
         $customer = Customer::get()->where('status', 'Active');
-        $account = ChartOfAccount::get()->where('status', 'Active');
-       $employees = Employee::where('employee_status','present')->orderBy('id_card','asc')->get();
+        $account = Account::get()->where('status', 'Active');
+        $employees = Employee::where('status', 'Active')->orderBy('id_card', 'asc')->get();
 
         return view('backend.pages.hrm.attendance.create', get_defined_vars());
     }
@@ -116,16 +117,16 @@ class AttendanceController extends Controller
     }
 
 
-  public function absentEmployee(Request $request)
+    public function absentEmployee(Request $request)
     {
-    //    dd($request->all());
-       
+        //    dd($request->all());
+
         if (Attendance::where('emplyee_id', $request->emplyee_id)->whereDate('date', today()->format('Y-m-d'))->first()) {
             session()->flash('error', 'This employee  check in');
             return redirect()->route('hrm.attendance.create');
         }
         $this->systemService->absent($request);
-       
+
 
         session()->flash('success', 'Absent successfully!!');
         return redirect()->route('hrm.attendance.create');
@@ -167,7 +168,7 @@ class AttendanceController extends Controller
             session()->flash('error', 'Edit id must be numeric!!');
             return redirect()->back();
         }
-        
+
         $title = "Edit Attendance";
         $model = $this->systemService->edit($id);
 
@@ -187,14 +188,14 @@ class AttendanceController extends Controller
     public function update(Request $request, $id)
     {
         $updated = Attendance::find($id);
-         $updated->date     = $request->date;
-          $updated->sign_in   = $request->sign_in;
-           $updated->sign_out   = $request->sign_out;
-           $updated->save();
+        $updated->date     = $request->date;
+        $updated->sign_in   = $request->sign_in;
+        $updated->sign_out   = $request->sign_out;
+        $updated->save();
 
         if ($updated) {
             session()->flash('success', 'Attendance update successfuly!!');
-           return redirect(session('previous_url') ?? route('admin.hrm-attendance-index'));
+            return redirect(session('previous_url') ?? route('admin.hrm-attendance-index'));
         }
     }
 
@@ -224,124 +225,123 @@ class AttendanceController extends Controller
         }
     }
 
-public function mark(Request $request)
-{
-   
-    $title = 'Attendance Mark';
-    session(['previous_url' => url()->current()]);
-     $employees = Employee::where('employee_status','present')->orderBy('id_card','asc')->get();
+    public function mark(Request $request)
+    {
 
-    
-    // Initialize collections
-    $attendances = collect();
-    $dayes = collect();
-
-    if ($request->isMethod('post')) {
-        $query = Attendance::with('employe')
-            ->selectRaw('DATE(date) as date, emplyee_id, sign_in, sign_out, id, markStatus, ot, attendanceStatus');
+        $title = 'Attendance Mark';
+        session(['previous_url' => url()->current()]);
+        $employees = Employee::where('status', 'Active')->orderBy('id_card', 'asc')->get();
 
 
-        // Apply filters
-        if ($request->employee_id && $request->employee_id !== 'all') {
-            $query->where('emplyee_id', $request->employee_id);
-        }
+        // Initialize collections
+        $attendances = collect();
+        $dayes = collect();
 
-        if ($request->from) {
-            $query->whereDate('date', $request->from);
+        if ($request->isMethod('post')) {
+            $query = Attendance::with('employe')
+                ->selectRaw('DATE(date) as date, emplyee_id, sign_in, sign_out, id, markStatus, ot, attendanceStatus');
+
+
+            // Apply filters
+            if ($request->employee_id && $request->employee_id !== 'all') {
+                $query->where('emplyee_id', $request->employee_id);
+            }
+
+            if ($request->from) {
+                $query->whereDate('date', $request->from);
+            } else {
+                // Default to today if no date specified
+                $query->whereDate('date', now()->toDateString());
+            }
+
+            $attendances = $query->orderBy('emplyee_id', 'asc')->get();
+
+            // Get unique dates for grouping
+            $dayes = $attendances->groupBy('date')->keys()->map(function ($date) {
+                return (object)['date' => $date];
+            });
+            //    dd($attendances);
+            // For AJAX requests, return partial view
+            if ($request->ajax()) {
+                return view('backend.pages.hrm.attendance.partial_table', compact('attendances', 'dayes', 'employees'))->render();
+            }
         } else {
-            // Default to today if no date specified
-            $query->whereDate('date', now()->toDateString());
+            // Default GET request - show today's attendance
+            $today = now()->toDateString();
+            $attendances = Attendance::with('employe')
+                ->selectRaw('DATE(date) as date, emplyee_id, sign_in, sign_out, id')
+                ->whereDate('date', $today)
+                ->get();
+
+            $dayes = collect([(object)['date' => $today]]);
         }
 
-        $attendances = $query->orderBy('emplyee_id','asc')->get();
-
-        // Get unique dates for grouping
-        $dayes = $attendances->groupBy('date')->keys()->map(function($date) {
-            return (object)['date' => $date];
-        });
-        //    dd($attendances);
-        // For AJAX requests, return partial view
-        if ($request->ajax()) {
-            return view('backend.pages.hrm.attendance.partial_table', compact('attendances', 'dayes','employees'))->render();
-        }
-    } else {
-        // Default GET request - show today's attendance
-        $today = now()->toDateString();
-        $attendances = Attendance::with('employe')
-            ->selectRaw('DATE(date) as date, emplyee_id, sign_in, sign_out, id')
-            ->whereDate('date', $today)
-            ->get();
-
-        $dayes = collect([(object)['date' => $today]]);
+        return view('backend.pages.hrm.attendance.mark', compact('title', 'employees', 'attendances', 'dayes'));
     }
 
-    return view('backend.pages.hrm.attendance.mark', compact('title', 'employees', 'attendances', 'dayes'));
-}
+    public function ajaxUpdate(Request $request)
+    {
+        //  dd($request->all());
+        foreach ($request->attendances as $item) {
+            $attendance = Attendance::find($item['attendance_id']);
 
-public function ajaxUpdate(Request $request)
-{
-    //  dd($request->all());
-    foreach ($request->attendances as $item) {
-        $attendance = Attendance::find($item['attendance_id']);
+            if (!$attendance) continue;
 
-        if (!$attendance) continue;
+            // Check previous date for late count
+            $previousDate = \Carbon\Carbon::parse($attendance->date)->subDay()->toDateString();
+            $previous = Attendance::where('emplyee_id', $item['employee_id'])
+                ->where('date', $previousDate)
+                ->first();
 
-        // Check previous date for late count
-        $previousDate = \Carbon\Carbon::parse($attendance->date)->subDay()->toDateString();
-        $previous = Attendance::where('emplyee_id', $item['employee_id'])
-                              ->where('date', $previousDate)
-                              ->first();
+            $lateCount = $previous && $previous->lateStatus == 'yes'
+                ? ($previous->lateCount ?? 0) + 1
+                : 1;
 
-        $lateCount = $previous && $previous->lateStatus == 'yes'
-            ? ($previous->lateCount ?? 0) + 1
-            : 1;
-  
-        $attendance->update([
-            'sign_in' => $item['sign_in'],
-            'sign_out' => $item['sign_out'],
-            'lateStatus' => $item['lateStatus'],
-            'ot' => $item['ot'],
-            'attendanceStatus' => $item['attendanceStatus'],
-            'markStatus' => 'yes',
-            'lateCount' => $lateCount,
+            $attendance->update([
+                'sign_in' => $item['sign_in'],
+                'sign_out' => $item['sign_out'],
+                'lateStatus' => $item['lateStatus'],
+                'ot' => $item['ot'],
+                'attendanceStatus' => $item['attendanceStatus'],
+                'markStatus' => 'yes',
+                'lateCount' => $lateCount,
+            ]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+
+    public function updateSingle(Request $request, $id)
+    {
+        // dd($request->all());
+        $attendance = Attendance::findOrFail($id);
+
+        // Update basic fields
+        $attendance->sign_in = $request->sign_in;
+        $attendance->sign_out = $request->sign_out;
+
+        // Update additional fields
+        $attendance->lateStatus = $request->lateStatus ? 'yes' : 'no'; // Assuming it's a boolean
+        $attendance->markStatus = $request->markStatus ? 'yes' : 'no';
+        $attendance->attendanceStatus = $request->attendanceStatus; // 'Active' or 'absent'
+        $attendance->ot = $request->ot;
+
+
+
+        $attendance->save();
+
+        return response()->json([
+            'success' => true,
+
         ]);
     }
 
-    return response()->json(['success' => true]);
-}
 
+    public function fetchRow($id)
+    {
+        $attendance = Attendance::with('employe')->findOrFail($id);
 
-public function updateSingle(Request $request, $id)
-{
-    // dd($request->all());
-    $attendance = Attendance::findOrFail($id);
-
-    // Update basic fields
-    $attendance->sign_in = $request->sign_in;
-    $attendance->sign_out = $request->sign_out;
-
-    // Update additional fields
-    $attendance->lateStatus = $request->lateStatus ? 'yes' : 'no'; // Assuming it's a boolean
-    $attendance->markStatus = $request->markStatus ? 'yes' : 'no';
-    $attendance->attendanceStatus = $request->attendanceStatus; // 'present' or 'absent'
-     $attendance->ot = $request->ot;
-
-    
-
-    $attendance->save();
-
-  return response()->json([
-        'success' => true,
-       
-    ]);
-}
-
-
-public function fetchRow($id)
-{
-    $attendance = Attendance::with('employe')->findOrFail($id);
-
-    return view('backend.pages.hrm.attendance.single_row', compact('attendance'))->render();
-}
-
+        return view('backend.pages.hrm.attendance.single_row', compact('attendance'))->render();
+    }
 }

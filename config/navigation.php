@@ -823,9 +823,21 @@ $menus =  [
         'icon' => 'fas fa-users-cog',
         'parent_id' => 0,
         'submenu' => [
+            // [
+            //     'label' => 'Position',
+            //     'route' => 'hrm.position.index',
+            // ],
             [
-                'label' => 'Position',
-                'route' => 'hrm.position.index',
+                'label' => 'Team',
+                'route' => 'team.index',
+            ],
+            [
+                'label' => 'Department',
+                'route' => 'department.index',
+            ],
+            [
+                'label' => 'Designation',
+                'route' => 'designation.index',
             ],
             [
                 'label' => 'Employee',

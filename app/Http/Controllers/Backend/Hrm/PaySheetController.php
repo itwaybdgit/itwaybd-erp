@@ -27,7 +27,7 @@ class PaySheetController extends Controller
 
         global $conveyance;
         $title = 'Pay Sheet';
-        $employees = Employee::where('employee_status', 'present')->orderBy('id_card', 'asc')->get();
+        $employees = Employee::where('status', 'Active')->orderBy('id_card', 'asc')->get();
 
         $accounts = Account::whereIn('id', [4, 5, 6])->get();
         if ($request->method() == "GET") {
@@ -39,7 +39,7 @@ class PaySheetController extends Controller
                 if ($request->employee_id && $request->employee_id != "all") {
                     $takeEmployee = $takeEmployee->where("id", $request->employee_id);
                 }
-                $takeEmployee = $takeEmployee->where('employee_status', 'present')->get();
+                $takeEmployee = $takeEmployee->where('status', 'Active')->get();
 
 
                 foreach ($takeEmployee as $employee) {

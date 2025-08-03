@@ -186,9 +186,9 @@
                                         @enderror
                                     </div>
                                     <div class="col-md-4 mb-1">
-                                        <label for="">Present Address</label>
-                                        <textarea name="present_address" class="form-control input-rounded">{{ $model->present_address }}</textarea>
-                                        @error('present_address')
+                                        <label for="">Active Address</label>
+                                        <textarea name="Active_address" class="form-control input-rounded">{{ $model->Active_address }}</textarea>
+                                        @error('Active_address')
                                             <span class=" error text-red text-bold">{{ $message }}</span>
                                         @enderror
                                     </div>
@@ -347,11 +347,11 @@
                                         <label for="">Status <span class="text-danger">*</span></label>
                                         <select name="status" class="form-control">
 
-                                            <option value="present"
-                                                {{ $model->employee_status == 'present' ? 'selected' : '' }}>Active
+                                            <option value="Active"
+                                                {{ $model->status == 'Active' ? 'selected' : '' }}>Active
                                             </option>
                                             <option value="left"
-                                                {{ $model->employee_status == 'left' ? 'selected' : '' }}>Inactive</option>
+                                                {{ $model->status == 'left' ? 'selected' : '' }}>Inactive</option>
                                         </select>
                                         @error('status')
                                             <span class="error text-red text-bold">{{ $message }}</span>
@@ -491,19 +491,7 @@
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="col-md-4 mb-1">
-                                <label for="">Branch <span class="text-danger">*</span></label>
-                                <select value="{{ $model->branch_id }}" name="branch_id" class="form-control">
-                                    <option selected value="0">No Applicable</option>
-                                    @foreach ($branchs as $value)
-                                        <option {{ $model->branch_id == $value->id ? 'selected' : '' }}
-                                            value="{{ $value->id }}">{{ $value->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('branch_id')
-                                    <span class=" error text-red text-bold">{{ $message }}</span>
-                                @enderror
-                            </div>
+
                             <div class="col-md-4 mb-1">
                                 <label for="">Reference</label>
                                 <input type="text" class="form-control input-rounded"
@@ -516,9 +504,9 @@
                             </textarea>
                             </div>
                             <div class="col-md-4 mb-1">
-                                <label for="">Present Address</label>
-                                <textarea name="present_address" class="form-control input-rounded">
-                                {{ old('present_address') ?? $model->present_address }}
+                                <label for="">Active Address</label>
+                                <textarea name="Active_address" class="form-control input-rounded">
+                                {{ old('Active_address') ?? $model->Active_address }}
                             </textarea>
                             </div>
                             <div class="col-md-4 mb-1">

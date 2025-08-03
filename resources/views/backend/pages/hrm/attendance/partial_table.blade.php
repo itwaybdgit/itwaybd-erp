@@ -99,8 +99,8 @@
 
                                    // Step 7: Status
                                    $hasSignIn = !is_null($attendance->sign_in);
-                                   $isPresent =  $attendance->attendanceStatus == 'yes';
-                                   $isAbsent =  $attendance->attendanceStatus == 'no';
+                                   $isActive = $attendance->attendanceStatus == 'yes';
+                                   $isAbsent = $attendance->attendanceStatus == 'no';
                                    $isLate = $actualIn && $actualIn->gt($officeStartIntime);
                                @endphp
 
@@ -115,16 +115,16 @@
                                        </div>
                                    </td>
                                    <td>
-                                   
+
                                        <div class="d-flex flex-column">
                                            <div class="status-indicator">
-                                               <div class="status-badge status-{{ $isPresent ? 'present' : 'absent' }}">
+                                               <div class="status-badge status-{{ $isActive ? 'Active' : 'absent' }}">
                                                </div>
                                                <div class="status-toggle">
                                                    <button type="button"
-                                                       class="toggle-btn present {{ $isPresent ? 'active' : '' }}"
-                                                       onclick="toggleStatus(event, {{ $attendance->employe->id }}, 'present')">
-                                                       <i class="bi bi-check-circle"></i> Present
+                                                       class="toggle-btn Active {{ $isActive ? 'active' : '' }}"
+                                                       onclick="toggleStatus(event, {{ $attendance->employe->id }}, 'Active')">
+                                                       <i class="bi bi-check-circle"></i> Active
                                                    </button>
                                                    <button type="button"
                                                        class="toggle-btn absent {{ $isAbsent ? 'active' : '' }}"
@@ -193,17 +193,19 @@
                                    </td>
 
                                    <td class="overtime-display">
-                                 @if($attendance->ot != null)
-                                <input type="text" name="ot" class="form-control form-control-sm ot"
-                                    value="{{ $attendance->ot }}">
-                            @else
-                                @if ($overtimeHours > 0 || $overtimeMins > 0)
-                                    <input type="text" name="ot" class="form-control form-control-sm ot"
-                                        value="{{ $overtimeHours }} : {{ str_pad($overtimeMins, 2, '0', STR_PAD_LEFT) }}">
-                                @else
-                                    <input type="text" name="ot" class="form-control form-control-sm ot" value="">
-                                @endif
-                            @endif
+                                       @if ($attendance->ot != null)
+                                           <input type="text" name="ot" class="form-control form-control-sm ot"
+                                               value="{{ $attendance->ot }}">
+                                       @else
+                                           @if ($overtimeHours > 0 || $overtimeMins > 0)
+                                               <input type="text" name="ot"
+                                                   class="form-control form-control-sm ot"
+                                                   value="{{ $overtimeHours }} : {{ str_pad($overtimeMins, 2, '0', STR_PAD_LEFT) }}">
+                                           @else
+                                               <input type="text" name="ot"
+                                                   class="form-control form-control-sm ot" value="">
+                                           @endif
+                                       @endif
 
                                    </td>
 

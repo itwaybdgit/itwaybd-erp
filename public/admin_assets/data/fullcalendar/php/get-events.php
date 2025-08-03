@@ -19,11 +19,11 @@ if (!isset($_GET['start']) || !isset($_GET['end'])) {
 
 // Parse the start/end parameters.
 // These are assumed to be ISO8601 strings with no time nor timezone, like "2013-12-29".
-// Since no timezone will be present, they will parsed as UTC.
+// Since no timezone will be Active, they will parsed as UTC.
 $range_start = parseDateTime($_GET['start']);
 $range_end = parseDateTime($_GET['end']);
 
-// Parse the timezone parameter if it is present.
+// Parse the timezone parameter if it is Active.
 $timezone = null;
 if (isset($_GET['timezone'])) {
 	$timezone = new DateTimeZone($_GET['timezone']);

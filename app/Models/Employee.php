@@ -26,7 +26,7 @@ class Employee extends Model
         'last_in_time',
         'reference',
         'experience',
-        'present_address',
+        'Active_address',
         'permanent_address',
         'department_id',
         'designation_id',
@@ -60,14 +60,14 @@ class Employee extends Model
     }
     public function teams()
     {
-        return $this->belongsTo(Team::class, "team",'id');
+        return $this->belongsTo(Team::class, "team", 'id');
     }
     public function departments()
     {
-        return $this->belongsTo(Department::class, "department_id",'id');
+        return $this->belongsTo(Department::class, "department_id", 'id');
     }
     public function designations()
     {
-        return $this->belongsTo(Designation::class, "designation_id",'id');
+        return $this->belongsTo(Designation::class, "designation_id", 'id');
     }
 }

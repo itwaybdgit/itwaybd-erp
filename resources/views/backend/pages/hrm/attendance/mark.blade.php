@@ -41,13 +41,13 @@
             letter-spacing: 0.5px;
         }
 
-        .toggle-btn.present {
+        .toggle-btn.Active {
             border-color: #20c997;
             color: #20c997;
             background-color: transparent;
         }
 
-        .toggle-btn.present.active {
+        .toggle-btn.Active.active {
             background-color: #20c997;
             color: white;
         }
@@ -314,24 +314,24 @@
         function handleClockInChange(employeeId) {
             const row = document.querySelector(`tr[data-employee-id="${employeeId}"]`);
             const clockInInput = row.querySelector('.clock-in');
-            const presentBtn = row.querySelector('.toggle-btn.present');
+            const ActiveBtn = row.querySelector('.toggle-btn.Active');
             const absentBtn = row.querySelector('.toggle-btn.absent');
             const leaveSection = row.querySelector('.leave-section');
             const statusBadge = row.querySelector('.status-badge');
 
             if (clockInInput.value) {
-                // If clock-in has value, set to present
-                presentBtn.classList.add('active');
+                // If clock-in has value, set to Active
+                ActiveBtn.classList.add('active');
                 absentBtn.classList.remove('active');
-                statusBadge.className = 'status-badge status-present';
+                statusBadge.className = 'status-badge status-Active';
                 leaveSection.classList.remove('show');
 
                 // Update status in database
                 const attendanceId = row.dataset.attendanceId;
-                updateAttendanceStatus(employeeId, attendanceId, 'present');
+                updateAttendanceStatus(employeeId, attendanceId, 'Active');
             } else {
                 // If clock-in is empty, set to absent
-                presentBtn.classList.remove('active');
+                ActiveBtn.classList.remove('active');
                 absentBtn.classList.add('active');
                 statusBadge.className = 'status-badge status-absent';
                 leaveSection.classList.add('show');
@@ -352,19 +352,19 @@
             const row = document.querySelector(`tr[data-employee-id="${employeeId}"]`);
             const attendanceId = row.dataset.attendanceId;
             const statusBadge = row.querySelector('.status-badge');
-            const presentBtn = row.querySelector('.toggle-btn.present');
+            const ActiveBtn = row.querySelector('.toggle-btn.Active');
             const absentBtn = row.querySelector('.toggle-btn.absent');
             const leaveSection = row.querySelector('.leave-section');
             const clockInInput = row.querySelector('.clock-in');
             const clockOutInput = row.querySelector('.clock-out');
             const attendanceSpan = row.querySelector('.marked, .not-marked');
 
-            presentBtn.classList.remove('active');
+            ActiveBtn.classList.remove('active');
             absentBtn.classList.remove('active');
 
-            if (status === 'present') {
-                presentBtn.classList.add('active');
-                statusBadge.className = 'status-badge status-present';
+            if (status === 'Active') {
+                ActiveBtn.classList.add('active');
+                statusBadge.className = 'status-badge status-Active';
                 if (leaveSection) leaveSection.classList.remove('show');
                 if (attendanceSpan) {
                     attendanceSpan.textContent = 'Not Marked';
@@ -434,7 +434,7 @@
                 const isLate = row.querySelector('.late-arrival')?.checked ? 'yes' : 'no';
                 const ot = row.querySelector('input[name="ot"]')?.value || null;
 
-                const isPresent = row.querySelector('.toggle-btn.present')?.classList.contains('active') ? 'yes' :
+                const isActive = row.querySelector('.toggle-btn.Active')?.classList.contains('active') ? 'yes' :
                     'no';
                 const isMarked = row.querySelector('span.marked') ? 'yes' : 'no';
 
@@ -445,7 +445,7 @@
                     sign_out: clockOut,
                     lateStatus: isLate,
                     ot: ot,
-                    attendanceStatus: isPresent,
+                    attendanceStatus: isActive,
                     markStatus: isMarked
                 });
             });
@@ -484,7 +484,7 @@
             const ot = row.querySelector('.ot').value;
             const clockOut = row.querySelector('.clock-out').value;
             const isLate = row.querySelector('.late-arrival').checked;
-            const status = row.querySelector('.toggle-btn.present').classList.contains('active') ? 'present' : 'absent';
+            const status = row.querySelector('.toggle-btn.Active').classList.contains('active') ? 'Active' : 'absent';
 
             const spinner = row.querySelector('.spinner-border');
             spinner.style.display = 'inline-block';

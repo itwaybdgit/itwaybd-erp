@@ -172,8 +172,8 @@ class AttendanceRepositories
 
     public function signin($request)
     {
-        $branch = Branch::first();
-        $branchId = Auth()->id() ?? $branch->id;
+        // $branch = Branch::first();
+        // $branchId = Auth()->id() ?? $branch->id;
 
         if ($request->emplyee_id == 'all') {
             $employees = Employee::get();
@@ -193,7 +193,7 @@ class AttendanceRepositories
                 // Create new attendance
                 $Attendance = new $this->model;
                 $Attendance->emplyee_id = $data->id;
-                $Attendance->branch_id = $branchId;
+                // $Attendance->branch_id = $branchId;
                 $Attendance->date = $request->date;
                 $Attendance->sign_in = $request->sign_in;
                 $Attendance->latitude = $request->latitude;
@@ -216,7 +216,7 @@ class AttendanceRepositories
 
             $Attendance = new $this->model;
             $Attendance->emplyee_id = $request->emplyee_id;
-            $Attendance->branch_id = $branchId;
+            // $Attendance->branch_id = $branchId;
             $Attendance->date = $request->date;
             $Attendance->sign_in = $request->sign_in;
             $Attendance->latitude = $request->latitude;

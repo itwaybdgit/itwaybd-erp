@@ -33,10 +33,10 @@
                 <div class="card-header">
                     <h3 class="card-title">Attendence</h3>
                     <div class="card-tools">
-                        @if (helper::roleAccess('hrm.attendance.index'))
-                            <a class="btn btn-default" href="{{ route('hrm.attendance.create') }}"><i class="fa fa-plus"></i>
-                                Add New</a>
-                        @endif
+
+                        <a class="btn btn-default" href="{{ route('hrm.attendance.create') }}"><i class="fa fa-plus"></i>
+                            Add New</a>
+
 
                         <span id="buttons"></span>
                         <a class="btn btn-tool btn-default" data-card-widget="collapse">

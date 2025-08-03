@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\ProjectMember;
 use App\Models\Subtask;
 use App\Models\User;
+use App\Models\Employee;
 use App\Models\TaskMessage;
 use Illuminate\Http\Request;
 use App\Models\Task;
@@ -63,27 +64,32 @@ class TaskController extends Controller
     //     return view('admin.pages.ProjectManagement.task.index', get_defined_vars());
     // }
 
-     public function getProjectUsers($projectId)
-    {
-        try {
-          
-            $users = User::join('project_members', 'users.id', '=', 'project_members.member_id')
-                ->where('project_members.project_id', $projectId)
-                ->select('users.id', 'users.name', 'users.email')
-                ->get();
-            
-            return response()->json([
-                'success' => true,
-                'users' => $users,
-                'message' => 'Users fetched successfully'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error fetching users: ' . $e->getMessage()
-            ], 500);
-        }
+    public function getProjectUsers($projectId)
+{
+    try {
+        $projectMembers = ProjectMember::where('project_id', $projectId)->get();
+
+        // Extract all member_ids
+        $memberIds = $projectMembers->pluck('member_id');
+
+        // Get users with those IDs
+        $users = Employee::whereIn('id', $memberIds)
+            ->select('id', 'name', 'email')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'users' => $users,
+            'message' => 'Users fetched successfully'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error fetching users: ' . $e->getMessage()
+        ], 500);
     }
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -116,7 +122,7 @@ class TaskController extends Controller
             'project_id' => 'required|exists:projects,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'subtasks.*.title' => 'required|string|max:255',
-            'subtasks.*.user_id' => 'required|exists:users,id',
+            'subtasks.*.user_id' => 'required',
             'subtasks.*.description' => 'nullable|string',
             'subtasks.*.priority' => 'nullable|in:Low,Medium,High,Critical',
             'subtasks.*.status' => 'nullable|in:Pending,In Progress,Completed',
@@ -327,7 +333,7 @@ class TaskController extends Controller
             'project_id' => 'required|exists:projects,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
             'subtasks.*.title' => 'required|string|max:255',
-            'subtasks.*.user_id' => 'required|exists:users,id',
+            'subtasks.*.user_id' => 'required',
             'subtasks.*.description' => 'nullable|string',
             'subtasks.*.priority' => 'nullable|in:Low,Medium,High,Critical',
             'subtasks.*.status' => 'nullable|in:Pending,In Progress,Completed',

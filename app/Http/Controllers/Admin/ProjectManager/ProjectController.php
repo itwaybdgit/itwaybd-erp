@@ -148,7 +148,7 @@ class ProjectController extends Controller
         'tags.*' => 'string|max:50',
         'notes' => 'nullable|string',
         'team_members' => 'nullable|array',
-        'team_members.*' => 'integer|exists:users,id',
+        'team_members.*' => 'integer',
     ]);
 
     // Convert status to boolean

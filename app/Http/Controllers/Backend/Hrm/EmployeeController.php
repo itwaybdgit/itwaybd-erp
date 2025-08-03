@@ -52,7 +52,6 @@ class EmployeeController extends Controller
     public function __construct(EmployeeService $employeeService, Transformers $transformers)
     {
 
-
         $this->systemService = $employeeService;
 
         $this->systemTransformer = $transformers;
@@ -79,15 +78,15 @@ class EmployeeController extends Controller
      */
     public function create()
     {
+
         $title = 'Add New Employee';
-        $branchs = Branch::get();
+
         $designations = Designation::get();
         $userrolls = RollPermission::get();
         $departments = Department::get();
 
         $zones = Zone::get();
         $subzones = Subzone::get();
-        $positions = Position::get();
         if (env("ZKTECO")) {
             $area =  isset(getZKTecoAreas()['data']) ? getZKTecoAreas()['data'] : [];
         } else {
@@ -133,14 +132,13 @@ class EmployeeController extends Controller
         }
         $title = 'Add New Employee';
         // $userRoll = $this->userRoleService->getAllRole();
-        $branchs = Branch::get();
-        $positions = Position::get();
+
         $userrolls = RollPermission::get();
         $departments = Department::get();
         $zones = Zone::get();
         $subzones = Subzone::get();
         $designations = Designation::get();
-        $positions = Position::get();
+        // $positions = Position::get();
         $model = Employee::findOrFail($id);
         if (env("ZKTECO")) {
             $area =  isset(getZKTecoAreas()['data']) ? getZKTecoAreas()['data'] : [];

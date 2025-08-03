@@ -93,7 +93,7 @@ class EmployeeRepositories
                 $nestedData['nid'] = $value->nid;
                 $nestedData['email'] = $value->email;
                 $nestedData['department'] = $value->department;
-                $nestedData['present_address'] = $value->present_address;
+                $nestedData['Active_address'] = $value->Active_address;
                 $nestedData['salary'] = $value->salary;
                 $nestedData['over_time_is'] = $value->over_time_is;
                 $nestedData['join_date'] = $value->join_date;
@@ -152,7 +152,7 @@ class EmployeeRepositories
             'last_in_time' => ['nullable'],
             'reference' => ['nullable'],
             'experience' => ['nullable'],
-            'present_address' => ['nullable'],
+            'Active_address' => ['nullable'],
             'permanent_address' => ['nullable'],
             'department_id' => ['nullable'],
             'designation_id' => ['nullable'],
@@ -171,7 +171,7 @@ class EmployeeRepositories
             'is_login' => ['nullable'],
             'zone_id' => ['nullable'],
             'subzone_id' => ['nullable'],
-            'branch_id' => ['nullable'],
+
             'password' => ['nullable', 'confirmed', 'min:6',],
         ]);
 
@@ -278,7 +278,6 @@ class EmployeeRepositories
         $employee->id_card = $request->id_card;
         $employee->gender = $request->gender;
         $employee->personal_phone = $request->personal_phone;
-        $employee->branch_id = $request->branch_id;
         $employee->office_phone = $request->office_phone;
         $employee->marital_status = $request->marital_status;
         $employee->nid = $request->nid;
@@ -288,7 +287,7 @@ class EmployeeRepositories
         $employee->department_id = $request->department_id;
         // $employee->position_id = $request->position_id;
         $employee->experience = $request->experience;
-        $employee->present_address = $request->present_address;
+        $employee->Active_address = $request->Active_address;
         $employee->permanent_address = $request->permanent_address;
         $employee->achieved_degree = $request->achieved_degree;
         $employee->institution = $request->institution;

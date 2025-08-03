@@ -148,7 +148,7 @@
                                 @enderror
                             </div>
 
-                            <div class="col-md-4 mb-1">
+                            {{-- <div class="col-md-4 mb-1">
                                 <label for="">Branch <span class="text-danger">*</span></label>
                                 <select name="branch_id" class="form-control">
                                     <option selected value="0">No Applicable</option>
@@ -159,7 +159,7 @@
                                 @error('branch_id')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <div class="col-md-4 mb-1">
                                 <label for="">Experience</label>
@@ -169,9 +169,9 @@
                                 @enderror
                             </div>
                             <div class="col-md-4 mb-1">
-                                <label for="">Present Address</label>
-                                <textarea value="{{ old('present_address') }}" name="present_address" class="form-control input-rounded"></textarea>
-                                @error('present_address')
+                                <label for="">Active Address</label>
+                                <textarea value="{{ old('Active_address') }}" name="Active_address" class="form-control input-rounded"></textarea>
+                                @error('Active_address')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -259,7 +259,7 @@
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('position_id')
+                                @error('department_id')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
                             </div>

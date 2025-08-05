@@ -108,7 +108,7 @@ class Task extends Model
      */
     public function assignedUsers()
     {
-        return $this->hasManyThrough(User::class, Subtask::class, 'task_id', 'id', 'id', 'user_id');
+        return $this->hasManyThrough(Employee::class, Subtask::class, 'task_id', 'id', 'id', 'user_id');
     }
 
     /**

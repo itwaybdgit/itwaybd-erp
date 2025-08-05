@@ -581,7 +581,6 @@ $menus =  [
             ],
         ]
     ],
-
     [
         'label' => 'Services',
         'route' => null,
@@ -657,6 +656,15 @@ $menus =  [
                 'label' => 'Project Create',
                 'route' => 'project.create',
             ],
+        ]
+    ],
+    [
+        'label' => 'Task Management',
+        'route' => null,
+        'access' => 'project',
+        'icon' => 'fas fa-industry',
+        'parent_id' => 0,
+        'submenu' => [
             [
                 'label' => 'Task List',
                 'route' => 'task.index',
@@ -669,10 +677,7 @@ $menus =  [
                 'label' => 'My Task',
                 'route' => 'task.mytask',
             ],
-
-
         ]
-
     ],
 
     [

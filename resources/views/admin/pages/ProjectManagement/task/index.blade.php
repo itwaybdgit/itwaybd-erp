@@ -134,7 +134,7 @@
                                                              @foreach($task->assignedUsers as $user)
             <span class="badge bg-primary me-1">{{ $user->name }}</span>
         @endforeach
-                                                     
+
                                                     </div>
                                                 </td>
                                                 <td>

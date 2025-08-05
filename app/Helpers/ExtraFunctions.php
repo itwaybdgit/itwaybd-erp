@@ -76,7 +76,7 @@ if (!function_exists('notifications')) {
      */
      function notifications(array $to, $form,$name,$mess,$subject)
     {
-        Mail::to($to)->send(new MailNotification($form,$name,$mess,$subject));
+        // Mail::to($to)->send(new MailNotification($form,$name,$mess,$subject));
     }
 }
 

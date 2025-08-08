@@ -16,7 +16,9 @@ class Subtask extends Model
         'description',
         'user_id',
         'priority',
+        'project_id',
         'status',
+        'time_logged',
         'completed_at',
         'created_by',
         'updated_by',
@@ -79,7 +81,7 @@ class Subtask extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+          return $this->hasOneThrough(User::class, Employee::class, 'id', 'id', 'user_id', 'user_id');
     }
 
     /**
@@ -132,6 +134,25 @@ class Subtask extends Model
             default:
                 return 'badge-secondary';
         }
+    }
+
+
+
+    // This refers to employee table
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'user_id');
+    }
+
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function timers()
+    {
+        return $this->hasMany(SubtaskTimer::class);
     }
 
     /**

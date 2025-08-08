@@ -68,7 +68,7 @@ class EmployeeService
             'dob' => ['nullable'],
             'gender' => ['required'],
             'personal_phone' => ['required'],
-            'branch_id' => ['required'],
+
             'id_card' => ['required', 'unique:employees,id_card'],
             'office_phone' => ['nullable', 'numeric'],
             'marital_status' => ['nullable'],
@@ -76,10 +76,11 @@ class EmployeeService
             'email' => ['nullable', 'email'], // added email validation
             'reference' => ['nullable'],
             'last_in_time' => ['required'],
+            'team' => ['required'],
             'department' => ['nullable'],
             'position_id' => ['nullable'],
             'experience' => ['nullable'],
-            'present_address' => ['nullable'],
+            'Active_address' => ['nullable'],
             'permanent_address' => ['nullable'],
             'achieved_degree' => ['nullable'],
             'institution' => ['nullable'],
@@ -105,8 +106,9 @@ class EmployeeService
             'name' => ['required'],
             'dob' => ['nullable'],
             'gender' => ['required'],
+            'team' => ['required'],
             'personal_phone' => ['required'],
-            'branch_id' => ['required'],
+
             'id_card' => [
                 'required',
                 Rule::unique('employees', 'id_card')->ignore($id)
@@ -120,7 +122,7 @@ class EmployeeService
             'department' => ['nullable'],
             'position_id' => ['nullable'],
             'experience' => ['nullable'],
-            'present_address' => ['nullable'],
+            'Active_address' => ['nullable'],
             'permanent_address' => ['nullable'],
             'achieved_degree' => ['nullable'],
             'institution' => ['nullable'],

@@ -20,6 +20,7 @@ use App\Models\ResellerDowngradation;
 use App\Models\ResellerNIRequest;
 use App\Models\ResellerOptimize;
 use App\Models\ResellerUpgradation;
+use App\Models\RollPermission;
 use App\Models\Supplier;
 use App\Models\SupportCategory;
 use App\Models\SupportStatus;
@@ -172,11 +173,11 @@ class DashboardController extends Controller
         // THis month
         $monthlyAmount = BandwidthCustomerPackage::where('billing_frequency', 'MONTHLY')->whereMonth('payment_date_monthly', date('m'))->whereYear('payment_date_monthly', date('Y'))->sum('rate');
         $yearAmount = BandwidthCustomerPackage::where('billing_frequency', 'YEARLY')->whereMonth('payment_date_yearly', date('m'))->whereYear('payment_date_yearly', date('Y'))->sum('rate');
-
         // $billings = $billingModel->where('company_id', auth()->user()->company_id)->where('date_', today()->format('d-m-Y'))->get();
 
+        $userRoll = RollPermission::find(auth()->user()->roll_id ?? 1);
 
-        //task 
+        //task
 
         $tasks = auth()->user()->is_admin == 1
             ? Task::all()

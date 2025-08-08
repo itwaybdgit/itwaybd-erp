@@ -12,16 +12,14 @@ use Illuminate\Validation\ValidationException;
 
 class HoliDayController extends Controller
 {
-     public function index(Request $request)
-{
-    $title = 'Add New HoliDay';
+    public function index(Request $request)
+    {
+        $title = 'Add New HoliDay';
 
+        return view('backend.pages.hrm.holi_day.index', compact('title'));
+    }
 
-
-    return view('backend.pages.hrm.holi_day.index', compact('title'));
-}
-
- public function indexList(Request $request): JsonResponse
+    public function indexList(Request $request): JsonResponse
     {
         $year = $request->get('year', date('Y'));
         $month = $request->get('month');
@@ -40,7 +38,7 @@ class HoliDayController extends Controller
         ]);
     }
 
-     public function getByDate(Request $request): JsonResponse
+    public function getByDate(Request $request): JsonResponse
     {
         $date = $request->get('date');
 
@@ -59,76 +57,74 @@ class HoliDayController extends Controller
         ]);
     }
 
- public function store(Request $request): JsonResponse
-{
-    try {
-        if ($request->type === 'weekly') {
-            $validated = $request->validate([
-                'year' => 'required|integer|min:1900|max:2100',
-                'day' => 'required|array|min:1',
-                'title' => 'nullable|string|max:255',
-            ]);
+    public function store(Request $request): JsonResponse
+    {
+        try {
+            if ($request->type === 'weekly') {
+                $validated = $request->validate([
+                    'year' => 'required|integer|min:1900|max:2100',
+                    'day' => 'required|array|min:1',
+                    'title' => 'nullable|string|max:255',
+                ]);
 
-            $days = $validated['day'];
-            $year = $validated['year'];
-            $title = $validated['title'];
+                $days = $validated['day'];
+                $year = $validated['year'];
+                $title = $validated['title'];
 
-            $startDate = Carbon::createFromDate($year, 1, 1);
-            $endDate = Carbon::createFromDate($year, 12, 31);
+                $startDate = Carbon::createFromDate($year, 1, 1);
+                $endDate = Carbon::createFromDate($year, 12, 31);
 
-            $datesToInsert = [];
+                $datesToInsert = [];
 
-            while ($startDate->lte($endDate)) {
-                if (in_array(strtolower($startDate->format('l')), $days)) {
-                    $datesToInsert[] = [
-                        'title' => $title,
-                        'date' => $startDate->format('Y-m-d'),
-                        'type' => 'weekly',
-                        'created_at' => now(),
-                        'updated_at' => now()
-                    ];
+                while ($startDate->lte($endDate)) {
+                    if (in_array(strtolower($startDate->format('l')), $days)) {
+                        $datesToInsert[] = [
+                            'title' => $title,
+                            'date' => $startDate->format('Y-m-d'),
+                            'type' => 'weekly',
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ];
+                    }
+                    $startDate->addDay();
                 }
-                $startDate->addDay();
+
+                Holiday::insert($datesToInsert);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Weekly holidays created successfully',
+                ], 201);
+            } else {
+                $validated = $request->validate([
+                    'title' => 'required|string|max:255',
+                    'date' => 'required|date',
+                    'type' => 'required|in:public,religious,national,weekly,other'
+                ]);
+
+                $holiday = Holiday::create($validated);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Holiday created successfully',
+                    'data' => $holiday
+                ], 201);
             }
-
-            Holiday::insert($datesToInsert);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Holiday save failed: ' . $e->getMessage());
 
             return response()->json([
-                'success' => true,
-                'message' => 'Weekly holidays created successfully',
-            ], 201);
-
-        } else {
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'date' => 'required|date',
-                'type' => 'required|in:public,religious,national,weekly,other'
-            ]);
-
-            $holiday = Holiday::create($validated);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Holiday created successfully',
-                'data' => $holiday
-            ], 201);
+                'success' => false,
+                'message' => 'An unexpected error occurred. Please try again.'
+            ], 500);
         }
-
-    } catch (ValidationException $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Validation failed',
-            'errors' => $e->errors()
-        ], 422);
-    } catch (\Exception $e) {
-        Log::error('Holiday save failed: ' . $e->getMessage());
-
-        return response()->json([
-            'success' => false,
-            'message' => 'An unexpected error occurred. Please try again.'
-        ], 500);
     }
-}
 
     public function show(Holiday $holiday): JsonResponse
     {
@@ -165,7 +161,4 @@ class HoliDayController extends Controller
             'message' => 'Holiday deleted successfully'
         ]);
     }
-
-
-
 }

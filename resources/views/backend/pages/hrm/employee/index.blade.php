@@ -56,7 +56,7 @@
                                     <th>Nid</th>
                                     <th>Email</th>
                                     <th>Department</th>
-                                    <th>Present Address</th>
+                                    <th>Active Address</th>
                                     <th>Salary</th>
                                     <th>Overtime</th>
                                     <th>Join Date</th>
@@ -77,7 +77,7 @@
                                     <th>Nid</th>
                                     <th>Email</th>
                                     <th>Department</th>
-                                    <th>Present Address</th>
+                                    <th>Active Address</th>
                                     <th>Salary</th>
                                     <th>Join Date</th>
                                     <th>Overtime</th>
@@ -96,7 +96,7 @@
                                         <h5 class="modal-title">Choose Columns</h5>
                                     </div>
                                     <div class="modal-body">
-                                        @foreach (['SL', 'Name', 'Date of Birth', 'Gender', 'Personal Phone', 'Office Phone', 'Nid', 'Email', 'Department', 'Present Address', 'Salary', 'Overtime', 'Join Date', 'Action'] as $col)
+                                        @foreach (['SL', 'Name', 'Date of Birth', 'Gender', 'Personal Phone', 'Office Phone', 'Nid', 'Email', 'Department', 'Active Address', 'Salary', 'Overtime', 'Join Date', 'Action'] as $col)
                                             <div class="form-check">
                                                 <input class="form-check-input column-checkbox" type="checkbox"
                                                     value="{{ $col }}" id="col_{{ $col }}" checked>

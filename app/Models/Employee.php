@@ -58,6 +58,10 @@ class Employee extends Model
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function teams()
     {
         return $this->belongsTo(Team::class, "team",'id');

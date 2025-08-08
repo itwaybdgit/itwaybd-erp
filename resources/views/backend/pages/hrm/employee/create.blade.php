@@ -148,7 +148,7 @@
                                 @enderror
                             </div>
 
-                            <div class="col-md-4 mb-1">
+                            {{-- <div class="col-md-4 mb-1">
                                 <label for="">Branch <span class="text-danger">*</span></label>
                                 <select name="branch_id" class="form-control">
                                     <option selected value="0">No Applicable</option>
@@ -159,7 +159,7 @@
                                 @error('branch_id')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <div class="col-md-4 mb-1">
                                 <label for="">Experience</label>
@@ -169,9 +169,9 @@
                                 @enderror
                             </div>
                             <div class="col-md-4 mb-1">
-                                <label for="">Present Address</label>
-                                <textarea value="{{ old('present_address') }}" name="present_address" class="form-control input-rounded"></textarea>
-                                @error('present_address')
+                                <label for="">Active Address</label>
+                                <textarea value="{{ old('Active_address') }}" name="Active_address" class="form-control input-rounded"></textarea>
+                                @error('Active_address')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -253,9 +253,21 @@
                             </div> --}}
                             <div class="col-md-4 mb-1">
                                 <label for="">Department <span class="text-danger">*</span></label>
-                                <select name="department_id" class="form-control">
+                                <select name="department_id" class="form-control select2">
                                     <option selected disabled>Select Department</option>
                                     @foreach ($departments as $value)
+                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('department_id')
+                                    <span class=" error text-red text-bold">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col-md-4 mb-1">
+                                <label for="">Designations <span class="text-danger">*</span></label>
+                                <select name="designation_id" class="form-control select2">
+                                    <option selected disabled>Select Designations</option>
+                                    @foreach ($designations as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
                                     @endforeach
                                 </select>
@@ -264,10 +276,10 @@
                                 @enderror
                             </div>
                             <div class="col-md-4 mb-1">
-                                <label for="">Designations <span class="text-danger">*</span></label>
-                                <select name="designation_id" class="form-control">
-                                    <option selected disabled>Select Designations</option>
-                                    @foreach ($designations as $value)
+                                <label for="">Team <span class="text-danger">*</span></label>
+                                <select name="team" class="form-control select2">
+                                    <option selected disabled>Select Team</option>
+                                    @foreach ($teams as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
                                     @endforeach
                                 </select>
@@ -301,9 +313,9 @@
                                 </select>
                             </div>
                         </div>
-
                     </div>
                 </div>
+
                 <div class="card" id="_logindiv">
                     <div class="card-header">
                         <h4 class="card-title">Login Info</h4>

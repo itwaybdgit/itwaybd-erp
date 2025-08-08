@@ -50,7 +50,7 @@ class SalarySheetController extends Controller
     public function dataProcessingSalarySheet(Request $request)
     {
         $json_data = $this->systemService->getList($request);
-    
+
         return json_encode($this->systemTransformer->dataTable($json_data));
     }
 
@@ -62,7 +62,7 @@ class SalarySheetController extends Controller
     public function create()
     {
         $title = 'Add New Salary Sheet';
-        $employees = Employee::where('employee_status','present')->orderBy('id_card','asc')->get();
+        $employees = Employee::where('status', 'Active')->orderBy('id_card', 'asc')->get();
         return view('backend.pages.hrm.salary_sheet.create', get_defined_vars());
     }
     /**
@@ -98,7 +98,7 @@ class SalarySheetController extends Controller
             return redirect()->back();
         }
         $title = 'Add New Salary Sheet';
-       $employees = Employee::where('employee_status','present')->orderBy('id_card','asc')->get();
+        $employees = Employee::where('status', 'Active')->orderBy('id_card', 'asc')->get();
         $model = SalarySheet::findOrFail($id);
         return view('backend.pages.hrm.salary_sheet.edit', get_defined_vars());
     }

@@ -20,6 +20,7 @@ class Task extends Model
         'priority',
         'project_id',
         'image',
+        'team_id',
         'created_by',
         'updated_by',
     ];
@@ -93,6 +94,17 @@ class Task extends Model
     public function subtasks()
     {
         return $this->hasMany(Subtask::class);
+    }
+
+    public function areAllSubtasksComplete()
+    {
+        return $this->subtasks()->where('status', '!=', 'Completed')->count() === 0;
+    }
+
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class)->withDefault();
     }
 
     /**
@@ -220,7 +232,7 @@ class Task extends Model
     public function scopeOverdue($query)
     {
         return $query->where('end_date_time', '<', now())
-                    ->where('status', '!=', self::STATUS_COMPLETED);
+            ->where('status', '!=', self::STATUS_COMPLETED);
     }
 
     /**
@@ -229,7 +241,7 @@ class Task extends Model
     public function scopeDueToday($query)
     {
         return $query->whereDate('end_date_time', today())
-                    ->where('status', '!=', self::STATUS_COMPLETED);
+            ->where('status', '!=', self::STATUS_COMPLETED);
     }
 
     /**
@@ -257,7 +269,7 @@ class Task extends Model
     {
         return $query->where(function ($q) use ($search) {
             $q->where('title', 'like', "%{$search}%")
-              ->orWhere('description', 'like', "%{$search}%");
+                ->orWhere('description', 'like', "%{$search}%");
         });
     }
 

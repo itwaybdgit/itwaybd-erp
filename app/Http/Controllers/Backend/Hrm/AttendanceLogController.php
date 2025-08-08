@@ -19,7 +19,7 @@ class AttendanceLogController extends Controller
     {
         $title = 'Attendance Log';
         session(['previous_url' => url()->current()]);
-        $employees = Employee::where('employee_status', 'present')->orderBy('id_card', 'asc')->get();
+        $employees = Employee::where('status', 'Active')->orderBy('id_card', 'asc')->get();
 
 
         $attendances = collect();
@@ -81,7 +81,7 @@ class AttendanceLogController extends Controller
         $holidays = Holiday::whereBetween('date', [$from, $to])->pluck('date')->toArray();
 
         // Get all employees
-        $employees = Employee::where('employee_status', 'present')->orderBy('id_card', 'asc')->get();
+        $employees = Employee::where('status', 'Active')->orderBy('id_card', 'asc')->get();
 
         // Create date range
         $dateRange = collect();
@@ -98,12 +98,12 @@ class AttendanceLogController extends Controller
                 continue;
             }
 
-            // Present employees on this date
-            $presentEmployeeIds = Attendance::whereDate('date', $date)->pluck('emplyee_id')->toArray();
+            // Active employees on this date
+            $ActiveEmployeeIds = Attendance::whereDate('date', $date)->pluck('emplyee_id')->toArray();
 
             // Filter absent employees
-            $absentEmployees = $employees->filter(function ($employee) use ($presentEmployeeIds) {
-                return !in_array($employee->id, $presentEmployeeIds);
+            $absentEmployees = $employees->filter(function ($employee) use ($ActiveEmployeeIds) {
+                return !in_array($employee->id, $ActiveEmployeeIds);
             });
 
             // Group absent dates by employee

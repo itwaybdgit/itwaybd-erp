@@ -12,6 +12,8 @@ use App\Transformers\AdjustTransformer;
 use App\Services\Hrm\LeaveApplicationService;
 use App\Services\InventorySetup\AdjustService;
 use App\Transformers\Transformers;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 
@@ -76,15 +78,29 @@ class LeaveApplicationController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $this->validate($request, $this->systemService->storeValidation($request));
-        } catch (ValidationException $e) {
-            session()->flash('error', 'Validation error !!');
-            return redirect()->back()->withErrors($e->errors())->withInput();
-        }
 
-        $this->systemService->store($request);
-        session()->flash('success', 'Data successfully save!!');
+        $LeaveApplication = new LeaveApplication();
+        $LeaveApplication->employee_id = $request->employee_id;
+        $LeaveApplication->department_id = $request->department_id;
+        $LeaveApplication->apply_date = $request->apply_date;
+        $LeaveApplication->end_date = $request->end_date;
+        $LeaveApplication->reason = $request->reason;
+        $LeaveApplication->payment_status = $request->payment_status;
+        $file = $request->file('file');
+        if (isset($file)) {
+            $currentDate = Carbon::now()->toDateString();
+            $fileName  = $currentDate . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            if (!Storage::disk('public')->exists('leave')) {
+                Storage::disk('public')->makeDirectory('leave');
+            }
+
+            $file->storeAs('leave', $fileName, 'public');
+        } else {
+            $fileName = null;
+        }
+        $LeaveApplication->file = $fileName;
+        $LeaveApplication->save();
         return redirect()->route('hrm.leave.index');
     }
     /**

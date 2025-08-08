@@ -16,6 +16,8 @@
                 <!-- Filter Section -->
                 <div class="card shadow mb-4">
                     <div class="card-body">
+                        <x-alert type="info" message="Please fill out the form below to create a new task." />
+
                         <form method="GET" action="{{ route('task.index') }}">
                             <div class="row">
                                 <div class="col-md-3">

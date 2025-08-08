@@ -78,7 +78,7 @@ class LeaveApplicationService
             'end_date' => 'required',
             'reason' => 'required',
             'payment_status' => 'required',
-            'file' => 'mimes:pdf,doc,docx,txt,jpg,png,jpeg|max:2048',
+            'file' => null,
         ];
     }
 
@@ -92,7 +92,7 @@ class LeaveApplicationService
             'end_date' => 'required',
             'reason' => 'required',
             'payment_status' => 'required',
-            'file' => 'mimes:pdf,doc,docx,txt,jpg,png,jpeg|max:2048',
+            'file' => null,
         ];
     }
 

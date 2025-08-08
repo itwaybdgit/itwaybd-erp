@@ -2223,7 +2223,8 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth'])->group(function
         route::put('/update/{id}', [TaskController::class, 'update'])->name('update');
         route::delete('/destroy/{id}', [TaskController::class, 'destroy'])->name('destroy');
         Route::get('/get-project-users/{projectId}', [TaskController::class, 'getProjectUsers'])->name('get.project.users');
-
+        Route::get('/get-team-users/{teamId}', [TaskController::class, 'getTeamUsers'])->name('get.team.users');
+        Route::get('/get-team-projects/{teamId}', [TaskController::class, 'getTeamProjects']);
         Route::delete('task-message/{id}', [TaskController::class, 'taskmessage_destory'])->name('task-message.destroy');
 
         route::get('/mytasks', [MytaskController::class, 'index'])->name('mytask');

@@ -649,6 +649,10 @@
         </div>
     @endif
 
+    @if (in_array('task.mytask', explode(',', $userRoll->child_id)))
+        @include('admin.pages.task_dashboard')
+    @endif
+
     @if (check_access('transmission'))
         <div class="col-4">
             <div class="card gr_1_color">

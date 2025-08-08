@@ -1,839 +1,1462 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Modal Debug</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <title>Professional Task Management System</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #f8f9fa;
-            padding: 20px;
-        }
-
-        .stat-card {
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Custom Modal Styles */
-        .task-modal .modal-dialog {
-            max-width: 900px;
-            margin: 1rem auto;
-        }
-
-        .task-modal .modal-content {
-            border-radius: 8px;
-            overflow: hidden;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .modal-tabs {
-            display: flex;
-            border-bottom: 1px solid #e9ecef;
-            background: #f8f9fa;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
-        .modal-tab {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e6ed;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             padding: 12px 20px;
-            background: none;
-            border: none;
+            border-radius: 25px;
+            color: white;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: transparent;
+            color: #667eea;
+            border-radius: 25px;
             cursor: pointer;
-            color: #6c757d;
-            font-size: 14px;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
-        .modal-tab.active {
-            color: #495057;
-            border-bottom-color: #007bff;
-            background: white;
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
 
-        .task-modal .modal-header {
-            padding: 0;
-            border-bottom: none;
+        .search-box {
+            flex: 1;
+            max-width: 300px;
             position: relative;
         }
 
-        .task-modal .modal-body {
-            padding: 0;
-            display: flex;
-            flex: 1;
+        .search-box input {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            border: 2px solid #e0e6ed;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+            position: relative;
             overflow: hidden;
         }
 
-        .modal-main-content {
-            flex: 1;
-            padding: 24px;
-            overflow-y: auto;
+        .task-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
-        .modal-sidebar {
-            width: 280px;
-            background: #f8f9fa;
-            padding: 20px;
-            border-left: 1px solid #e9ecef;
-            overflow-y: auto;
+        .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
         }
 
         .task-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #495057;
+            color: #2c3e50;
+            font-size: 1.3rem;
+            font-weight: 700;
             margin-bottom: 8px;
         }
 
-        .project-info {
-            font-size: 14px;
-            color: #6c757d;
-            margin-bottom: 4px;
-        }
-
-        .project-link {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        .section {
-            margin-bottom: 32px;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 16px;
+        .task-meta {
             display: flex;
-            align-items: center;
-            gap: 8px;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
         }
 
-        .task-details {
-            color: #6c757d;
-            line-height: 1.6;
-            margin-bottom: 16px;
+        .priority {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
-        .checklist-header {
+        .priority.high {
+            background: #ffe6e6;
+            color: #e74c3c;
+        }
+
+        .priority.medium {
+            background: #fff3cd;
+            color: #f39c12;
+        }
+
+        .priority.low {
+            background: #d4edda;
+            color: #27ae60;
+        }
+
+        .status {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status.pending {
+            background: #ffeaa7;
+            color: #fdcb6e;
+        }
+
+        .status.in-progress {
+            background: #74b9ff;
+            color: white;
+        }
+
+        .status.completed {
+            background: #00b894;
+            color: white;
+        }
+
+        .status.on-hold {
+            background: #636e72;
+            color: white;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .time-tracking {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .checklist-counter {
-            color: #6c757d;
-            font-size: 14px;
-        }
-
-        .checklist-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-            padding: 8px 0;
-        }
-
-        .checklist-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #007bff;
-        }
-
-        .checklist-item label {
-            color: #6c757d;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .create-item {
-            color: #007bff;
-            text-decoration: underline;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .attachment {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
+            margin: 15px 0;
+            padding: 10px;
             background: #f8f9fa;
-            border-radius: 6px;
-            margin-bottom: 12px;
-        }
-
-        .attachment-preview {
-            width: 48px;
-            height: 48px;
-            background: #e9ecef;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .attachment-info {
-            flex: 1;
-        }
-
-        .attachment-name {
-            font-weight: 500;
-            color: #495057;
-            margin-bottom: 4px;
-        }
-
-        .attachment-meta {
-            font-size: 12px;
-            color: #6c757d;
-        }
-
-        .attachment-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .attachment-actions a {
-            color: #007bff;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .sidebar-section {
-            margin-bottom: 24px;
-        }
-
-        .sidebar-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 12px;
-        }
-
-        .assigned-users {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #007bff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .timer-section {
-            text-align: center;
-            margin-bottom: 20px;
+            border-radius: 10px;
         }
 
         .timer-display {
-            font-size: 24px;
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
         }
 
-        .play-btn {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #28a745;
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
             border: none;
-            color: white;
+            border-radius: 20px;
             cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-success {
+            background: #00b894;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #fdcb6e;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtasks-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .subtasks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .subtask-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .subtask-info {
+            flex: 1;
+        }
+
+        .subtask-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .subtask-meta {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        .subtask-item.active-timer {
+            background: linear-gradient(135deg, #e8f8f5, #d5f4e6);
+            border-left: 4px solid #27ae60;
+        }
+
+        .collaboration-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .team-members {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .member-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             display: flex;
             align-items: center;
             justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
         }
 
-        .settings-item {
+        .member-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 12px;
-            margin-bottom: 4px;
-            background: white;
-            border-radius: 4px;
-            font-size: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
         }
 
-        .settings-label {
-            color: #6c757d;
-        }
-
-        .settings-value {
-            color: #495057;
-            font-weight: 500;
-        }
-
-        .add-reminder-btn {
-            width: 100%;
-            padding: 10px;
-            background: #e3f2fd;
-            border: 1px solid #bbdefb;
-            border-radius: 4px;
-            color: #1976d2;
+        .close {
+            font-size: 2rem;
             cursor: pointer;
-            font-size: 14px;
+            color: #7f8c8d;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #e74c3c;
+        }
+
+        .form-group {
             margin-bottom: 20px;
         }
 
-        .tags-section {
-            border-top: 1px solid #e9ecef;
-            padding-top: 16px;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
         }
 
-        .edit-tags {
-            color: #007bff;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .invoice-info {
-            background: #e8f4f8;
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
             padding: 12px;
-            border-radius: 4px;
-            margin-top: 16px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
         }
 
-        .invoice-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 4px;
-            font-size: 14px;
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
         }
 
-        .icon {
-            width: 16px;
-            height: 16px;
-            fill: currentColor;
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .task-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
-        .debug-info {
-            background: #e7f3ff;
-            border: 1px solid #b3d4fc;
-            border-radius: 4px;
+        .floating-timer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ffffff, #fdfdfd);
+            color: white !important;
+            padding: 15px 20px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 999;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            display: none;
+            z-index: 1001;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.success {
+            background: #00b894;
+        }
+
+        .notification.error {
+            background: #e74c3c;
+        }
+
+        .notification.info {
+            background: #667eea;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .task-card.active-timer {
+            border-left-color: #00b894;
+            background: linear-gradient(135deg, rgba(0, 184, 148, 0.05), rgba(102, 126, 234, 0.05));
+        }
+
+        .activity-log {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 8px;
             padding: 15px;
-            margin-bottom: 20px;
+            margin-top: 15px;
         }
 
-        .debug-info h5 {
-            color: #0066cc;
-            margin-bottom: 10px;
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
         }
 
-        .debug-info ul {
-            margin: 0;
-            padding-left: 20px;
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
         }
     </style>
 </head>
+
 <body>
-    <div class="container-fluid">
-        <div class="debug-info">
-            <h5>🔧 Debug Information</h5>
-            <p><strong>Common issues that prevent modals from opening:</strong></p>
-            <ul>
-                <li>Bootstrap JS not loaded or loaded incorrectly</li>
-                <li>jQuery conflicts or missing</li>
-                <li>JavaScript errors preventing event handlers</li>
-                <li>Incorrect modal markup structure</li>
-                <li>CSS conflicts affecting modal display</li>
-            </ul>
-        </div>
-
-        <!-- Test Buttons -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <h4>Test Modal Opening Methods:</h4>
-                <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#taskModal">
-                    Method 1: Bootstrap data attributes
-                </button>
-                <button class="btn btn-success me-2" onclick="openModalJS()">
-                    Method 2: JavaScript
-                </button>
-                <button class="btn btn-warning me-2" onclick="loadTaskModal(123)">
-                    Method 3: Your original function
-                </button>
-                <button class="btn btn-info me-2" onclick="debugModal()">
-                    Debug Modal
-                </button>
+    <div class="container">
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All Tasks</button>
+            <button class="filter-btn" data-filter="my-tasks">My Tasks</button>
+            <button class="filter-btn" data-filter="team-tasks">Team Tasks</button>
+            <button class="filter-btn" data-filter="completed">Completed</button>
+            <button class="filter-btn" data-filter="overdue">Overdue</button>
+            <div class="search-box">
+                <input type="text" placeholder="Search tasks..." id="searchInput">
+                <i class="fas fa-search"></i>
             </div>
         </div>
 
-        <!-- Sample Task Table -->
-        <div class="card shadow">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>SL</th>
-                                <th>Title</th>
-                                <th>Project</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>
-                                    <div class="fw-bold">Packaging design layout</div>
-                                    <small class="text-muted">This is the initial draft and it must contain all the key elements...</small>
-                                </td>
-                                <td>
-                                    <span class="badge bg-info">WordPress Landing Page</span>
-                                </td>
-                                <td>
-                                    <div class="progress" style="height: 20px;">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small class="text-muted">25% Complete</small>
-                                </td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-sm btn-outline-success" 
-                                            data-bs-toggle="modal" data-bs-target="#taskModal"
-                                            onclick="loadTaskModal(1)"
-                                            title="Quick View">
-                                            <i class="fas fa-expand"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-primary" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>
-                                    <div class="fw-bold">Website Development</div>
-                                    <small class="text-muted">Complete frontend and backend development...</small>
-                                </td>
-                                <td>
-                                    <span class="badge bg-info">E-commerce Site</span>
-                                </td>
-                                <td>
-                                    <div class="progress" style="height: 20px;">
-                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small class="text-muted">60% Complete</small>
-                                </td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-sm btn-outline-success" 
-                                            data-bs-toggle="modal" data-bs-target="#taskModal"
-                                            onclick="loadTaskModal(2)"
-                                            title="Quick View">
-                                            <i class="fas fa-expand"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-primary" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-tasks"></i>
+                <h3 id="totalTasks">0</h3>
+                <p>Total Tasks</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-clock"></i>
+                <h3 id="activeTasks">0</h3>
+                <p>Active Tasks</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-check-circle"></i>
+                <h3 id="completedTasks">0</h3>
+                <p>Completed</p>
+            </div>
+        </div>
+
+        <div class="task-grid" id="taskGrid">
+            <!-- Tasks will be populated here -->
+        </div>
+    </div>
+
+    <!-- Floating Timer for Subtasks -->
+    <div class="floating-timer" id="floatingTimer">
+        <div class="timer-display">
+            <i class="fas fa-clock"></i>
+            <span id="floatingTimerDisplay">00:00:00</span>
+            <span id="floatingTaskName"></span>
+        </div>
+        <button class="btn btn-sm btn-warning" onclick="pauseActiveSubtaskTimer()">
+            <i class="fas fa-pause"></i>
+        </button>
+    </div>
+
+    <!-- Notifications -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Task Details Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Task Details</h2>
+                <span class="close" onclick="closeModal('taskModal')">&times;</span>
+            </div>
+            <div id="modalContent">
+                <!-- Content will be populated dynamically -->
             </div>
         </div>
     </div>
 
-    <!-- Task Modal -->
-    <div class="modal fade task-modal" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="modal-tabs">
-                        <button class="modal-tab active" data-tab="task">Task</button>
-                        <button class="modal-tab" data-tab="information">Information</button>
-                        <button class="modal-tab" data-tab="notes">My Notes</button>
-                        <button class="modal-tab" data-tab="recurring">Recurring</button>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Support Request Modal -->
+    <div id="supportModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('supportModal')">&times;</span>
+            <h3 id="supportModalTitle">Request Support</h3>
+            <form id="supportForm">
+                <div class="form-group">
+                    <label>Select Team Member:</label>
+                    <select id="supportMember" class="form-control">
+
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Support Type:</label>
+                    <select id="supportType" required>
+                        <optgroup label="Software Development Team">
+                            <option value="code-assistance">Code Assistance</option>
+                            <option value="bug-fix">Bug Fix</option>
+                            <option value="feature-review">Feature Review</option>
+                            <option value="merge-support">Merge Support</option>
+                        </optgroup>
+
+                        <optgroup label="Accounts Team">
+                            <option value="invoice-help">Invoice Help</option>
+                            <option value="expense-approval">Expense Approval</option>
+                            <option value="report-review">Report Review</option>
+                        </optgroup>
+
+                        <optgroup label="HR Team">
+                            <option value="leave-request">Leave Request Help</option>
+                            <option value="policy-explanation">Policy Explanation</option>
+                            <option value="conflict-resolution">Conflict Resolution</option>
+                        </optgroup>
+
+                        <optgroup label="Support Team">
+                            <option value="customer-issue">Customer Issue Handling</option>
+                            <option value="ticket-assistance">Ticket Assistance</option>
+                            <option value="live-support">Live Support Backup</option>
+                        </optgroup>
+
+                        <optgroup label="Sales Team">
+                            <option value="lead-followup">Lead Follow-up</option>
+                            <option value="proposal-review">Proposal Review</option>
+                            <option value="client-demo">Client Demo Support</option>
+                        </optgroup>
+                    </select>
                 </div>
 
-                <div class="modal-body">
-                    <div class="modal-main-content">
-                        <!-- Task Tab Content -->
-                        <div class="tab-content" id="task-content">
-                            <h1 class="task-title" id="modal-task-title">Packaging design layout</h1>
-                            <div class="project-info">
-                                <strong>Project:</strong> <span id="modal-project-name" class="project-link">WordPress Landing Page</span>
-                            </div>
-                            <div class="project-info">
-                                <strong>Milestone:</strong> Planning
-                            </div>
-
-                            <div class="section">
-                                <h2 class="section-title">
-                                    <svg class="icon" viewBox="0 0 24 24">
-                                        <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
-                                    </svg>
-                                    Description
-                                </h2>
-                                
-                                <div class="task-details" id="modal-task-description">
-                                    This is the initial draft and it must contain all the key elements (as listed in the project brief). It should allow the client to envisage the final outcome.
-                                </div>
-
-                                <a href="#" class="create-item">Edit Description</a>
-                            </div>
-
-                            <div class="section">
-                                <div class="checklist-header">
-                                    <h2 class="section-title">
-                                        <input type="checkbox" style="margin-right: 8px;">
-                                        Checklist
-                                    </h2>
-                                    <span class="checklist-counter">0/4</span>
-                                </div>
-
-                                <div class="checklist-item">
-                                    <input type="checkbox" id="check1">
-                                    <label for="check1">Suitable for target audience</label>
-                                </div>
-                                <div class="checklist-item">
-                                    <input type="checkbox" id="check2">
-                                    <label for="check2">Maximum of 3 iterations</label>
-                                </div>
-                                <div class="checklist-item">
-                                    <input type="checkbox" id="check3">
-                                    <label for="check3">Test across multiple devices and browsers</label>
-                                </div>
-                                <div class="checklist-item">
-                                    <input type="checkbox" id="check4">
-                                    <label for="check4">Minimum resolution 1200 x 3000px</label>
-                                </div>
-
-                                <a href="#" class="create-item">Create A New Item</a>
-                            </div>
-
-                            <div class="section">
-                                <h2 class="section-title">
-                                    <svg class="icon" viewBox="0 0 24 24">
-                                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                                    </svg>
-                                    Attachments
-                                </h2>
-                                
-                                <div class="attachment">
-                                    <div class="attachment-preview">
-                                        <svg class="icon" viewBox="0 0 24 24" style="width: 24px; height: 24px;">
-                                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                                        </svg>
-                                    </div>
-                                    <div class="attachment-info">
-                                        <div class="attachment-name">Steven [11 months ago]</div>
-                                        <div class="attachment-meta">mockup-package-1.jpg</div>
-                                    </div>
-                                    <div class="attachment-actions">
-                                        <a href="#">Download ↓</a>
-                                        <span style="color: #e9ecef;">|</span>
-                                        <a href="#">Set Cover</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Information Tab Content (Hidden by default) -->
-                        <div class="tab-content" id="information-content" style="display: none;">
-                            <h2>Task Information</h2>
-                            <p>Additional task information will go here...</p>
-                            <div class="task-details">
-                                <strong>Task ID:</strong> <span id="info-task-id">123</span><br>
-                                <strong>Created:</strong> 2024-01-15<br>
-                                <strong>Updated:</strong> 2024-01-20<br>
-                                <strong>Priority:</strong> High<br>
-                                <strong>Estimated Hours:</strong> 8 hours<br>
-                                <strong>Actual Hours:</strong> 6 hours<br>
-                            </div>
-                        </div>
-
-                        <!-- Notes Tab Content (Hidden by default) -->
-                        <div class="tab-content" id="notes-content" style="display: none;">
-                            <h2>My Notes</h2>
-                            <textarea class="form-control" rows="6" placeholder="Add your notes here..."></textarea>
-                            <button class="btn btn-primary mt-2">Save Notes</button>
-                        </div>
-
-                        <!-- Recurring Tab Content (Hidden by default) -->
-                        <div class="tab-content" id="recurring-content" style="display: none;">
-                            <h2>Recurring Settings</h2>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="enableRecurring">
-                                <label class="form-check-label" for="enableRecurring">
-                                    Enable recurring task
-                                </label>
-                            </div>
-                            <div class="mt-3">
-                                <label class="form-label">Repeat every:</label>
-                                <select class="form-select">
-                                    <option>Daily</option>
-                                    <option>Weekly</option>
-                                    <option>Monthly</option>
-                                    <option>Yearly</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal-sidebar">
-                        <div class="sidebar-section">
-                            <div class="sidebar-title">Assigned Users</div>
-                            <div class="assigned-users">
-                                <div class="user-avatar">A</div>
-                                <div class="user-avatar">B</div>
-                            </div>
-                        </div>
-
-                        <div class="sidebar-section">
-                            <div class="sidebar-title">My Timer 
-                                <svg class="icon" viewBox="0 0 24 24" style="width: 14px; height: 14px; margin-left: 4px;">
-                                    <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z"/>
-                                </svg>
-                            </div>
-                            <div class="timer-display">
-                                <span id="timer">00:00</span>
-                                <button class="play-btn" onclick="toggleTimer()">▶</button>
-                            </div>
-                        </div>
-
-                        <div class="sidebar-section">
-                            <div class="sidebar-title">Settings</div>
-                            <div class="settings-item">
-                                <span class="settings-label">📅 Start Date:</span>
-                                <span class="settings-value" id="modal-start-date">12-12-2024</span>
-                            </div>
-                            <div class="settings-item">
-                                <span class="settings-label">📅 Due Date:</span>
-                                <span class="settings-value" id="modal-end-date">12-14-2024</span>
-                            </div>
-                            <div class="settings-item">
-                                <span class="settings-label">📊 Status:</span>
-                                <span class="settings-value" id="modal-status">Awaiting Feedback</span>
-                            </div>
-                            <div class="settings-item">
-                                <span class="settings-label">🔥 Priority:</span>
-                                <span class="settings-value">Normal</span>
-                            </div>
-                            <div class="settings-item">
-                                <span class="settings-label">👁️ Client:</span>
-                                <span class="settings-value">Visible</span>
-                            </div>
-                        </div>
-
-                        <button class="add-reminder-btn">
-                            ⏰ Add A Reminder
-                        </button>
-
-                        <div class="sidebar-section tags-section">
-                            <div class="sidebar-title">Tags</div>
-                            <a href="#" class="edit-tags">Edit Tags</a>
-                        </div>
-
-                        <div class="invoice-info">
-                            <div class="invoice-row">
-                                <span>Time Invoiced</span>
-                                <span>00:00</span>
-                            </div>
-                            <div class="invoice-row">
-                                <span>Project</span>
-                                <span style="color: #007bff;">#62</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label>Message:</label>
+                    <textarea id="supportMessage" rows="4" placeholder="Describe what kind of support you need..."></textarea>
                 </div>
-            </div>
+                <button type="submit" class="btn btn-primary">Send Support Request</button>
+            </form>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script>
-        let timerRunning = false;
-        let seconds = 0;
-        let timerInterval;
-
-        // Sample task data
-        const sampleTasks = {
-            1: {
-                title: "Packaging design layout",
-                project: "WordPress Landing Page",
-                description: "This is the initial draft and it must contain all the key elements (as listed in the project brief). It should allow the client to envisage the final outcome.",
-                start_date: "12-12-2024",
-                end_date: "12-14-2024",
-                status: "In Progress"
-            },
-            2: {
-                title: "Website Development",
-                project: "E-commerce Site",
-                description: "Complete frontend and backend development with payment integration and admin panel.",
-                start_date: "01-15-2024",
-                end_date: "02-15-2024",
-                status: "In Progress"
-            }
-        };
-
-        function toggleTimer() {
-            const playBtn = document.querySelector('.play-btn');
-            const timerDisplay = document.getElementById('timer');
-            
-            if (timerRunning) {
-                clearInterval(timerInterval);
-                playBtn.innerHTML = '▶';
-                timerRunning = false;
-            } else {
-                timerInterval = setInterval(() => {
-                    seconds++;
-                    const mins = Math.floor(seconds / 60);
-                    const secs = seconds % 60;
-                    timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-                }, 1000);
-                playBtn.innerHTML = '⏸';
-                timerRunning = true;
-            }
-        }
-
-        // Fixed loadTaskModal function with actual data loading
-        function loadTaskModal(taskId) {
-            console.log('Loading task modal for ID:', taskId);
-            
-            // Get task data
-            const task = sampleTasks[taskId];
-            if (task) {
-                // Update modal content
-                document.getElementById('modal-task-title').textContent = task.title;
-                document.getElementById('modal-project-name').textContent = task.project;
-                document.getElementById('modal-task-description').textContent = task.description;
-                document.getElementById('modal-start-date').textContent = task.start_date;
-                document.getElementById('modal-end-date').textContent = task.end_date;
-                document.getElementById('modal-status').textContent = task.status;
-                document.getElementById('info-task-id').textContent = taskId;
-            }
-
-            // Force show modal using Bootstrap instance
-            try {
-                const modalElement = document.getElementById('taskModal');
-                const modal = new bootstrap.Modal(modalElement);
-                modal.show();
-            } catch (error) {
-                console.error('Error opening modal:', error);
-                alert('Error opening modal. Check console for details.');
-            }
-        }
-
-        // Alternative method to open modal
-        function openModalJS() {
-            const modalElement = document.getElementById('taskModal');
-            const modal = new bootstrap.Modal(modalElement);
-            modal.show();
-        }
-
-        // Debug function
-        function debugModal() {
-            const modalElement = document.getElementById('taskModal');
-            console.log('Modal element:', modalElement);
-            console.log('Bootstrap available:', typeof bootstrap !== 'undefined');
-            console.log('jQuery available:', typeof $ !== 'undefined');
-            
-            if (!modalElement) {
-                alert('Modal element not found!');
-                return;
-            }
-            
-            try {
-                const modal = new bootstrap.Modal(modalElement);
-                console.log('Modal instance created:', modal);
-                modal.show();
-                alert('Modal should be opening now. Check if it appears.');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error: ' + error.message);
-            }
-        }
-
-        // Tab functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, initializing...');
-            
-            const tabs = document.querySelectorAll('.modal-tab');
-            const contents = document.querySelectorAll('.tab-content');
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    console.log('Tab clicked:', this.dataset.tab);
-                    
-                    // Remove active class from all tabs
-                    tabs.forEach(t => t.classList.remove('active'));
-                    // Add active class to clicked tab
-                    this.classList.add('active');
-
-                    // Hide all content
-                    contents.forEach(content => content.style.display = 'none');
-                    
-                    // Show corresponding content
-                    const targetContent = document.getElementById(this.dataset.tab + '-content');
-                    if (targetContent) {
-                        targetContent.style.display = 'block';
-                    }
-                });
-            });
-
-            // Checklist functionality
-            const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const checkedCount = document.querySelectorAll('.checklist-item input[type="checkbox"]:checked').length;
-                    const totalCount = checkboxes.length;
-                    document.querySelector('.checklist-counter').textContent = `${checkedCount}/${totalCount}`;
-                });
-            });
-
-            // Test Bootstrap availability
-            if (typeof bootstrap === 'undefined') {
-                console.error('Bootstrap JS is not loaded!');
-                document.body.insertAdjacentHTML('afterbegin', 
-                    '<div class="alert alert-danger">⚠️ Bootstrap JS is not loaded! Modal will not work.</div>'
-                );
-            } else {
-                console.log('Bootstrap JS loaded successfully');
+        // CSRF setup for all jQuery AJAX calls
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
 
-        // Modal event listeners for debugging
-        document.addEventListener('DOMContentLoaded', function()
+        // Global variables - Remove localStorage related variables
+        let currentTask = null;
+        let activeSubtaskTimers = {};
+        let taskData = [];
+        let currentFilter = 'all';
+        let currentUser = null;
+        let currentActiveSubtask = null;
+        let serverTimerSyncInterval = null;
+
+        // Push notification setup
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        function sendPushNotification(title, message, options = {}) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                const notification = new Notification(title, {
+                    body: message,
+                    icon: '/favicon.ico',
+                    badge: '/favicon.ico',
+                    ...options
+                });
+
+                setTimeout(() => {
+                    notification.close();
+                }, 5000);
+
+                return notification;
+            }
+        }
+
+        // Server-based timer functions
+        function loadActiveTimerFromServer() {
+            $.get('/api/my-active-timer')
+                .done(function(response) {
+                    if (response.active_timer) {
+                        const timer = response.active_timer;
+                        restoreServerTimer(timer);
+                    }
+                })
+                .fail(function(xhr) {
+                    console.error('Failed to load active timer:', xhr.responseText);
+                });
+        }
+
+        function restoreServerTimer(timerData) {
+            // Clear any existing local timer first
+            clearCurrentTimer();
+
+            const subtaskId = timerData.subtask_id;
+            const startTime = new Date(timerData.started_at).getTime();
+
+            // Set up the timer with server data
+            activeSubtaskTimers[subtaskId] = {
+                startTime: startTime,
+                elapsed: timerData.current_duration,
+                taskId: timerData.task_id,
+                title: timerData.title,
+                serverId: timerData.id,
+                interval: setInterval(() => updateServerBasedTimer(subtaskId), 1000)
+            };
+
+            currentActiveSubtask = subtaskId;
+
+            // Show floating timer
+            $('#floatingTimer').show();
+            $('#floatingTaskName').text(`- ${timerData.title}`);
+
+            // Update UI
+            $(`.subtask-item[data-subtask-id="${subtaskId}"]`).addClass('active-timer');
+
+            // Render tasks to update UI
+            setTimeout(() => renderTasks(), 100);
+
+            console.log(`Server timer restored: ${timerData.title} (${timerData.formatted_duration} elapsed)`);
+        }
+
+        function updateServerBasedTimer(subtaskId) {
+            const timer = activeSubtaskTimers[subtaskId];
+            if (!timer) return;
+
+            const currentTime = Math.floor((Date.now() - timer.startTime) / 1000);
+
+            const timerDisplay = $(`#subtask-timer-${subtaskId}`);
+            if (timerDisplay.length) {
+                timerDisplay.text(formatTime(currentTime));
+            }
+
+            const modalTimerDisplay = $(`#modal-subtask-timer-${subtaskId}`);
+            if (modalTimerDisplay.length) {
+                modalTimerDisplay.text(formatTime(currentTime));
+            }
+
+            $('#floatingTimerDisplay').text(formatTime(currentTime));
+        }
+
+        function syncWithServer() {
+            if (currentActiveSubtask && activeSubtaskTimers[currentActiveSubtask]) {
+                $.post(`/api/subtasks/${currentActiveSubtask}/auto-save-timer`)
+                    .done(function(response) {
+                        // Update local timer with server data
+                        const timer = activeSubtaskTimers[currentActiveSubtask];
+                        if (timer) {
+                            timer.elapsed = response.current_duration;
+                        }
+                    })
+                    .fail(function(xhr) {
+                        console.warn('Failed to sync with server:', xhr.responseText);
+                    });
+            }
+        }
+
+        function clearCurrentTimer() {
+            if (currentActiveSubtask && activeSubtaskTimers[currentActiveSubtask]) {
+                const timer = activeSubtaskTimers[currentActiveSubtask];
+                clearInterval(timer.interval);
+                delete activeSubtaskTimers[currentActiveSubtask];
+            }
+
+            currentActiveSubtask = null;
+            $('#floatingTimer').hide();
+            $('.subtask-item').removeClass('active-timer');
+        }
+
+        // Initialize the application
+        $(document).ready(function() {
+            requestNotificationPermission();
+
+            loadMyTasks();
+            loadTaskStats();
+            setupEventListeners();
+
+            // Load active timer from server
+            setTimeout(() => {
+                loadActiveTimerFromServer();
+            }, 1000);
+
+            // Refresh tasks periodically
+            setInterval(loadMyTasks, 30000);
+
+            // Sync with server every 10 seconds
+            serverTimerSyncInterval = setInterval(syncWithServer, 10000);
+        });
+
+        function setupEventListeners() {
+            $('.filter-btn').on('click', function() {
+                $('.filter-btn').removeClass('active');
+                $(this).addClass('active');
+                currentFilter = $(this).data('filter');
+                renderTasks();
+            });
+
+            $('#searchInput').on('input', function() {
+                renderTasks();
+            });
+
+            $('#supportForm').on('submit', function(e) {
+                e.preventDefault();
+                handleSupportRequest();
+            });
+
+            // Handle page visibility changes
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    // Tab became visible, sync with server
+                    setTimeout(() => {
+                        loadActiveTimerFromServer();
+                        renderTasks();
+                    }, 500);
+                }
+            });
+
+            // Handle browser focus events
+            $(window).on('focus', function() {
+                // Window gained focus, sync with server
+                setTimeout(() => {
+                    loadActiveTimerFromServer();
+                    renderTasks();
+                }, 100);
+            });
+        }
+
+        function startSubtaskTimer(taskId, subtaskId, subtaskTitle) {
+            if (activeSubtaskTimers[subtaskId]) return;
+
+            $.post(`/api/subtasks/${subtaskId}/start-timer`)
+                .done(function(response) {
+                    const startTime = new Date(response.started_at).getTime();
+
+                    $('#floatingTimer').show();
+                    $('#floatingTaskName').text(`- ${subtaskTitle}`);
+
+                    activeSubtaskTimers[subtaskId] = {
+                        startTime: startTime,
+                        elapsed: 0,
+                        taskId: taskId,
+                        title: subtaskTitle,
+                        serverId: response.timer_id,
+                        interval: setInterval(() => updateServerBasedTimer(subtaskId), 1000)
+                    };
+
+                    currentActiveSubtask = subtaskId;
+
+                    $(`.subtask-item[data-subtask-id="${subtaskId}"]`).addClass('active-timer');
+                    renderTasks();
+
+                    showNotification('Timer started for: ' + subtaskTitle, 'success');
+                    sendPushNotification('Timer Started', `Working on: ${subtaskTitle}`);
+                })
+                .fail(function(xhr) {
+                    showNotification('Failed to start subtask timer', 'error');
+                    console.error('Timer start error:', xhr.responseText);
+                });
+        }
+
+        function pauseSubtaskTimer(taskId, subtaskId) {
+            const timer = activeSubtaskTimers[subtaskId];
+            if (!timer) return;
+
+            $.post(`/api/subtasks/${subtaskId}/pause-timer`)
+                .done(function(response) {
+                    // Clear local timer
+                    clearInterval(timer.interval);
+                    delete activeSubtaskTimers[subtaskId];
+                    currentActiveSubtask = null;
+
+                    // Update task data locally
+                    const task = taskData.find(t => t.id === taskId);
+                    if (task) {
+                        const subtask = task.subtasks.find(st => st.id === subtaskId);
+                        if (subtask) {
+                            subtask.time_logged += response.duration;
+                            task.time_logged += response.duration;
+                        }
+                    }
+
+                    $(`.subtask-item[data-subtask-id="${subtaskId}"]`).removeClass('active-timer');
+                    renderTasks();
+
+                    $('#floatingTimer').hide();
+
+                    showNotification(`Subtask time logged: ${response.formatted_duration}`, 'success');
+                    sendPushNotification('Timer Paused', `Logged ${response.formatted_duration} for: ${timer.title}`);
+                })
+                .fail(function(xhr) {
+                    showNotification('Failed to pause subtask timer', 'error');
+                    console.error('Timer pause error:', xhr.responseText);
+                });
+        }
+
+        function pauseActiveSubtaskTimer() {
+            if (currentActiveSubtask) {
+                const timer = activeSubtaskTimers[currentActiveSubtask];
+                if (timer) {
+                    pauseSubtaskTimer(timer.taskId, currentActiveSubtask);
+                }
+            }
+        }
+
+        // Rest of your existing functions remain the same...
+        function loadMyTasks() {
+            $.get('/api/my-tasks')
+                .done(function(response) {
+                    taskData = response.tasks;
+                    renderTasks();
+                    console.log('Tasks loaded:', taskData);
+                })
+                .fail(function(xhr) {
+                    console.error('Failed to load tasks:', xhr.responseText);
+                    showNotification('Failed to load tasks', 'error');
+                });
+        }
+
+        function loadTaskStats() {
+            $.get('/api/my-task-stats')
+                .done(function(stats) {
+                    updateStatsDisplay(stats);
+                })
+                .fail(function(xhr) {
+                    console.error('Failed to load stats:', xhr.responseText);
+                });
+        }
+
+        function updateStatsDisplay(stats) {
+            $('#totalTasks').text(stats.totalTasks);
+            $('#activeTasks').text(stats.activeTasks);
+            $('#completedTasks').text(stats.completedTasks);
+            $('#overdueTasks').text(stats.overdueTasks || 0);
+        }
+
+        // Keep all your existing rendering functions...
+        function renderTasks() {
+            const searchTerm = $('#searchInput').val().toLowerCase();
+            let filteredTasks = taskData;
+
+            filteredTasks = filteredTasks.filter(task => {
+                const matchesSearch = task.title.toLowerCase().includes(searchTerm) ||
+                    task.description.toLowerCase().includes(searchTerm);
+
+                const matchesFilter = (() => {
+                    switch (currentFilter) {
+                        case 'my-tasks':
+                            return true;
+                        case 'completed':
+                            return task.status.toLowerCase() === 'completed';
+                        case 'overdue':
+                            return task.is_overdue;
+                        case 'in-progress':
+                            return task.status.toLowerCase() === 'in progress';
+                        default:
+                            return true;
+                    }
+                })();
+
+                return matchesSearch && matchesFilter;
+            });
+
+            const taskGrid = $('#taskGrid');
+            taskGrid.empty();
+
+            if (filteredTasks.length === 0) {
+                taskGrid.append(
+                    '<div class="no-tasks"><h3>No tasks found</h3><p>You have no tasks matching the current filters.</p></div>'
+                );
+                return;
+            }
+
+            filteredTasks.forEach(task => {
+                taskGrid.append(createTaskCard(task));
+            });
+        }
+
+        function createTaskCard(task) {
+            const completedSubtasks = task.subtasks.filter(st => st.status === 'completed').length;
+            const totalSubtasks = task.subtasks.length;
+            const progressPercentage = totalSubtasks > 0 ? Math.round((completedSubtasks / totalSubtasks) * 100) : 0;
+
+            const now = new Date();
+            const dueDate = new Date(task.end_date_time);
+            const isOverdueNow = dueDate < now;
+
+            return `
+<div class="task-card" data-task-id="${task.id}">
+    <div class="task-header">
+        <div>
+            <div class="task-title">${task.title}</div>
+            <div class="task-meta">
+                <span><i class="fas fa-calendar"></i> Due: ${formatDate(task.end_date_time)}</span>
+                ${task.is_overdue ? '<span style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> Overdue</span>' : ''}
+            </div>
+        </div>
+        <div>
+            <span class="priority ${task.priority.toLowerCase()}">${task.priority}</span>
+            <span class="status ${task.status.toLowerCase().replace(' ', '-')}">${task.status}</span>
+        </div>
+    </div>
+
+    ${isOverdueNow ? `
+                                            <div class="alert-overdue" style="margin-top: 10px; padding: 10px; background-color: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; border-radius: 4px;">
+                                                <i class="fas fa-exclamation-circle"></i> This task is overdue!
+                                            </div>
+                                        ` : ''}
+
+    <div class="task-description-content" id="desc-${task.id}">
+        ${truncateDescription(task.description, 100)}
+    </div>
+    <a href="javascript:void(0)"
+       class="read-more-toggle"
+       data-task-id="${task.id}"
+       data-full-description='${encodeURIComponent(task.description)}'
+       onclick="toggleDescription(this)">Read more</a>
+
+    <div class="progress-section">
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: ${task.progress}%"></div>
+        </div>
+        <small style="color: #7f8c8d;">${task.progress}% Complete (${completedSubtasks}/${totalSubtasks} subtasks)</small>
+    </div>
+
+    <div class="time-tracking">
+        <div class="timer-display">
+            <span>Total Time: ${formatTime(task.time_logged)}</span>
+        </div>
+        <div class="timer-controls">
+            <button class="btn btn-primary" onclick="openTaskDetails(${task.id})">
+                <i class="fas fa-eye"></i> Details
+            </button>
+        </div>
+    </div>
+
+    <div class="subtasks-section">
+        <div class="subtasks-header">
+            <h4><i class="fas fa-list-ul"></i> My Subtasks</h4>
+        </div>
+        <div class="subtasks-list">
+            ${task.subtasks.slice(0, 3).map(subtask => {
+                const isActiveTimer = activeSubtaskTimers[subtask.id];
+                return `
+                                                        <div class="subtask-item ${isActiveTimer ? 'active-timer' : ''}" data-subtask-id="${subtask.id}" style="display: flex; flex-direction: column; width: 100%;">
+                                                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                                                <div class="subtask-info" onclick="toggleSubtaskDescription(${subtask.id})" style="cursor: pointer; flex-grow: 1;">
+                                                                    <div class="subtask-title">
+                                                                        ${subtask.title}
+                                                                        <i class="fas fa-chevron-down subtask-toggle-icon" id="toggle-icon-${subtask.id}" style="font-size: 12px; margin-left: 8px; transition: transform 0.3s ease;"></i>
+                                                                    </div>
+                                                                    <div class="subtask-meta">
+                                                                        <span class="priority ${subtask.priority}">${subtask.priority}</span>
+                                                                        <span class="status ${subtask.status.replace(' ', '-')}">${subtask.status.replace('-', ' ')}</span>
+                                                                        <span>Time: ${isActiveTimer ? `<span id="subtask-timer-${subtask.id}" style="color: #e74c3c; font-weight: bold;">00:00:00</span>` : formatTime(subtask.time_logged)}</span>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="subtask-actions">
+                                                                    ${isActiveTimer ? `
+                                    <button class="btn btn-warning btn-sm" onclick="pauseSubtaskTimer(${task.id}, ${subtask.id})">
+                                        <i class="fas fa-pause"></i>
+                                    </button>` : `
+                                    <button class="btn btn-success btn-sm" onclick="startSubtaskTimer(${task.id}, ${subtask.id}, '${subtask.title}')">
+                                        <i class="fas fa-play"></i>
+                                    </button>`
+                                                                    }
+
+                                                  ${subtask.status !== 'completed' ? `
+    <button class="btn btn-primary btn-sm" onclick="markSubtaskComplete(${subtask.id})">
+        <i class="fas fa-check"></i>
+    </button>` : ''
+                }
+                <button class="btn btn-info btn-sm" onclick="requestSubtaskSupport(${task.id}, ${subtask.id}, '${subtask.title}')">
+                    <i class="fas fa-hands-helping"></i> Help
+                </button>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="subtask-description-box" id="subtask-desc-${subtask.id}" style="display: none; margin-top: 8px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #007bff; border-radius: 4px; font-size: 14px; color: #6c757d; width: 100%;">
+                                                                ${subtask.description || 'No description available'}
+                                                            </div>
+                                                        </div>
+                                                    `;
+            }).join('')}
+            ${task.subtasks.length > 3 ? `<small style="color: #7f8c8d;">+${task.subtasks.length - 3} more subtasks</small>` : ''}
+        </div>
+    </div>
+    <div class="task-actions">
+        <button class="btn btn-primary" onclick="openTaskDetails(${task.id})">
+            <i class="fas fa-eye"></i> View Details
+        </button>
+    </div>
+</div>
+`;
+        }
+
+        function requestSubtaskSupport(taskId, subtaskId, subtaskTitle) {
+            const task = taskData.find(t => t.id === taskId);
+            if (!task) return;
+
+            currentTask = task;
+            currentSubtask = {
+                id: subtaskId,
+                title: subtaskTitle
+            };
+
+            const supportSelect = $('#supportMember');
+            supportSelect.empty().append('<option value="">Choose a team member...</option>');
+
+            task.team_members.forEach(member => {
+                supportSelect.append(`<option value="${member.id}">${member.name} (${member.role})</option>`);
+            });
+
+            // Update the modal title to show it's for a specific subtask
+            $('#supportModalTitle').text(`Request Support for: ${subtaskTitle}`);
+
+            // Initialize or re-initialize Select2 on the dropdown
+            supportSelect.select2({
+                placeholder: 'Search a team member...',
+                width: '100%',
+                dropdownParent: $('#supportModal')
+            });
+
+            $('#supportModal').show();
+        }
+
+        // Function to toggle subtask description visibility
+        function toggleSubtaskDescription(subtaskId) {
+            const descBox = document.getElementById(`subtask-desc-${subtaskId}`);
+            const toggleIcon = document.getElementById(`toggle-icon-${subtaskId}`);
+
+            if (descBox.style.display === 'none' || descBox.style.display === '') {
+                descBox.style.display = 'block';
+                toggleIcon.style.transform = 'rotate(180deg)';
+                toggleIcon.classList.remove('fa-chevron-down');
+                toggleIcon.classList.add('fa-chevron-up');
+            } else {
+                descBox.style.display = 'none';
+                toggleIcon.style.transform = 'rotate(0deg)';
+                toggleIcon.classList.remove('fa-chevron-up');
+                toggleIcon.classList.add('fa-chevron-down');
+            }
+        }
+
+        function truncateDescription(description, wordLimit) {
+            const words = description.trim().split(/\s+/);
+            if (words.length <= wordLimit) {
+                return `<p>${description}</p>`;
+            }
+            const shortText = words.slice(0, wordLimit).join(' ');
+            return `<p>${shortText}...</p>`;
+        }
+
+        function toggleDescription(element) {
+            const taskId = element.dataset.taskId;
+            const fullDescription = decodeURIComponent(element.dataset.fullDescription);
+            const descDiv = document.getElementById(`desc-${taskId}`);
+
+            if (element.innerText === 'Read more') {
+                descDiv.innerHTML = `<p>${fullDescription}</p>`;
+                element.innerText = 'Show less';
+            } else {
+                descDiv.innerHTML = truncateDescription(fullDescription, 100);
+                element.innerText = 'Read more';
+            }
+        }
+
+        function markSubtaskComplete(subtaskId) {
+            $.post(`/api/subtasks/${subtaskId}/status`, {
+                    status: 'Completed'
+                })
+                .done(function(response) {
+                    showNotification('Subtask marked as complete!', 'success');
+                    loadMyTasks();
+
+                    const task = taskData.find(t => t.subtasks.some(st => st.id === subtaskId));
+                    const subtask = task ? task.subtasks.find(st => st.id === subtaskId) : null;
+
+                    if (subtask) {
+                        sendPushNotification('Subtask Completed!', `✅ ${subtask.title} has been completed`);
+                    }
+                })
+                .fail(function(xhr) {
+                    showNotification('Failed to update subtask', 'error');
+                });
+        }
+
+        function handleSupportRequest() {
+            const supportData = {
+                task_id: currentTask.id,
+                subtask_id: currentSubtask?.id || null,
+                subtask_title: currentSubtask?.title || null,
+                member_id: $('#supportMember').val(),
+                support_type: $('#supportType').val(),
+                message: $('#supportMessage').val()
+            };
+
+            $.post('/api/support-requests', supportData)
+                .done(function(response) {
+                    showNotification('Support request sent successfully!', 'success');
+                    closeModal('supportModal');
+                    $('#supportForm')[0].reset();
+                    currentSubtask = null;
+                })
+                .fail(function(xhr) {
+                    showNotification('Failed to send support request', 'error');
+                });
+        }
+
+        function openTaskDetails(taskId) {
+            const task = taskData.find(t => t.id === taskId);
+            if (!task) return;
+
+            $('#modalTitle').text(task.title);
+
+            const modalContent = `
+        <div class="task-details">
+            <div class="detail-section">
+                <h4><i class="fas fa-info-circle"></i> Task Information</h4>
+                <p><strong>Description:</strong> ${task.description}</p>
+                <p><strong>Priority:</strong> <span class="priority ${task.priority.toLowerCase()}">${task.priority}</span></p>
+                <p><strong>Status:</strong> <span class="status ${task.status.toLowerCase().replace(' ', '-')}">${task.status}</span></p>
+                <p><strong>Progress:</strong> ${task.progress}%</p>
+                <p><strong>Start Date:</strong> ${formatDate(task.start_date_time)}</p>
+                <p><strong>Due Date:</strong> ${formatDate(task.end_date_time)}</p>
+                <p><strong>Total Time Logged:</strong> ${formatTime(task.time_logged)}</p>
+                ${task.is_overdue ? '<p style="color: #e74c3c;"><strong>Status:</strong> Overdue!</p>' : ''}
+            </div>
+
+            <div class="detail-section">
+                <h4><i class="fas fa-list-ul"></i> My Subtasks</h4>
+                <div class="subtasks-detail">
+                    ${task.subtasks.map(subtask => {
+                        const isActiveTimer = activeSubtaskTimers[subtask.id];
+                        return `
+                                                                        <div class="subtask-detail-item ${isActiveTimer ? 'active-timer' : ''}">
+                                                                            <div class="subtask-header">
+                                                                                <h5>${subtask.title}</h5>
+                                                                                <div>
+                                                                                    <span class="priority ${subtask.priority}">${subtask.priority}</span>
+                                                                                    <span class="status ${subtask.status.replace(' ', '-')}">${subtask.status.replace('-', ' ')}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <p><strong>Time Logged:</strong> ${isActiveTimer ? `<span id="modal-subtask-timer-${subtask.id}" style="color: #e74c3c; font-weight: bold;">00:00:00</span>` : formatTime(subtask.time_logged)}</p>
+                                                                            <div class="subtask-actions">
+                                                                                ${isActiveTimer ?
+                                                                                    `<button class="btn btn-warning btn-sm" onclick="pauseSubtaskTimer(${task.id}, ${subtask.id})">
+                                        <i class="fas fa-pause"></i> Pause Timer
+                                    </button>` :
+                                                                                    `<button class="btn btn-success btn-sm" onclick="startSubtaskTimer(${task.id}, ${subtask.id}, '${subtask.title}')">
+                                        <i class="fas fa-play"></i> Start Timer
+                                    </button>`
+                                                                                }
+                                                                                <button class="btn btn-info btn-sm" onclick="sendSubtaskPushNotification(${subtask.id}, '${subtask.title}')">
+                                                                                    <i class="fas fa-bell"></i> Push Notification
+                                                                                </button>
+                                                                                ${subtask.status !== 'completed' ?
+                                                                                    `<button class="btn btn-primary btn-sm" onclick="markSubtaskComplete(${subtask.id})">
+                                        <i class="fas fa-check"></i> Mark Complete
+                                    </button>` : ''
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                        `;
+                    }).join('')}
+                </div>
+            </div>
+
+        </div>
+        `;
+
+            $('#modalContent').html(modalContent);
+            $('#taskModal').show();
+        }
+
+        // Utility functions
+        function formatTime(seconds) {
+            if (!seconds || seconds < 0) return "00:00:00";
+
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function closeModal(modalId) {
+            $('#' + modalId).hide();
+        }
+
+        function showNotification(message, type) {
+            const notification = $('#notification');
+            notification.removeClass('success error info').addClass(type);
+            notification.text(message).show();
+
+            setTimeout(() => {
+                notification.hide();
+            }, 3000);
+        }
+
+        function sendSubtaskPushNotification(subtaskId, title) {
+            sendPushNotification('Subtask Reminder', `Don't forget about: ${title}`);
+        }
+
+        // Close modals when clicking outside
+        $(window).on('click', function(e) {
+            if ($(e.target).hasClass('modal')) {
+                $(e.target).hide();
+            }
+        });
+
+        // Cleanup on page unload
+        $(window).on('beforeunload', function() {
+            // Clear intervals to prevent memory leaks
+            if (serverTimerSyncInterval) {
+                clearInterval(serverTimerSyncInterval);
+            }
+
+            Object.values(activeSubtaskTimers).forEach(timer => {
+                if (timer.interval) {
+                    clearInterval(timer.interval);
+                }
+            });
+        });
+
+        // Server-based timer management functions
+        function getActiveTimerInfo() {
+            return $.get('/api/my-active-timer')
+                .then(function(response) {
+                    return response.active_timer;
+                });
+        }
+
+        function isTimerActive() {
+            return currentActiveSubtask !== null;
+        }
+
+        // Export functions for global access
+        window.taskTimerManager = {
+            getActiveTimer: getActiveTimerInfo,
+            isActive: isTimerActive,
+            pause: pauseActiveSubtaskTimer,
+            syncWithServer: syncWithServer
+        };
+
+        // Debug functions (remove in production)
+        window.debugTimer = {
+            showActiveTimer: () => {
+                getActiveTimerInfo().then(timer => {
+                    console.log('Active Timer:', timer);
+                });
+            },
+            forceSync: () => {
+                loadActiveTimerFromServer();
+                console.log('Timer synced with server');
+            },
+            clearLocalTimer: () => {
+                clearCurrentTimer();
+                console.log('Local timer cleared');
+            }
+        };
+    </script>
+</body>
+
+</html>

@@ -172,7 +172,7 @@
                                         </td>
                                         <td>
                                             @if ($attendance->attendanceStatus == 'yes')
-                                                <span style="color: aqua">Present</span>
+                                                <span style="color: aqua">Active</span>
                                             @else
                                                 <spane style="color: red">
                                                     Absent
@@ -207,8 +207,8 @@
         </div>
     </div>
     <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script> -->
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script> -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.3/purify.min.js"></script>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ApiController;
+use App\Http\Controllers\Admin\Task\MytaskController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/subzones', [ApiController::class, 'get_subzones'])->name('api.subzones');
@@ -20,3 +21,11 @@ Route::post('/splitter-for-new-client', [ApiController::class, 'get_splitters_fo
 Route::get('/box', [ApiController::class, 'get_box'])->name('api.box');
 
 Route::get('/splitter', [ApiController::class, 'get_splitter'])->name('api.splitter');
+
+// Add these routes to your routes/web.php file
+
+
+// Route::middleware(['auth:sanctum'])->group(function () {
+    // Get user's tasks
+
+// });

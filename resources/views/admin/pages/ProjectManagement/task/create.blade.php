@@ -68,12 +68,12 @@
                             </div>
 
                             <!-- Status and Priority -->
-                            {{-- <div class="row mb-3">
+                            <div class="row mb-3 d-none">
                                 <div class="col-md-6">
                                     <label for="taskStatus" class="form-label">Status</label>
                                     <select class="form-select form-control" id="taskStatus" name="status" required>
                                         <option value="" disabled selected>Select status</option>
-                                        <option value="Pending">Pending</option>
+                                        <option selected value="Pending">Pending</option>
                                         <option value="In Progress">In Progress</option>
                                         <option value="Completed">Completed</option>
                                     </select>
@@ -81,19 +81,19 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="taskPriority" class="form-label">Priority</label>
+                                <div class="col-md-6 d-none">
+                                    <label for="taskPriority" class="form-label d-none">Priority</label>
                                     <select class="form-select form-control" id="taskPriority" name="priority" required>
                                         <option value="" disabled selected>Select priority</option>
                                         <option value="Low">Low</option>
                                         <option value="Medium">Medium</option>
-                                        <option value="High">High</option>
+                                        <option selected value="High">High</option>
                                     </select>
                                     @error('priority')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                            </div> --}}
+                            </div>
 
                             <!-- Team and Project Selection -->
                             <div class="row mb-3">

@@ -16,7 +16,7 @@ class AddTimeLoggedToSubtasks extends Migration
         Schema::table('subtasks', function (Blueprint $table) {
             $table->integer('time_logged')->default(0);
             $table->integer('timer_elapsed')->default(0);
-            $table->dateTime('last_timer_sync')->default();
+            $table->dateTime('last_timer_sync')->nullable();
         });
     }
 

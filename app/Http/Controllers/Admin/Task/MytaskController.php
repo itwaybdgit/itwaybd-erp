@@ -21,7 +21,7 @@ class MytaskController extends Controller
     {
         $employee = Employee::where('user_id', Auth::id())->first();
         if (!$employee) {
-            return view('tasks.my-tasks')->with('tasks', collect([]));
+            return back();
         }
 
         $tasks = Task::whereHas('subtasks', function ($query) use ($employee) {

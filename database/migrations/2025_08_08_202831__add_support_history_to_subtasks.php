@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddTimeLoggedToSubtasks extends Migration
+class AddSupportHistoryToSubtasks extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,7 @@ class AddTimeLoggedToSubtasks extends Migration
     public function up()
     {
         Schema::table('subtasks', function (Blueprint $table) {
-            $table->integer('time_logged')->default(0);
-            $table->integer('timer_elapsed')->default(0);
-            $table->dateTime('last_timer_sync')->default();
+            $table->json('support_history')->nullable()->after('description');
         });
     }
 

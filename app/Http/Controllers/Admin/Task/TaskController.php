@@ -128,7 +128,7 @@ class TaskController extends Controller
             'description' => 'required|string',
             'team_id' => 'required',
             'start_date_time' => 'required|date',
-            'end_date_time' => 'required|date|after:start_date_time',
+            'end_date_time' => 'required|date',
             // 'status' => 'required|in:Pending,In Progress,Completed',
             // 'priority' => 'required|in:Low,Medium,High',
             // 'project_id' => 'required|exists:projects,id',

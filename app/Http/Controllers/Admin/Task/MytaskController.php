@@ -37,6 +37,7 @@ class MytaskController extends Controller
             ])
             ->orderBy('created_at', 'desc')
             ->get();
+
         $tasks->transform(function ($task) use ($employee) {
             $userSubtasks = $task->subtasks->where('user_id', $employee->id);
 
@@ -78,7 +79,6 @@ class MytaskController extends Controller
                 'creator'
             ])
             ->get();
-
         $formattedTasks = $tasks->map(function ($task) use ($employee) {
             $userSubtasks = $task->subtasks->where('user_id', $employee->id);
 
@@ -86,8 +86,8 @@ class MytaskController extends Controller
                 'id' => $task->id,
                 'title' => $task->title,
                 'description' => $task->description,
-                'priority' => $task->priority,
-                'status' => $task->status,
+                'priority' => $task->priority ? $task->priority : 'normal',
+                'status' => $task->status? $task->status : 'pending',
                 'project_id' => $task->project_id,
                 'team_id' => $task->team_id,
                 'start_date_time' => optional($task->start_date_time)->format('Y-m-d\TH:i:s'),

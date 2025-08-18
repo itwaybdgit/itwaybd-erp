@@ -7,7 +7,7 @@
                 <h1 class="h3 mb-0 text-gray-800">
                     <i class="fas fa-task me-2"></i>Create New Task
                 </h1>
-                <a href="{{ route('task.index') }}" class="btn btn-rounded btn-info">
+                <a href="{{ route('task.mytask') }}" class="btn btn-rounded btn-info">
                     <span class="btn-icon-start text-white">
                         <i class="fa fa-arrow-left"></i>
                     </span>
@@ -24,13 +24,28 @@
                             enctype="multipart/form-data">
                             @csrf
                             <!-- Task Title -->
-                            <div class="mb-3">
-                                <label for="taskTitle" class="form-label">Task Title</label>
-                                <input type="text" class="form-control" id="taskTitle" name="title"
-                                    placeholder="Enter task title" required />
-                                @error('title')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="taskTitle" class="form-label">Task Title</label>
+                                    <input type="text" class="form-control" id="taskTitle" name="title"
+                                        placeholder="Enter task title" required />
+                                    @error('title')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="project_id" class="form-label">Select Project <small class="text-muted">(only for tech team)</small></label>
+                                    <select class="form-select form-control select2" id="project_id" name="project_id">
+                                        <option value="" disabled selected>Select project</option>
+                                        @foreach ($projects as $project)
+                                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('project_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
 
                             <!-- Task Description -->
@@ -435,7 +450,7 @@
                     <label for="subtask_title_${subtaskCounter}" class="form-label">Subtask Title</label>
                     <input type="text" class="form-control" id="subtask_title_${subtaskCounter}"
                            name="subtasks[${subtaskCounter}][title]"
-                           value="${subtaskTitle}" readonly>
+                           value="${subtaskTitle}">
                 </div>
                 <div class="col-md-4">
                     <label for="subtask_user_${subtaskCounter}" class="form-label">Assign To</label>
@@ -447,20 +462,7 @@
                 </div>
             </div>
             <div class="row subtask-row">
-                ${isTeamTech ? `
-                            <div class="col-md-6 subtask-project-row">
-                                <label for="subtask_project_${subtaskCounter}" class="form-label">Project <span class="text-danger">*</span></label>
-                                <select class="form-select form-control select2" id="subtask_project_${subtaskCounter}"
-                                        name="subtasks[${subtaskCounter}][project_id]" required>
-                                    <option value="" disabled selected>Select project</option>
-                                    ${generateProjectOptions()}
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                        ` : `
-                            <input type="hidden" name="subtasks[${subtaskCounter}][project_id]" value="0">
-                            <div class="col-md-12">
-                        `}
+                <div class="col-md-12">
                     <label for="subtask_description_${subtaskCounter}" class="form-label">Description</label>
                     <textarea class="form-control" id="subtask_description_${subtaskCounter}"
                               name="subtasks[${subtaskCounter}][description]" rows="2"

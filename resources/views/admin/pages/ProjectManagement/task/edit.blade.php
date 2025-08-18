@@ -27,13 +27,30 @@
                             @method('PUT')
 
                             <!-- Task Title -->
-                            <div class="mb-3">
-                                <label for="taskTitle" class="form-label">Task Title</label>
-                                <input type="text" class="form-control" id="taskTitle" name="title"
-                                    placeholder="Enter task title" value="{{ old('title', $task->title) }}" required />
-                                @error('title')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="taskTitle" class="form-label">Task Title</label>
+                                    <input type="text" class="form-control" id="taskTitle" name="title"
+                                        placeholder="Enter task title" value="{{ old('title', $task->title) }}" required />
+                                    @error('title')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="project_id" class="form-label">Select Project <small class="text-muted">(only for tech team)</small></label>
+                                    <select class="form-select form-control select2" id="project_id" name="project_id">
+                                        <option value="" disabled selected>Select project</option>
+                                        @foreach ($projects as $project)
+                                            <option value="{{ $project->id }}" {{ old('project_id', $task->project_id) == $project->id ? 'selected' : '' }}>
+                                                {{ $project->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('project_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
 
                             <!-- Task Description -->
@@ -187,31 +204,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="row subtask-row">
-                                                    @php
-                                                        $isTeamTech = $task->team && (strtolower(trim($task->team->name)) === 'tech' ||
-                                                                      strtolower(trim($task->team->name)) === 'tech team' ||
-                                                                      strpos(strtolower(trim($task->team->name)), 'tech') !== false);
-                                                    @endphp
-
-                                                    @if($isTeamTech)
-                                                        <div class="col-md-6 subtask-project-row">
-                                                            <label for="subtask_project_{{ $index + 1 }}" class="form-label">Project <span class="text-danger">*</span></label>
-                                                            <select class="form-select form-control" id="subtask_project_{{ $index + 1 }}"
-                                                                    name="subtasks[{{ $index + 1 }}][project_id]" required>
-                                                                <option value="" disabled>Select project</option>
-                                                                @foreach($teamProjects as $project)
-                                                                    <option value="{{ $project->id }}"
-                                                                        {{ old('subtasks.'.($index + 1).'.project_id', $subtask->project_id) == $project->id ? 'selected' : '' }}>
-                                                                        {{ $project->name }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                    @else
-                                                        <input type="hidden" name="subtasks[{{ $index + 1 }}][project_id]" value="{{ $subtask->project_id }}">
-                                                        <div class="col-md-12">
-                                                    @endif
+                                                    <div class="col-md-12">
                                                         <label for="subtask_description_{{ $index + 1 }}" class="form-label">Description</label>
                                                         <textarea class="form-control" id="subtask_description_{{ $index + 1 }}"
                                                                   name="subtasks[{{ $index + 1 }}][description]" rows="2"
@@ -544,20 +537,7 @@
                     </div>
                 </div>
                 <div class="row subtask-row">
-                    ${isTeamTech ? `
-                                <div class="col-md-6 subtask-project-row">
-                                    <label for="subtask_project_${subtaskCounter}" class="form-label">Project <span class="text-danger">*</span></label>
-                                    <select class="form-select form-control select2" id="subtask_project_${subtaskCounter}"
-                                            name="subtasks[${subtaskCounter}][project_id]" required>
-                                        <option value="" disabled selected>Select project</option>
-                                        ${generateProjectOptions()}
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                            ` : `
-                                <input type="hidden" name="subtasks[${subtaskCounter}][project_id]" value="0">
-                                <div class="col-md-12">
-                            `}
+                    <div class="col-md-12">
                         <label for="subtask_description_${subtaskCounter}" class="form-label">Description</label>
                         <textarea class="form-control" id="subtask_description_${subtaskCounter}"
                                   name="subtasks[${subtaskCounter}][description]" rows="2"

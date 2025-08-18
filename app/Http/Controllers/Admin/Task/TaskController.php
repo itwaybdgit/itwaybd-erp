@@ -139,6 +139,7 @@ class TaskController extends Controller
             'subtasks.*.priority' => 'nullable|in:Low,Medium,High,Critical',
             'subtasks.*.status' => 'nullable|in:Pending,In Progress,Completed',
         ]);
+
         DB::beginTransaction();
 
         try {
@@ -165,7 +166,7 @@ class TaskController extends Controller
                     Subtask::create([
                         'task_id' => $task->id,
                         'title' => $subtaskData['title'],
-                        'project_id' => $subtaskData['project_id'],
+                        'project_id' => $request->project_id,
                         'description' => $subtaskData['description'] ?? '',
                         'user_id' => $subtaskData['user_id'],
                         'priority' => $subtaskData['priority'] ?? 'Medium',
@@ -273,7 +274,7 @@ class TaskController extends Controller
                         if ($subtask && $subtask->task_id == $task->id) {
                             $subtask->update([
                                 'title' => $subtaskData['title'],
-                                'project_id' => $subtaskData['project_id'] ?? 0,
+                                'project_id' => $request->project_id ?? 0,
                                 'description' => $subtaskData['description'] ?? '',
                                 'user_id' => $subtaskData['user_id'],
                                 'priority' => $subtaskData['priority'] ?? 'Medium',
@@ -285,7 +286,7 @@ class TaskController extends Controller
                         $newSubtask = Subtask::create([
                             'task_id' => $task->id,
                             'title' => $subtaskData['title'],
-                            'project_id' => $subtaskData['project_id'] ?? 0,
+                            'project_id' => $request->project_id ?? 0,
                             'description' => $subtaskData['description'] ?? '',
                             'user_id' => $subtaskData['user_id'],
                             'priority' => $subtaskData['priority'] ?? 'Medium',

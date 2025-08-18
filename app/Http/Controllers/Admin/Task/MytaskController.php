@@ -129,6 +129,41 @@ class MytaskController extends Controller
     }
 
 
+    public function storeSubtask(Request $request)
+    {
+        $request->validate([
+            'task_id' => 'required|integer|exists:tasks,id',
+            'subtasks' => 'required|array',
+            'subtasks.*.title' => 'required|string|max:255',
+            'subtasks.*.priority' => 'required|string',
+            'subtasks.*.status' => 'required|string',
+            'subtasks.*.description' => 'nullable|string',
+        ]);
+        $savedSubtasks = [];
+
+        $task = Task::findOrFail($request->task_id);
+        $employee_id = Employee::where('user_id', Auth::id())->value('id');
+
+        foreach ($request->subtasks as $subtaskData) {
+            $subtask = Subtask::create([
+                'task_id' => $request->task_id,
+                'title' => $subtaskData['title'],
+                'project_id' => $task->project_id,
+                'user_id' => $employee_id,
+                'description' => $subtaskData['description'],
+                'priority' => $subtaskData['priority'],
+                'status' => $subtaskData['status'],
+            ]);
+            $savedSubtasks[] = $subtask;
+        }
+
+        return response()->json([
+            'message' => 'Subtasks saved successfully',
+            'data' => $savedSubtasks
+        ], 201);
+    }
+
+
 
     private function calculateUserProgress($userSubtasks)
     {

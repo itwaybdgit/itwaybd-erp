@@ -138,6 +138,7 @@
         .stat-card h3 {
             font-size: 2rem;
             margin-bottom: 5px;
+            color: #fff;
         }
 
         .task-grid {
@@ -1059,7 +1060,6 @@
         }
 
         function createTaskCard(task) {
-            console.log(task);
             const completedSubtasks = task.subtasks.filter(st => st.status === 'completed').length;
             const totalSubtasks = task.subtasks.length;
             const progressPercentage = totalSubtasks > 0 ? Math.round((completedSubtasks / totalSubtasks) * 100) : 0;
@@ -1120,6 +1120,7 @@
                     <div class="subtasks-section">
                         <div class="subtasks-header">
                             <h4><i class="fas fa-list-ul"></i> My Subtasks</h4>
+                            <button type="button" id="add-subtask-btn" onclick="addNewSubtask(${task.id})">+ Add Subtask</button>
                         </div>
                         <div class="subtasks-list">
                             ${task.subtasks.slice(0, 3).map(subtask => {
@@ -1167,6 +1168,11 @@
                                 `;
                             }).join('')}
                             ${task.subtasks.length > 3 ? `<small style="color: #7f8c8d;">+${task.subtasks.length - 3} more subtasks</small>` : ''}
+
+                            <div id="subtasks-container-${task.id}"></div>
+
+                            <button type="button" onclick="saveSubtasks(${task.id})" class="btn btn-success mt-2">💾 Save Subtasks</button>
+
                         </div>
                     </div>
                     <div class="task-actions">
@@ -1177,6 +1183,135 @@
                 </div>
             `;
         }
+
+        let subtaskCounter = 0;
+
+        function addNewSubtask(taskId) {
+            if (!taskId) {
+                console.error("Task ID is required to add a subtask.");
+                return;
+            }
+            subtaskCounter++;
+            let subtaskHTML = `
+                <div class="subtask-item" id="subtask-${subtaskCounter}">
+                    <div class="row">
+                        <div class="col-6">
+                            <input type="text" class="form-control mb-1" name="subtasks[${subtaskCounter}][title]" placeholder="Subtask Title" required>
+                        </div>
+                        <div class="col-3">
+                            <select class="form-control mb-1" name="subtasks[${subtaskCounter}][priority]">
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                                <option value="Critical">Critical</option>
+                            </select>
+                        </div>
+
+                        <div class="col-3">
+
+                            <select class="form-control mb-1" name="subtasks[${subtaskCounter}][status]">
+                                <option value="Pending" selected>Pending</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <textarea class="form-control mb-1" name="subtasks[${subtaskCounter}][description]" placeholder="Subtask Description"></textarea>
+                        </div>
+                        
+                    </div>
+
+                    <button type="button" onclick="removeSubtask(${subtaskCounter}, '${taskId}')" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i> Remove Subtask
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('subtasks-container-' + taskId).insertAdjacentHTML('beforeend', subtaskHTML);
+        }
+
+        function saveSubtasks(taskId) {
+            if (!taskId) {
+                console.error("Task ID is required to save subtasks.");
+                return;
+            }
+            let subtasks = [];
+
+            document.querySelectorAll('#subtasks-container-' + taskId + ' .subtask-item').forEach((item, index) => {
+                let title = item.querySelector('input[name*="[title]"]').value;
+                let priority = item.querySelector('select[name*="[priority]"]').value;
+                let status = item.querySelector('select[name*="[status]"]').value;
+                let description = item.querySelector('textarea[name*="[description]"]').value;
+
+                subtasks.push({ title, priority, status, description });
+            });
+            fetch('/api/subtasks/store', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ task_id: taskId, subtasks: subtasks })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert("Subtasks saved successfully!");
+                const subtaskList = document.querySelector(`.task-card[data-task-id="${taskId}"] .subtasks-list`);
+                const container = document.getElementById(`subtasks-container-${taskId}`);
+
+
+                container.innerHTML = "";
+                data.data.forEach(subtask => {
+                    console.log("Adding subtask:", subtask);
+                    let subtaskHTML = `
+                        <div class="subtask-item" data-subtask-id="${subtask.id}" style="display: flex; flex-direction: column; width: 100%;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <div class="subtask-info" onclick="toggleSubtaskDescription(${subtask.id})" style="cursor: pointer; flex-grow: 1;">
+                                    <div class="subtask-title">
+                                        ${subtask.title}
+                                        <i class="fas fa-chevron-down subtask-toggle-icon" id="toggle-icon-${subtask.id}" style="font-size: 12px; margin-left: 8px; transition: transform 0.3s ease;"></i>
+                                    </div>
+                                    <div class="subtask-meta">
+                                        <span class="priority ${subtask.priority}">${subtask.priority}</span>
+                                        <span class="status ${subtask.status.replace(' ', '-')}">${subtask.status}</span>
+                                        <span>Time: ${formatTime(subtask.time_logged ?? 0)}</span>
+                                    </div>
+                                </div>
+
+                                <div class="subtask-actions">
+                                    <button class="btn btn-success btn-sm" onclick="startSubtaskTimer(${taskId}, ${subtask.id}, '${subtask.title}')">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="markSubtaskComplete(${subtask.id})">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="requestSubtaskSupport(${taskId}, ${subtask.id}, '${subtask.title}')">
+                                        <i class="fas fa-hands-helping"></i> Help
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="subtask-description-box" id="subtask-desc-${subtask.id}" style="display: none; margin-top: 8px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #007bff; border-radius: 4px; font-size: 14px; color: #6c757d; width: 100%;">
+                                ${subtask.description || 'No description available'}
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', subtaskHTML);
+                });
+            })
+            .catch(err => console.error("Error:", err));
+        }
+
+        function removeSubtask(id) {
+            document.getElementById(`subtask-${id}`).remove();
+        }
+
+
+
+
+
+
 
         function requestSubtaskSupport(taskId, subtaskId, subtaskTitle) {
             const task = taskData.find(t => t.id === taskId);

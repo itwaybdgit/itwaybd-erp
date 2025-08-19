@@ -351,3 +351,50 @@
         });
     });
 </script>
+<!--
+
+                            <div class="row invoice-info">
+                                <div class="col-sm-4 " style="">
+                                    {{-- @if (isset($companyInfo->invoice_logo))
+                                    {!! $companyInfo->invoice_logo ?? '' !!}
+                                @endif --}}
+
+
+                                    @if ($business->business_name == 'ISP BILLING PRO')
+                                        <img src="https://ispbillingpro.com/wp-content/uploads/2020/10/cropped-WhatsApp_Image_2023-04-04_at_3.04.37_PM-removebg-preview-300x112.png"
+                                            id="businessInvoiceLogo" width="200px" height="100px" alt="">
+                                    @else
+                                        <img src="{{ asset('storage/' . $business->invoice_logo) }}"
+                                            id="businessInvoiceLogo" width="200px" height="80px" alt="">
+                                    @endif
+                                </div>
+                                
+                                <div class="col-sm-4 invoice-col" style="text-align: center">
+                                    <b style="font-size : 20px"> {{ $invoice->customer->company_name ?? 'N/A' }} </b>
+                                    <br>
+                                    Invoice: {{ $invoice->invoice_no ?? 'N/A' }} <br>
+
+                                    Phone : {{ $invoice->customer->company_owner_phone ?? 'N/A' }} <br>
+                                    Address: House: {{ $invoice->customer->house ?? '' }}, Road:
+                                    {{ $invoice->customer->road ?? '' }},
+                                    {{ $invoice->customer->upazilla->upozilla_name ?? '' }},
+                                    {{ $invoice->customer->district->district_name ?? '' }},
+                                    {{ $invoice->customer->division->name ?? '' }} <br>
+                                    {{ $invoice->billing_month ?? 'N/A' }}
+
+                                </div>
+                               
+
+                                <div class="col-sm-4 invoice-col" style="text-align:right">
+                                    <b id="businessName">{{ $business->business_name ?? $companyInfo->company_name }}</b>
+                                    <address>
+                                        Phone : <strong
+                                            id="businessPhone">{{ $business->phone ?? $companyInfo->phone }}</strong><br>
+                                        Address : <strong
+                                            id="businessAddress"><em>{{ $business->address ?? $companyInfo->address }}</em></strong><br>
+                                        Email: <strong
+                                            id="businessEmail">{{ $business->email ?? $companyInfo->email }}</strong>
+                                    </address>
+                                </div>
+                               
+                            </div>

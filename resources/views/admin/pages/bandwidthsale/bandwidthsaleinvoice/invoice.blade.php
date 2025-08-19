@@ -16,6 +16,100 @@
 </style>
 
 
+<style>
+    .header-section {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        width: 100%;
+        position: relative;
+        background-color: #ffffff;
+    }
+
+    .header-logo {
+        flex: 0 0 220px;
+        /* padding: 34px 115px; */
+        margin-top: 80px;
+        margin-left: 90px;
+        z-index: 2;
+    }
+
+    .row.mt-3.mb-3 {
+        align-items: center;
+    }
+
+    .header-banner {
+        flex: 1;
+        /* position: relative; */
+        height: 180px;
+    }
+
+    .header-banner img.rotated-bg {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 85%;
+        transform: rotate(180deg) scaleX(1);
+        /* 🔄 Rotate & Flip horizontally */
+        object-fit: cover;
+        z-index: 1;
+    }
+
+    .invoice-details {
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .header-text {
+        position: absolute;
+        top: 40%;
+        right: 43px;
+        transform: translateY(-50%);
+        color: #fff;
+        font-weight: bold;
+        font-size: 2.0rem;
+        text-align: right;
+        z-index: 2;
+        white-space: nowrap;
+    }
+
+    img.rotated-bg {
+        width: 50%;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .header-section {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header-logo {
+            text-align: center;
+            width: 100%;
+        }
+
+        .header-banner {
+            width: 80%;
+            height: 120px;
+        }
+
+        .header-banner img.rotated-bg {
+            object-fit: cover;
+            height: 120px;
+        }
+
+        .header-text {
+            font-size: 1.1rem;
+            right: 15px;
+            text-align: center;
+            width: 100%;
+        }
+    }
+</style>
+
+
+
 @section('content')
     <div class="row">
         <div class="col-md-12">
@@ -137,55 +231,50 @@
 
                         <div class="invoice p-3 mb-3" id="DivIdToPrint{{ $lo }}">
                             <!-- title row -->
-                            <!-- info row -->
-                            <div class="row invoice-info">
-                                <div class="col-sm-4 " style="">
-                                    {{-- @if (isset($companyInfo->invoice_logo))
-                                    {!! $companyInfo->invoice_logo ?? '' !!}
-                                @endif --}}
 
-
-                                    @if ($business->business_name == 'ISP BILLING PRO')
-                                        <img src="https://ispbillingpro.com/wp-content/uploads/2020/10/cropped-WhatsApp_Image_2023-04-04_at_3.04.37_PM-removebg-preview-300x112.png"
-                                            id="businessInvoiceLogo" width="200px" height="100px" alt="">
-                                    @else
-                                        <img src="{{ asset('storage/' . $business->invoice_logo) }}"
-                                            id="businessInvoiceLogo" width="200px" height="80px" alt="">
-                                    @endif
+                            <div class="header-section">
+                                <!-- Logo -->
+                                <div class="header-logo">
+                                    <img src="{{ $business->business_name == 'ISP BILLING PRO'
+                                        ? 'https://ispbillingpro.com/wp-content/uploads/2020/10/cropped-WhatsApp_Image_2023-04-04_at_3.04.37_PM-removebg-preview-300x112.png'
+                                        : asset('storage/' . $business->invoice_logo) }}"
+                                        id="businessInvoiceLogo" width="220px" height="90px" alt="Company Logo">
                                 </div>
-                                <!-- /.col -->
-                                <!-- /.col -->
-                                <div class="col-sm-4 invoice-col" style="text-align: center">
-                                    <b style="font-size : 20px"> {{ $invoice->customer->company_name ?? 'N/A' }} </b>
-                                    <br>
-                                    Invoice: {{ $invoice->invoice_no ?? 'N/A' }} <br>
 
-                                    Phone : {{ $invoice->customer->company_owner_phone ?? 'N/A' }} <br>
-                                    Address: House: {{ $invoice->customer->house ?? '' }}, Road:
-                                    {{ $invoice->customer->road ?? '' }},
-                                    {{ $invoice->customer->upazilla->upozilla_name ?? '' }},
-                                    {{ $invoice->customer->district->district_name ?? '' }},
-                                    {{ $invoice->customer->division->name ?? '' }} <br>
-                                    {{ $invoice->billing_month ?? 'N/A' }}
-
+                                <!-- Banner -->
+                                <div class="header-banner">
+                                    <img src="{{ asset('admin_assets/shade1.png') }}" class="rotated-bg"
+                                        alt="Header Background">
+                                    <div class="header-text">
+                                        Leading Website & Software Development<br>
+                                        Company in Bangladesh
+                                    </div>
                                 </div>
-                                <!-- /.col -->
+                            </div>
 
-                                <div class="col-sm-4 invoice-col" style="text-align:right">
-                                    <b id="businessName">{{ $business->business_name ?? $companyInfo->company_name }}</b>
-                                    <address>
-                                        Phone : <strong
-                                            id="businessPhone">{{ $business->phone ?? $companyInfo->phone }}</strong><br>
-                                        Address : <strong
-                                            id="businessAddress"><em>{{ $business->address ?? $companyInfo->address }}</em></strong><br>
-                                        Email: <strong
-                                            id="businessEmail">{{ $business->email ?? $companyInfo->email }}</strong>
-                                    </address>
-                                </div>
-                                <!-- /.col -->
-                            </div><br>
+
+
+                            <br>
                             <!-- /.row -->
-
+                            <div class="row mt-3 mb-3 align-content-center">
+                                <div class="col-md-8">
+                                    <div class="invoice-details">
+                                        <div class="mb-2">
+                                            <span class="fw-bold text-decoration-underline">Invoice No:</span>
+                                            {{ $invoice->invoice_no ?? 'N/A' }}
+                                        </div>
+                                        <div>
+                                            <span class="fw-bold text-decoration-underline">Invoice to:</span>
+                                            <span class="fw-bold">{{ $invoice->customer->company_name ?? 'N/A' }} </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-end invoice-details">
+                                        <div class="fw-bold">Month: {{ $invoice->billing_month ?? 'N/A' }}</div>
+                                    </div>
+                                </div>
+                            </div>
                             <!-- Table row -->
                             <div class="row">
                                 <div class="col-12 table-responsive">
@@ -286,16 +375,21 @@
 
                             <hr>
 
-                            {{-- <div class="row">
-                                <div class="col-2">
-                                    <h3>Our Product : </h3>
-                                </div>
-                                <div class="col-10"></div>
-                            </div> --}}
-                            <div class="col-md-12 bg-success text-white" style="text-align: center">
+                            <div class="col-12">
+                                <h3>Our Products : </h3>
+                            </div>
+
+                            <div class="row">
+
+
+                                <img src="{{ asset('admin_assets/shade1.png') }}" class="rotated-bg"
+                                    alt="Header Background">
+
+                            </div>
+                            {{-- <div class="col-md-12 bg-success text-white" style="text-align: center">
                                 Thank you for choosing {{ $companyInfo->company_name }} Company products.
                                 We believe you will be satisfied by our services.
-                            </div>
+                            </div> --}}
                             <!-- /.col -->
                             <!-- /.col -->
                         </div>

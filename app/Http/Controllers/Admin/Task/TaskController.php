@@ -51,30 +51,7 @@ class TaskController extends Controller
     }
 
 
-<<<<<<< HEAD
-    public function getProjectUsers($projectId)
-    {
-        try {
-            $projectMembers = ProjectMember::where('project_id', $projectId)->get();
 
-            $memberIds = $projectMembers->pluck('member_id');
-
-            $users = Employee::whereIn('id', $memberIds)
-                ->select('id', 'name', 'email')
-                ->get();
-
-            return response()->json([
-                'success' => true,
-                'users' => $users,
-                'message' => 'Users fetched successfully'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error fetching users: ' . $e->getMessage()
-            ], 500);
-        }
-=======
     // public function index()
     // {
     //     $tasks = Task::get();
@@ -107,7 +84,6 @@ class TaskController extends Controller
             'success' => false,
             'message' => 'Error fetching users: ' . $e->getMessage()
         ], 500);
->>>>>>> new-samad
     }
 }
 

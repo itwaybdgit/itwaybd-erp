@@ -54,7 +54,6 @@ class EmployeeRepositories
         );
 
 
-
         $totalData = $this->model::count();
 
         $limit = $request->input('length');

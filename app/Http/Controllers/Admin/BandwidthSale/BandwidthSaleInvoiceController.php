@@ -254,7 +254,6 @@ class BandwidthSaleInvoiceController extends Controller
             DB::rollBack();
             return back()->with('failed', 'Something was wrong' . 'Message' . $e->getMessage() . 'File' . $e->getFile());
         }
-
     }
 
     /**
@@ -278,7 +277,7 @@ class BandwidthSaleInvoiceController extends Controller
         return view($this->viewName . '.invoice', get_defined_vars());
     }
 
-    public function mail_invoice(Request $request,$business, BandwidthSaleInvoice $saleinvoiceid)
+    public function mail_invoice(Request $request, $business, BandwidthSaleInvoice $saleinvoiceid)
     {
         $business = Business::find($business);
 
@@ -306,8 +305,8 @@ class BandwidthSaleInvoiceController extends Controller
         ];
 
         $pdf = PDF::loadView('admin.pages.bandwidthsale.bandwidthsaleinvoice.mailinvoice2',  get_defined_vars())->save($filename);
-        $cc = implode(',',$request->cc_email ?? []);
-        Mail::to($request->email)->cc($cc)->send(new SaleInvoice($business, $request,$filename));
+        $cc = implode(',', $request->cc_email ?? []);
+        Mail::to($request->email)->cc($cc)->send(new SaleInvoice($business, $request, $filename));
         return view($this->viewName . '.mail_invoice', get_defined_vars());
     }
 
@@ -339,88 +338,90 @@ class BandwidthSaleInvoiceController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    function check_validity(BandwidthCustomer $customer) {
+    function check_validity(BandwidthCustomer $customer)
+    {
         $page_heading = "Billing Approve";
         $back_url = route($this->routeName . '.index');
         $store_url = route($this->routeName . '.index');
         $billingRemarks = ApprovalRemarks::where('type', 'billing_approve')->where('customer_id', $customer->id)->where('created_by', Auth::user()->id)->get();
         $businesses = Business::all();
         $items = Item::all();
-        return view($this->viewName.'.check_validity',get_defined_vars());
+        return view($this->viewName . '.check_validity', get_defined_vars());
     }
 
-    public function update(Request $request, BandwidthSaleInvoice $banseidthsaleinvoice) {
+    public function update(Request $request, BandwidthSaleInvoice $banseidthsaleinvoice)
+    {
 
-        AccountTransaction::where('type',5)->where('table_id', $banseidthsaleinvoice->id)->delete();
+        AccountTransaction::where('type', 5)->where('table_id', $banseidthsaleinvoice->id)->delete();
 
         $banseidthsaleinvoice->detaile()->delete();
 
         // $banseidthsaleinvoice->delete();
 
         $customer = $banseidthsaleinvoice->customer;
-        BandwidthCustomerPackage::where("bandwidht_customer_id",$customer->id)->delete();
+        BandwidthCustomerPackage::where("bandwidht_customer_id", $customer->id)->delete();
 
-      for($j=0;$j < count($request->item_id); $j++){
-          $package['bandwidht_customer_id'] = $customer->id;
-          $package['item_id'] = $request->item_id[$j];
-          $package['qty'] = $request->qty[$j];
-          $package['rate'] = $request->rate[$j];
-          $package['vat'] = $request->vat[$j];
-          BandwidthCustomerPackage::create($package);
-      }
+        for ($j = 0; $j < count($request->item_id); $j++) {
+            $package['bandwidht_customer_id'] = $customer->id;
+            $package['item_id'] = $request->item_id[$j];
+            $package['qty'] = $request->qty[$j];
+            $package['rate'] = $request->rate[$j];
+            $package['vat'] = $request->vat[$j];
+            BandwidthCustomerPackage::create($package);
+        }
 
-    //   $purchaseLastData = BandwidthSaleInvoice::latest('id')->pluck('id')->first() ?? "0";
-    //   $invoice_no = 'BS' . str_pad($purchaseLastData + 1, 5, "0", STR_PAD_LEFT);
+        //   $purchaseLastData = BandwidthSaleInvoice::latest('id')->pluck('id')->first() ?? "0";
+        //   $invoice_no = 'BS' . str_pad($purchaseLastData + 1, 5, "0", STR_PAD_LEFT);
 
-    //   $valideted['customer_id'] = $customer->id;
-    //   $valideted['invoice_no'] = $invoice_no;
-    //   $valideted['billing_month'] = date('F Y');
-      $valideted['due'] = array_sum($request->total);
-      $valideted['total'] = array_sum($request->total);
-      $valideted['created_by'] = auth()->id();
-      $bandwidthsaleinvoice = $banseidthsaleinvoice->update($valideted);
+        //   $valideted['customer_id'] = $customer->id;
+        //   $valideted['invoice_no'] = $invoice_no;
+        //   $valideted['billing_month'] = date('F Y');
+        $valideted['due'] = array_sum($request->total);
+        $valideted['total'] = array_sum($request->total);
+        $valideted['created_by'] = auth()->id();
+        $bandwidthsaleinvoice = $banseidthsaleinvoice->update($valideted);
 
-    // dd($bandwidthsaleinvoice);
-      for ($i = 0; $i < count($request->item_id); $i++) {
-          $details[] = [
-              'bandwidth_sale_invoice_id' => $banseidthsaleinvoice->id,
-              'description' => $request->remarks,
-              'item_id' => $request->item_id[$i],
-              'qty' => $request->qty[$i],
-              'business_id' => $request->business_id[$i],
-              'rate' => $request->rate[$i],
-              'vat' => $request->vat[$i],
-              'from_date' => $request->from_date[$i],
-              'to_date' => $request->to_date[$i],
-              'total' => $request->total[$i],
-          ];
-      }
+        // dd($bandwidthsaleinvoice);
+        for ($i = 0; $i < count($request->item_id); $i++) {
+            $details[] = [
+                'bandwidth_sale_invoice_id' => $banseidthsaleinvoice->id,
+                'description' => $request->remarks,
+                'item_id' => $request->item_id[$i],
+                'qty' => $request->qty[$i],
+                'business_id' => $request->business_id[$i],
+                'rate' => $request->rate[$i],
+                'vat' => $request->vat[$i],
+                'from_date' => $request->from_date[$i],
+                'to_date' => $request->to_date[$i],
+                'total' => $request->total[$i],
+            ];
+        }
 
-      BandwidthSaleInvoiceDetails::insert($details);
+        BandwidthSaleInvoiceDetails::insert($details);
 
-      $invoice = AccountTransaction::accountInvoice();
-      $transactionPay['invoice'] = $invoice;
-      $transactionPay['table_id'] = $banseidthsaleinvoice->id;
-      $transactionPay['account_id'] = $request->account_id ?? 15;
-      $transactionPay['type'] = 5;
-      $transactionPay['company_id'] = auth()->user()->company_id;
-      $transactionPay['credit'] = array_sum($request->total);
-      $transactionPay['remark'] = $request->remark;
-      $transactionPay['customer_id'] = $customer->id;
-      $transactionPay['created_by'] = Auth::id();
-      AccountTransaction::create($transactionPay);
+        $invoice = AccountTransaction::accountInvoice();
+        $transactionPay['invoice'] = $invoice;
+        $transactionPay['table_id'] = $banseidthsaleinvoice->id;
+        $transactionPay['account_id'] = $request->account_id ?? 15;
+        $transactionPay['type'] = 5;
+        $transactionPay['company_id'] = auth()->user()->company_id;
+        $transactionPay['credit'] = array_sum($request->total);
+        $transactionPay['remark'] = $request->remark;
+        $transactionPay['customer_id'] = $customer->id;
+        $transactionPay['created_by'] = Auth::id();
+        AccountTransaction::create($transactionPay);
 
-      $transactionPa['invoice'] = $invoice;
-      $transactionPa['table_id'] = $banseidthsaleinvoice->id;
-      $transactionPa['account_id'] = 5;
-      $transactionPa['type'] = 5;
-      $transactionPa['company_id'] = auth()->user()->company_id;
-      $transactionPa['debit'] =  array_sum($request->total);
-      $transactionPa['remark'] = $request->remark;
-      $transactionPa['customer_id'] = $customer->id;
-      $transactionPa['created_by'] = Auth::id();
-      AccountTransaction::create($transactionPa);
-      return redirect()->route('bandwidthsaleinvoice.index')->with('success', 'Bill Generate successfully!');
+        $transactionPa['invoice'] = $invoice;
+        $transactionPa['table_id'] = $banseidthsaleinvoice->id;
+        $transactionPa['account_id'] = 5;
+        $transactionPa['type'] = 5;
+        $transactionPa['company_id'] = auth()->user()->company_id;
+        $transactionPa['debit'] =  array_sum($request->total);
+        $transactionPa['remark'] = $request->remark;
+        $transactionPa['customer_id'] = $customer->id;
+        $transactionPa['created_by'] = Auth::id();
+        AccountTransaction::create($transactionPa);
+        return redirect()->route('bandwidthsaleinvoice.index')->with('success', 'Bill Generate successfully!');
     }
 
 
@@ -438,7 +439,7 @@ class BandwidthSaleInvoiceController extends Controller
 
     public function destroy(BandwidthSaleInvoice $banseidthsaleinvoice)
     {
-        AccountTransaction::where('type',5)->where('table_id', $banseidthsaleinvoice->id)->delete();
+        AccountTransaction::where('type', 5)->where('table_id', $banseidthsaleinvoice->id)->delete();
         $banseidthsaleinvoice->detaile()->delete();
         $banseidthsaleinvoice->delete();
 
@@ -462,7 +463,7 @@ class BandwidthSaleInvoiceController extends Controller
         $back_url = route($this->routeName . '.index');
         $customers = BandwidthCustomer::get();
         $paymentMethods = Account::whereIn('id', [2, 3, 4])->get();
-        $accounts = Account::getaccount()->where('parent_id', 9)->whereNotIn('id', [10,14])->get();
+        $accounts = Account::getaccount()->where('parent_id', 9)->whereNotIn('id', [10, 14])->get();
         return view($this->viewName . '.pay', get_defined_vars());
     }
 
@@ -488,43 +489,43 @@ class BandwidthSaleInvoiceController extends Controller
             $pay = TransactionHistory::create($valideted);
 
             $invoice = AccountTransaction::accountInvoice();
-           if($request->amount){
-               $transactionAval['invoice'] = $invoice;
-               $transactionAval['table_id'] = $pay->id;
-               $transactionAval['account_id'] = $request->payment_method;
-               $transactionAval['type'] = 5;
-               $transactionAval['company_id'] = auth()->user()->company_id;
-               $transactionAval['debit'] = $request->amount;
-               $transactionAval['remark'] = $request->description . ' Paid By ' . $request->paid_by;
-               $transactionAval['customer_id'] = $request->customer_id;
-               $transactionAval['created_by'] = Auth::id();
-               AccountTransaction::create($transactionAval);
-           }
+            if ($request->amount) {
+                $transactionAval['invoice'] = $invoice;
+                $transactionAval['table_id'] = $pay->id;
+                $transactionAval['account_id'] = $request->payment_method;
+                $transactionAval['type'] = 5;
+                $transactionAval['company_id'] = auth()->user()->company_id;
+                $transactionAval['debit'] = $request->amount;
+                $transactionAval['remark'] = $request->description . ' Paid By ' . $request->paid_by;
+                $transactionAval['customer_id'] = $request->customer_id;
+                $transactionAval['created_by'] = Auth::id();
+                AccountTransaction::create($transactionAval);
+            }
 
-           if($request->discount){
-               $transactionAval['invoice'] = $invoice;
-               $transactionAval['table_id'] = $pay->id;
-               $transactionAval['account_id'] = 14;
-               $transactionAval['type'] = 5;
-               $transactionAval['company_id'] = auth()->user()->company_id;
-               $transactionAval['debit'] = $request->discount;
-               $transactionAval['remark'] = $request->description . ' Paid By ' . $request->paid_by;
-               $transactionAval['customer_id'] = $request->customer_id;
-               $transactionAval['created_by'] = Auth::id();
-               AccountTransaction::create($transactionAval);
-           }
+            if ($request->discount) {
+                $transactionAval['invoice'] = $invoice;
+                $transactionAval['table_id'] = $pay->id;
+                $transactionAval['account_id'] = 14;
+                $transactionAval['type'] = 5;
+                $transactionAval['company_id'] = auth()->user()->company_id;
+                $transactionAval['debit'] = $request->discount;
+                $transactionAval['remark'] = $request->description . ' Paid By ' . $request->paid_by;
+                $transactionAval['customer_id'] = $request->customer_id;
+                $transactionAval['created_by'] = Auth::id();
+                AccountTransaction::create($transactionAval);
+            }
 
-           if($request->amount){
-               $transactionsf['invoice'] = $invoice;
-               $transactionsf['table_id'] = $pay->id;
-               $transactionsf['account_id'] = 5; //account receivable id;
-               $transactionsf['type'] = 5;
-               $transactionsf['company_id'] = auth()->user()->company_id;
-               $transactionsf['credit'] = $request->amount;
-               $transactionsf['remark'] = $request->description . ' Paid By ' . $request->paid_by;
-               $transactionsf['customer_id'] = $request->customer_id;
-               $transactionsf['created_by'] = Auth::id();
-               AccountTransaction::create($transactionsf);
+            if ($request->amount) {
+                $transactionsf['invoice'] = $invoice;
+                $transactionsf['table_id'] = $pay->id;
+                $transactionsf['account_id'] = 5; //account receivable id;
+                $transactionsf['type'] = 5;
+                $transactionsf['company_id'] = auth()->user()->company_id;
+                $transactionsf['credit'] = $request->amount;
+                $transactionsf['remark'] = $request->description . ' Paid By ' . $request->paid_by;
+                $transactionsf['customer_id'] = $request->customer_id;
+                $transactionsf['created_by'] = Auth::id();
+                AccountTransaction::create($transactionsf);
             }
 
 

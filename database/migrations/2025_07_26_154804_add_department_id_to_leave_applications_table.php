@@ -15,7 +15,9 @@ class AddDepartmentIdToLeaveApplicationsTable extends Migration
     {
         Schema::table('leave_applications', function (Blueprint $table) {
             //
+            if (!Schema::hasColumn('leave_applications', 'department_id')) {
             $table->unsignedBigInteger('department_id')->nullable()->after('employee_id');
+        }
         });
     }
 

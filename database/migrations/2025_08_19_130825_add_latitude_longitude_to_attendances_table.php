@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddFileColumnToLeaveApplicationsTable extends Migration
+class AddLatitudeLongitudeToAttendancesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class AddFileColumnToLeaveApplicationsTable extends Migration
      */
     public function up()
     {
-        Schema::table('leave_applications', function (Blueprint $table) {
+        Schema::table('attendances', function (Blueprint $table) {
             //
-            $table->string('file')->nullable();
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
         });
     }
 
@@ -26,11 +27,9 @@ class AddFileColumnToLeaveApplicationsTable extends Migration
      */
     public function down()
     {
-        Schema::table('leave_applications', function (Blueprint $table) {
+        Schema::table('attendances', function (Blueprint $table) {
             //
-            if (!Schema::hasColumn('leave_applications', 'file')) {
-                $table->string('file', 191)->nullable();
-            }
+             $table->dropColumn(['latitude', 'longitude']);
         });
     }
 }

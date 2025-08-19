@@ -79,7 +79,12 @@ class EmployeeController extends Controller
      */
     public function create()
     {
+
         $title = 'Add New Employee';
+<<<<<<< HEAD
+=======
+
+>>>>>>> new-samad
         $designations = Designation::get();
         $teams = Team::get();
         $userrolls = RollPermission::get();
@@ -131,7 +136,11 @@ class EmployeeController extends Controller
         }
         $title = 'Add New Employee';
         // $userRoll = $this->userRoleService->getAllRole();
+<<<<<<< HEAD
         $teams = Team::get();
+=======
+
+>>>>>>> new-samad
         $userrolls = RollPermission::get();
         $departments = Department::get();
         $zones = Zone::get();

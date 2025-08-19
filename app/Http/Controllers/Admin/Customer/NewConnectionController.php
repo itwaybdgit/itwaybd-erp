@@ -58,7 +58,7 @@ class NewConnectionController extends Controller
             ],
             [
                 'label' => 'Address',
-                'data' => 'presentaddress',
+                'data' => 'Activeaddress',
                 'searchable' => false,
             ],
             [
@@ -245,7 +245,7 @@ class NewConnectionController extends Controller
             'upazila' => ['nullable'],
             'roadnumber' => ['nullable'],
             'housenumber' => ['nullable'],
-            'presentaddress' => ['nullable'],
+            'Activeaddress' => ['nullable'],
             'permanentaddress' => ['nullable'],
             'zone' => ['required'],
             'subzone' => ['nullable'],
@@ -364,7 +364,7 @@ class NewConnectionController extends Controller
             'upazila' => ['nullable'],
             'roadnumber' => ['nullable'],
             'housenumber' => ['nullable'],
-            'presentaddress' => ['nullable'],
+            'Activeaddress' => ['nullable'],
             'permanentaddress' => ['nullable'],
             'zone' => ['required'],
             'subzone' => ['nullable'],
@@ -468,7 +468,7 @@ class NewConnectionController extends Controller
             $customer['company_id'] = auth()->user()->company_id;
             // $customer['name'] = $newconnection->roadnumber;
             // $customer['name'] = $newconnection->housenumber;
-            // $customer['name'] = $newconnection->presentaddress;
+            // $customer['name'] = $newconnection->Activeaddress;
             // $customer['name'] = $newconnection->permanentaddress;
             $customer['zone_id'] = $newconnection->zone;
             $customer['subzone_id'] = $newconnection->subzone;

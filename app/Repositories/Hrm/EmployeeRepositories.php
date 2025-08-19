@@ -289,7 +289,8 @@ class EmployeeRepositories
         $employee->team = $request->team;
         // $employee->position_id = $request->position_id;
         $employee->experience = $request->experience;
-        // $employee->Active_address = $request->Active_address;
+
+        $employee->Active_address = $request->Active_address;
         $employee->permanent_address = $request->permanent_address;
         $employee->achieved_degree = $request->achieved_degree;
         $employee->institution = $request->institution;

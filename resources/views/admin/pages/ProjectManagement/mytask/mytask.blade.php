@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Task Management System</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+@extends('admin.master')
+
+@section('content')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -16,7 +12,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f8f8f8;
             min-height: 100vh;
         }
 
@@ -142,6 +138,7 @@
         .stat-card h3 {
             font-size: 2rem;
             margin-bottom: 5px;
+            color: #fff;
         }
 
         .task-grid {
@@ -428,7 +425,7 @@
             width: 90%;
             max-width: 600px;
             max-height: 80vh;
-            overflow-y: auto;
+            overflow-y: auto!important;
         }
 
         .modal-header {
@@ -591,9 +588,6 @@
             font-size: 0.7rem;
         }
     </style>
-</head>
-
-<body>
     <div class="container">
         <div class="filters">
             <button class="filter-btn active" data-filter="all">All Tasks</button>
@@ -918,7 +912,9 @@
         function startSubtaskTimer(taskId, subtaskId, subtaskTitle) {
             if (activeSubtaskTimers[subtaskId]) return;
 
-            $.post(`/api/subtasks/${subtaskId}/start-timer`)
+            $.post(`/api/subtasks/${subtaskId}/start-timer`, {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            })
                 .done(function(response) {
                     const startTime = new Date(response.started_at).getTime();
 
@@ -952,7 +948,9 @@
             const timer = activeSubtaskTimers[subtaskId];
             if (!timer) return;
 
-            $.post(`/api/subtasks/${subtaskId}/pause-timer`)
+            $.post(`/api/subtasks/${subtaskId}/pause-timer`, {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            })
                 .done(function(response) {
                     // Clear local timer
                     clearInterval(timer.interval);
@@ -998,7 +996,6 @@
                 .done(function(response) {
                     taskData = response.tasks;
                     renderTasks();
-                    console.log('Tasks loaded:', taskData);
                 })
                 .fail(function(xhr) {
                     console.error('Failed to load tasks:', xhr.responseText);
@@ -1060,9 +1057,10 @@
                 return;
             }
 
-            filteredTasks.forEach(task => {
+            filteredTasks.forEach((task, index) => {
                 taskGrid.append(createTaskCard(task));
             });
+
         }
 
         function createTaskCard(task) {
@@ -1075,114 +1073,265 @@
             const isOverdueNow = dueDate < now;
 
             return `
-<div class="task-card" data-task-id="${task.id}">
-    <div class="task-header">
-        <div>
-            <div class="task-title">${task.title}</div>
-            <div class="task-meta">
-                <span><i class="fas fa-calendar"></i> Due: ${formatDate(task.end_date_time)}</span>
-                ${task.is_overdue ? '<span style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> Overdue</span>' : ''}
-            </div>
-        </div>
-        <div>
-            <span class="priority ${task.priority.toLowerCase()}">${task.priority}</span>
-            <span class="status ${task.status.toLowerCase().replace(' ', '-')}">${task.status}</span>
-        </div>
-    </div>
+                <div class="task-card" data-task-id="${task.id}">
+                    <div class="task-header">
+                        <div>
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-meta">
+                                <span><i class="fas fa-calendar"></i> Due: ${formatDate(task.end_date_time)}</span>
+                                ${task.is_overdue ? '<span style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> Overdue</span>' : ''}
+                            </div>
+                        </div>
+                        <div>
+                            <span class="priority ${task.priority.toLowerCase()}">${task.priority}</span>
+                            <span class="status ${task.status.toLowerCase().replace(' ', '-')}">${task.status}</span>
+                        </div>
+                    </div>
 
-    ${isOverdueNow ? `
-                                            <div class="alert-overdue" style="margin-top: 10px; padding: 10px; background-color: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; border-radius: 4px;">
-                                                <i class="fas fa-exclamation-circle"></i> This task is overdue!
+                    ${isOverdueNow ? `
+                    <div class="alert-overdue" style="margin-top: 10px; padding: 10px; background-color: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; border-radius: 4px;">
+                        <i class="fas fa-exclamation-circle"></i> This task is overdue!
+                    </div>
+                ` : ''}
+
+                    <div class="task-description-content" id="desc-${task.id}">
+                        ${truncateDescription(task.description, 100)}
+                    </div>
+                    <a href="javascript:void(0)"
+                    class="read-more-toggle"
+                    data-task-id="${task.id}"
+                    data-full-description='${encodeURIComponent(task.description)}'
+                    onclick="toggleDescription(this)">Read more</a>
+
+                    <div class="progress-section">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${task.progress}%"></div>
+                        </div>
+                        <small style="color: #7f8c8d;">${task.progress}% Complete (${completedSubtasks}/${totalSubtasks} subtasks)</small>
+                    </div>
+
+                    <div class="time-tracking">
+                        <div class="timer-display">
+                            <span>Total Time: ${formatTime(task.time_logged)}</span>
+                        </div>
+                        <div class="timer-controls">
+                            <button class="btn btn-primary" onclick="openTaskDetails(${task.id})">
+                                <i class="fas fa-eye"></i> Details
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="subtasks-section">
+                        <div class="subtasks-header">
+                            <h4><i class="fas fa-list-ul"></i> My Subtasks</h4>
+                            <button type="button" id="add-subtask-btn" onclick="addNewSubtask(${task.id})" class="btn btn-sm btn-primary">+ Add Subtask</button>
+                        </div>
+                        <div class="subtasks-list">
+                            ${task.subtasks.slice(0, 3).map(subtask => {
+                                const isActiveTimer = activeSubtaskTimers[subtask.id];
+                                return `
+                                    <div class="subtask-item ${isActiveTimer ? 'active-timer' : ''}" data-subtask-id="${subtask.id}" style="display: flex; flex-direction: column; width: 100%;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                            <div class="subtask-info" onclick="toggleSubtaskDescription(${subtask.id})" style="cursor: pointer; flex-grow: 1;">
+                                                <div class="subtask-title">
+                                                    ${subtask.title}
+                                                    <i class="fas fa-chevron-down subtask-toggle-icon" id="toggle-icon-${subtask.id}" style="font-size: 12px; margin-left: 8px; transition: transform 0.3s ease;"></i>
+                                                </div>
+                                                <div class="subtask-meta">
+                                                    <span class="priority ${subtask.priority}">${subtask.priority}</span>
+                                                    <span class="status ${subtask.status.replace(' ', '-')}">${subtask.status.replace('-', ' ')}</span>
+                                                    <span>Time: ${isActiveTimer ? `<span id="subtask-timer-${subtask.id}" style="color: #e74c3c; font-weight: bold;">00:00:00</span>` : formatTime(subtask.time_logged)}</span>
+                                                </div>
                                             </div>
-                                        ` : ''}
 
-    <div class="task-description-content" id="desc-${task.id}">
-        ${truncateDescription(task.description, 100)}
-    </div>
-    <a href="javascript:void(0)"
-       class="read-more-toggle"
-       data-task-id="${task.id}"
-       data-full-description='${encodeURIComponent(task.description)}'
-       onclick="toggleDescription(this)">Read more</a>
+                                            <div class="subtask-actions">
+                                                ${isActiveTimer ? `
+                                                <button class="btn btn-warning btn-sm" onclick="pauseSubtaskTimer(${task.id}, ${subtask.id})">
+                                                    <i class="fas fa-pause"></i>
+                                                </button>` : `
+                                                <button class="btn btn-success btn-sm" onclick="startSubtaskTimer(${task.id}, ${subtask.id}, '${subtask.title}')">
+                                                    <i class="fas fa-play"></i>
+                                                </button>`
+                                                }
 
-    <div class="progress-section">
-        <div class="progress-bar">
-            <div class="progress-fill" style="width: ${task.progress}%"></div>
-        </div>
-        <small style="color: #7f8c8d;">${task.progress}% Complete (${completedSubtasks}/${totalSubtasks} subtasks)</small>
-    </div>
+                                                ${subtask.status !== 'completed' ? `
+                                                <button class="btn btn-primary btn-sm" onclick="markSubtaskComplete(${subtask.id})">
+                                                    <i class="fas fa-check"></i>
+                                                </button>` : ''
+                                                }
+                                                <button class="btn btn-info btn-sm" onclick="requestSubtaskSupport(${task.id}, ${subtask.id}, '${subtask.title}')">
+                                                    <i class="fas fa-hands-helping"></i> Help
+                                                </button>
+                                            </div>
+                                        </div>
 
-    <div class="time-tracking">
-        <div class="timer-display">
-            <span>Total Time: ${formatTime(task.time_logged)}</span>
-        </div>
-        <div class="timer-controls">
-            <button class="btn btn-primary" onclick="openTaskDetails(${task.id})">
-                <i class="fas fa-eye"></i> Details
-            </button>
-        </div>
-    </div>
+                                        <div class="subtask-description-box" id="subtask-desc-${subtask.id}" style="display: none; margin-top: 8px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #007bff; border-radius: 4px; font-size: 14px; color: #6c757d; width: 100%;">
+                                            ${subtask.description || 'No description available'}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                            ${task.subtasks.length > 3 ? `<small style="color: #7f8c8d;">+${task.subtasks.length - 3} more subtasks</small>` : ''}
 
-    <div class="subtasks-section">
-        <div class="subtasks-header">
-            <h4><i class="fas fa-list-ul"></i> My Subtasks</h4>
-        </div>
-        <div class="subtasks-list">
-            ${task.subtasks.slice(0, 3).map(subtask => {
-                const isActiveTimer = activeSubtaskTimers[subtask.id];
-                return `
-                                                        <div class="subtask-item ${isActiveTimer ? 'active-timer' : ''}" data-subtask-id="${subtask.id}" style="display: flex; flex-direction: column; width: 100%;">
-                                                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                                                                <div class="subtask-info" onclick="toggleSubtaskDescription(${subtask.id})" style="cursor: pointer; flex-grow: 1;">
-                                                                    <div class="subtask-title">
-                                                                        ${subtask.title}
-                                                                        <i class="fas fa-chevron-down subtask-toggle-icon" id="toggle-icon-${subtask.id}" style="font-size: 12px; margin-left: 8px; transition: transform 0.3s ease;"></i>
-                                                                    </div>
-                                                                    <div class="subtask-meta">
-                                                                        <span class="priority ${subtask.priority}">${subtask.priority}</span>
-                                                                        <span class="status ${subtask.status.replace(' ', '-')}">${subtask.status.replace('-', ' ')}</span>
-                                                                        <span>Time: ${isActiveTimer ? `<span id="subtask-timer-${subtask.id}" style="color: #e74c3c; font-weight: bold;">00:00:00</span>` : formatTime(subtask.time_logged)}</span>
-                                                                    </div>
-                                                                </div>
+                            <div class="subtasks-containerr" id="subtasks-container-${task.id}"></div>
 
-                                                                <div class="subtask-actions">
-                                                                    ${isActiveTimer ? `
-                                    <button class="btn btn-warning btn-sm" onclick="pauseSubtaskTimer(${task.id}, ${subtask.id})">
-                                        <i class="fas fa-pause"></i>
-                                    </button>` : `
-                                    <button class="btn btn-success btn-sm" onclick="startSubtaskTimer(${task.id}, ${subtask.id}, '${subtask.title}')">
-                                        <i class="fas fa-play"></i>
-                                    </button>`
-                                                                    }
+                            <button type="button" onclick="saveSubtasks(${task.id})" class="btn btn-success mt-2 d-none saveSubtasks" id="">💾 Save Subtasks</button>
 
-                                                  ${subtask.status !== 'completed' ? `
-    <button class="btn btn-primary btn-sm" onclick="markSubtaskComplete(${subtask.id})">
-        <i class="fas fa-check"></i>
-    </button>` : ''
-                }
-                <button class="btn btn-info btn-sm" onclick="requestSubtaskSupport(${task.id}, ${subtask.id}, '${subtask.title}')">
-                    <i class="fas fa-hands-helping"></i> Help
-                </button>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="subtask-description-box" id="subtask-desc-${subtask.id}" style="display: none; margin-top: 8px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #007bff; border-radius: 4px; font-size: 14px; color: #6c757d; width: 100%;">
-                                                                ${subtask.description || 'No description available'}
-                                                            </div>
-                                                        </div>
-                                                    `;
-            }).join('')}
-            ${task.subtasks.length > 3 ? `<small style="color: #7f8c8d;">+${task.subtasks.length - 3} more subtasks</small>` : ''}
-        </div>
-    </div>
-    <div class="task-actions">
-        <button class="btn btn-primary" onclick="openTaskDetails(${task.id})">
-            <i class="fas fa-eye"></i> View Details
-        </button>
-    </div>
-</div>
-`;
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn btn-primary" onclick="openTaskDetails(${task.id})">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                    </div>
+                </div>
+            `;
         }
+
+        let subtaskCounter = 0;
+
+        function addNewSubtask(taskId) {
+            if (!taskId) {
+                console.error("Task ID is required to add a subtask.");
+                return;
+            }
+            subtaskCounter++;
+            if(subtaskCounter != 0) {
+                const thisContainer = document.querySelector(`#subtasks-container-${taskId}`);
+                const saveButton = thisContainer.nextElementSibling;
+                if (saveButton && saveButton.classList.contains("d-none")) {
+                    saveButton.classList.remove("d-none");
+                }
+            }
+            let subtaskHTML = `
+                <div class="subtask-item" id="subtask-${subtaskCounter}">
+                    <div class="row">
+                        <div class="col-6">
+                            <input type="text" class="form-control mb-1" name="subtasks[${subtaskCounter}][title]" placeholder="Subtask Title" required>
+                        </div>
+                        <div class="col-3">
+                            <select class="form-control mb-1" name="subtasks[${subtaskCounter}][priority]">
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                                <option value="Critical">Critical</option>
+                            </select>
+                        </div>
+
+                        <div class="col-3">
+
+                            <select class="form-control mb-1" name="subtasks[${subtaskCounter}][status]">
+                                <option value="Pending" selected>Pending</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <textarea class="form-control mb-1" name="subtasks[${subtaskCounter}][description]" placeholder="Subtask Description"></textarea>
+                        </div>
+                        
+                    </div>
+
+                    <button type="button" onclick="removeSubtask(${subtaskCounter}, '${taskId}')" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i> Remove Subtask
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('subtasks-container-' + taskId).insertAdjacentHTML('beforeend', subtaskHTML);
+        }
+
+        function saveSubtasks(taskId) {
+            if (!taskId) {
+                console.error("Task ID is required to save subtasks.");
+                return;
+            }
+            let subtasks = [];
+
+            document.querySelectorAll('#subtasks-container-' + taskId + ' .subtask-item').forEach((item, index) => {
+                let title = item.querySelector('input[name*="[title]"]').value;
+                let priority = item.querySelector('select[name*="[priority]"]').value;
+                let status = item.querySelector('select[name*="[status]"]').value;
+                let description = item.querySelector('textarea[name*="[description]"]').value;
+
+                subtasks.push({ title, priority, status, description });
+            });
+            fetch('/api/subtasks/store', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ task_id: taskId, subtasks: subtasks })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert("Subtasks saved successfully!");
+                const subtaskList = document.querySelector(`.task-card[data-task-id="${taskId}"] .subtasks-list`);
+                const container = document.getElementById(`subtasks-container-${taskId}`);
+
+
+                container.innerHTML = "";
+                data.data.forEach(subtask => {
+                    console.log("Adding subtask:", subtask);
+                    let subtaskHTML = `
+                        <div class="subtask-item" data-subtask-id="${subtask.id}" style="display: flex; flex-direction: column; width: 100%;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <div class="subtask-info" onclick="toggleSubtaskDescription(${subtask.id})" style="cursor: pointer; flex-grow: 1;">
+                                    <div class="subtask-title">
+                                        ${subtask.title}
+                                        <i class="fas fa-chevron-down subtask-toggle-icon" id="toggle-icon-${subtask.id}" style="font-size: 12px; margin-left: 8px; transition: transform 0.3s ease;"></i>
+                                    </div>
+                                    <div class="subtask-meta">
+                                        <span class="priority ${subtask.priority}">${subtask.priority}</span>
+                                        <span class="status ${subtask.status.replace(' ', '-')}">${subtask.status}</span>
+                                        <span>Time: ${formatTime(subtask.time_logged ?? 0)}</span>
+                                    </div>
+                                </div>
+
+                                <div class="subtask-actions">
+                                    <button class="btn btn-success btn-sm" onclick="startSubtaskTimer(${taskId}, ${subtask.id}, '${subtask.title}')">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="markSubtaskComplete(${subtask.id})">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="requestSubtaskSupport(${taskId}, ${subtask.id}, '${subtask.title}')">
+                                        <i class="fas fa-hands-helping"></i> Help
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="subtask-description-box" id="subtask-desc-${subtask.id}" style="display: none; margin-top: 8px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #007bff; border-radius: 4px; font-size: 14px; color: #6c757d; width: 100%;">
+                                ${subtask.description || 'No description available'}
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', subtaskHTML);
+                });
+            })
+            .catch(err => console.error("Error:", err));
+        }
+
+        function removeSubtask(id) {
+            const currentSubTask = document.getElementById(`subtask-${id}`);
+            const currentContainer = currentSubTask.closest('.subtasks-containerr');
+            const currentSaveBtn = currentContainer.nextElementSibling;
+
+            subtaskCounter--;
+            currentSubTask.remove();
+
+            if(subtaskCounter == 0 && currentSaveBtn && currentSaveBtn.classList.contains("saveSubtasks")) {
+                currentSaveBtn.classList.add("d-none");
+            }
+        }
+
+
+
+
+
+
 
         function requestSubtaskSupport(taskId, subtaskId, subtaskTitle) {
             const task = taskData.find(t => t.id === taskId);
@@ -1257,7 +1406,8 @@
 
         function markSubtaskComplete(subtaskId) {
             $.post(`/api/subtasks/${subtaskId}/status`, {
-                    status: 'Completed'
+                    status: 'Completed',
+                    _token: $('meta[name="csrf-token"]').attr('content')
                 })
                 .done(function(response) {
                     showNotification('Subtask marked as complete!', 'success');
@@ -1277,12 +1427,13 @@
 
         function handleSupportRequest() {
             const supportData = {
+                _token: $('meta[name="csrf-token"]').attr('content'),
                 task_id: currentTask.id,
                 subtask_id: currentSubtask?.id || null,
                 subtask_title: currentSubtask?.title || null,
                 member_id: $('#supportMember').val(),
                 support_type: $('#supportType').val(),
-                message: $('#supportMessage').val()
+                message: $('#supportMessage').val(),
             };
 
             $.post('/api/support-requests', supportData)
@@ -1457,6 +1608,4 @@
             }
         };
     </script>
-</body>
-
-</html>
+@endsection

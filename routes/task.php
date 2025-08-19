@@ -14,6 +14,7 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
     Route::post('/tasks/{taskId}/log-time', [MytaskController::class, 'logTime']);
 
     // Subtask management
+    Route::post('/subtasks/store', [MytaskController::class, 'storeSubtask']);
     Route::post('/subtasks/{subtaskId}/status', [MytaskController::class, 'updateSubtaskStatus']);
     Route::post('/subtasks/{subtaskId}/start-timer', [MytaskController::class, 'startTimer']);
     Route::post('/subtasks/{subtaskId}/log-time', [MytaskController::class, 'logTime']);

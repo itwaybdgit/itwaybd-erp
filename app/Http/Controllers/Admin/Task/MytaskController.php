@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin\Task;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\Subtask;
+use App\Models\SupportRequest;
 use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\TimerLog;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,6 +39,7 @@ class MytaskController extends Controller
             ])
             ->orderBy('created_at', 'desc')
             ->get();
+
         $tasks->transform(function ($task) use ($employee) {
             $userSubtasks = $task->subtasks->where('user_id', $employee->id);
 
@@ -78,7 +81,6 @@ class MytaskController extends Controller
                 'creator'
             ])
             ->get();
-
         $formattedTasks = $tasks->map(function ($task) use ($employee) {
             $userSubtasks = $task->subtasks->where('user_id', $employee->id);
 
@@ -86,8 +88,8 @@ class MytaskController extends Controller
                 'id' => $task->id,
                 'title' => $task->title,
                 'description' => $task->description,
-                'priority' => $task->priority,
-                'status' => $task->status,
+                'priority' => $task->priority ? $task->priority : 'normal',
+                'status' => $task->status? $task->status : 'pending',
                 'project_id' => $task->project_id,
                 'team_id' => $task->team_id,
                 'start_date_time' => optional($task->start_date_time)->format('Y-m-d\TH:i:s'),
@@ -126,6 +128,41 @@ class MytaskController extends Controller
         });
 
         return response()->json(['tasks' => $formattedTasks]);
+    }
+
+
+    public function storeSubtask(Request $request)
+    {
+        $request->validate([
+            'task_id' => 'required|integer|exists:tasks,id',
+            'subtasks' => 'required|array',
+            'subtasks.*.title' => 'required|string|max:255',
+            'subtasks.*.priority' => 'required|string',
+            'subtasks.*.status' => 'required|string',
+            'subtasks.*.description' => 'nullable|string',
+        ]);
+        $savedSubtasks = [];
+
+        $task = Task::findOrFail($request->task_id);
+        $employee_id = Employee::where('user_id', Auth::id())->value('id');
+
+        foreach ($request->subtasks as $subtaskData) {
+            $subtask = Subtask::create([
+                'task_id' => $request->task_id,
+                'title' => $subtaskData['title'],
+                'project_id' => $task->project_id,
+                'user_id' => $employee_id,
+                'description' => $subtaskData['description'],
+                'priority' => $subtaskData['priority'],
+                'status' => $subtaskData['status'],
+            ]);
+            $savedSubtasks[] = $subtask;
+        }
+
+        return response()->json([
+            'message' => 'Subtasks saved successfully',
+            'data' => $savedSubtasks
+        ], 201);
     }
 
 
@@ -365,7 +402,27 @@ class MytaskController extends Controller
 
     function createSupportRequest(Request $request)
     {
-        dd($request->all());
-        return response()->json(['message' => 'Support request created successfully']);
+        $validated = $request->validate([
+            'task_id'       => 'required|integer',
+            'subtask_id'    => 'required|integer',
+            'subtask_title' => 'required|string|max:255',
+            'member_id'     => 'required|integer',
+            'support_type'  => 'required|string|max:100',
+            'message'       => 'nullable|string',
+        ]);
+
+        $data = array_merge($validated, [
+            'requester_id' => auth()->id(),
+            'supporter_id' => User::where('id', $validated['member_id'])->value('id'),
+        ]);
+
+        unset($validated['member_id']);
+
+        $supportRequest = SupportRequest::create($data);
+
+        return response()->json([
+            'message' => 'Support request created successfully',
+            'data'    => $supportRequest,
+        ]);
     }
 }

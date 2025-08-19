@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin\Task;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\Subtask;
+use App\Models\SupportRequest;
 use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\TimerLog;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -400,7 +402,27 @@ class MytaskController extends Controller
 
     function createSupportRequest(Request $request)
     {
-        dd($request->all());
-        return response()->json(['message' => 'Support request created successfully']);
+        $validated = $request->validate([
+            'task_id'       => 'required|integer',
+            'subtask_id'    => 'required|integer',
+            'subtask_title' => 'required|string|max:255',
+            'member_id'     => 'required|integer',
+            'support_type'  => 'required|string|max:100',
+            'message'       => 'nullable|string',
+        ]);
+
+        $data = array_merge($validated, [
+            'requester_id' => auth()->id(),
+            'supporter_id' => User::where('id', $validated['member_id'])->value('id'),
+        ]);
+
+        unset($validated['member_id']);
+
+        $supportRequest = SupportRequest::create($data);
+
+        return response()->json([
+            'message' => 'Support request created successfully',
+            'data'    => $supportRequest,
+        ]);
     }
 }

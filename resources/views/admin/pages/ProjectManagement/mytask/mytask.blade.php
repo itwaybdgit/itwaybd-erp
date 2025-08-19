@@ -425,7 +425,7 @@
             width: 90%;
             max-width: 600px;
             max-height: 80vh;
-            overflow-y: auto;
+            overflow-y: auto!important;
         }
 
         .modal-header {
@@ -912,7 +912,9 @@
         function startSubtaskTimer(taskId, subtaskId, subtaskTitle) {
             if (activeSubtaskTimers[subtaskId]) return;
 
-            $.post(`/api/subtasks/${subtaskId}/start-timer`)
+            $.post(`/api/subtasks/${subtaskId}/start-timer`, {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            })
                 .done(function(response) {
                     const startTime = new Date(response.started_at).getTime();
 
@@ -946,7 +948,9 @@
             const timer = activeSubtaskTimers[subtaskId];
             if (!timer) return;
 
-            $.post(`/api/subtasks/${subtaskId}/pause-timer`)
+            $.post(`/api/subtasks/${subtaskId}/pause-timer`, {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            })
                 .done(function(response) {
                     // Clear local timer
                     clearInterval(timer.interval);
@@ -1120,7 +1124,7 @@
                     <div class="subtasks-section">
                         <div class="subtasks-header">
                             <h4><i class="fas fa-list-ul"></i> My Subtasks</h4>
-                            <button type="button" id="add-subtask-btn" onclick="addNewSubtask(${task.id})">+ Add Subtask</button>
+                            <button type="button" id="add-subtask-btn" onclick="addNewSubtask(${task.id})" class="btn btn-sm btn-primary">+ Add Subtask</button>
                         </div>
                         <div class="subtasks-list">
                             ${task.subtasks.slice(0, 3).map(subtask => {
@@ -1169,9 +1173,9 @@
                             }).join('')}
                             ${task.subtasks.length > 3 ? `<small style="color: #7f8c8d;">+${task.subtasks.length - 3} more subtasks</small>` : ''}
 
-                            <div id="subtasks-container-${task.id}"></div>
+                            <div class="subtasks-containerr" id="subtasks-container-${task.id}"></div>
 
-                            <button type="button" onclick="saveSubtasks(${task.id})" class="btn btn-success mt-2">💾 Save Subtasks</button>
+                            <button type="button" onclick="saveSubtasks(${task.id})" class="btn btn-success mt-2 d-none saveSubtasks" id="">💾 Save Subtasks</button>
 
                         </div>
                     </div>
@@ -1192,6 +1196,13 @@
                 return;
             }
             subtaskCounter++;
+            if(subtaskCounter != 0) {
+                const thisContainer = document.querySelector(`#subtasks-container-${taskId}`);
+                const saveButton = thisContainer.nextElementSibling;
+                if (saveButton && saveButton.classList.contains("d-none")) {
+                    saveButton.classList.remove("d-none");
+                }
+            }
             let subtaskHTML = `
                 <div class="subtask-item" id="subtask-${subtaskCounter}">
                     <div class="row">
@@ -1304,7 +1315,16 @@
         }
 
         function removeSubtask(id) {
-            document.getElementById(`subtask-${id}`).remove();
+            const currentSubTask = document.getElementById(`subtask-${id}`);
+            const currentContainer = currentSubTask.closest('.subtasks-containerr');
+            const currentSaveBtn = currentContainer.nextElementSibling;
+
+            subtaskCounter--;
+            currentSubTask.remove();
+
+            if(subtaskCounter == 0 && currentSaveBtn && currentSaveBtn.classList.contains("saveSubtasks")) {
+                currentSaveBtn.classList.add("d-none");
+            }
         }
 
 
@@ -1386,7 +1406,8 @@
 
         function markSubtaskComplete(subtaskId) {
             $.post(`/api/subtasks/${subtaskId}/status`, {
-                    status: 'Completed'
+                    status: 'Completed',
+                    _token: $('meta[name="csrf-token"]').attr('content')
                 })
                 .done(function(response) {
                     showNotification('Subtask marked as complete!', 'success');
@@ -1406,12 +1427,13 @@
 
         function handleSupportRequest() {
             const supportData = {
+                _token: $('meta[name="csrf-token"]').attr('content'),
                 task_id: currentTask.id,
                 subtask_id: currentSubtask?.id || null,
                 subtask_title: currentSubtask?.title || null,
                 member_id: $('#supportMember').val(),
                 support_type: $('#supportType').val(),
-                message: $('#supportMessage').val()
+                message: $('#supportMessage').val(),
             };
 
             $.post('/api/support-requests', supportData)

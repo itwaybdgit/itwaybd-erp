@@ -54,6 +54,7 @@ class AttendanceController extends Controller
 
     public function dataProcessingattendance(Request $request)
     {
+        
         session()->put('type', 2);
         $json_data = $this->systemService->getList($request);
         return json_encode($this->systemTransformer->dataTable($json_data));
@@ -70,7 +71,6 @@ class AttendanceController extends Controller
         $customer = Customer::get()->where('status', 'Active');
         $account = Account::get()->where('status', 'Active');
         $employees = Employee::where('status', 'Active')->orderBy('id_card', 'asc')->get();
-
         return view('backend.pages.hrm.attendance.create', get_defined_vars());
     }
     /**
@@ -79,6 +79,7 @@ class AttendanceController extends Controller
      */
     public function sign_in(Request $request)
     {
+      
         try {
             $this->validate($request, $this->systemService->signinValidation($request));
         } catch (ValidationException $e) {

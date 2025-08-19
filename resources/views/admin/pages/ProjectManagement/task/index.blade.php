@@ -98,7 +98,7 @@
                     <div class="card-body">
 
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
+                            <table class="table  table-hover">
                                 <thead class="table-dark">
                                     <tr>
                                         <th>SL</th>
@@ -122,7 +122,7 @@
                                                     <div class="fw-bold">{{ $task->title }}</div>
                                                     @if ($task->description)
                                                         <small
-                                                            class="text-muted">{{ Str::limit($task->description, 50) }}</small>
+                                                            class="text-muted">{{ Str::limit($task->description, 20) }}</small>
                                                     @endif
                                                     {{-- <span class="badge bg-info">
                                                         {{ $task->priority ?? '' }}
@@ -133,9 +133,15 @@
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
+<<<<<<< HEAD
                                                              @foreach($task->assignedUsers as $user)
             <span class="badge bg-primary me-1">{{ $user->name }}</span>
         @endforeach
+=======
+                                                        @foreach ($task->assignedUsers as $user)
+                                                            <span class="badge bg-primary me-1">{{ $user->name }}</span>
+                                                        @endforeach
+>>>>>>> new-samad
 
                                                     </div>
                                                 </td>
@@ -168,8 +174,8 @@
                                                             class="btn btn-sm btn-outline-primary" title="Edit">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <form action="{{ route('task.destroy', $task->id) }}" method="POST"
-                                                            class="d-inline"
+                                                        <form action="{{ route('task.destroy', $task->id) }}"
+                                                            method="POST" class="d-inline"
                                                             onsubmit="return confirm('Are you sure you want to delete this task?')">
                                                             @csrf
                                                             @method('DELETE')

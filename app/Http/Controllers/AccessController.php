@@ -54,7 +54,7 @@ class AccessController extends Controller
     }
 
     /**
-     * Check Access is Present or Not
+     * Check Access is Active or Not
      */
     public static function hasAccessInSession($key)
     {

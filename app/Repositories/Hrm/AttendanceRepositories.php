@@ -63,7 +63,7 @@ class AttendanceRepositories
         $query = $this->model::with('employe');
 
         // Auth-based filtering
-        if (auth()->user()->type !== "Admin") {
+        if (auth()->user()->is_admin !== 1) {
             $query->where('emplyee_id', auth()->user()->employee->id ?? 0);
         }
 
@@ -123,8 +123,8 @@ class AttendanceRepositories
             }
 
             $nestedData['id'] = $start + count($data) + 1; // account for spacer rows
-            $nestedData['id_cart'] = $value->employe->id_card ?? '';
-            $nestedData['emplyee_id'] = ucfirst($value->employe->name ?? '');
+            $nestedData['id_cart'] = $value->employe->id_card ?? 'Na';
+            $nestedData['emplyee_id'] = ucfirst($value->employe->name ?? 'na');
             $nestedData['date'] = $value->date;
             $nestedData['sign_in'] = $value->sign_in ? date('h:i A', strtotime($value->sign_in)) : 'N/A';
 

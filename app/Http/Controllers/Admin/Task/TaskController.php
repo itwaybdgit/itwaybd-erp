@@ -51,6 +51,7 @@ class TaskController extends Controller
     }
 
 
+<<<<<<< HEAD
     public function getProjectUsers($projectId)
     {
         try {
@@ -73,7 +74,43 @@ class TaskController extends Controller
                 'message' => 'Error fetching users: ' . $e->getMessage()
             ], 500);
         }
+=======
+    // public function index()
+    // {
+    //     $tasks = Task::get();
+
+
+    
+    //     return view('admin.pages.ProjectManagement.task.index', get_defined_vars());
+    // }
+
+    public function getProjectUsers($projectId)
+{
+    try {
+        $projectMembers = ProjectMember::where('project_id', $projectId)->get();
+
+        // Extract all member_ids
+        $memberIds = $projectMembers->pluck('member_id');
+
+        // Get users with those IDs
+        $users = Employee::whereIn('id', $memberIds)
+            ->select('id', 'name', 'email')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'users' => $users,
+            'message' => 'Users fetched successfully'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error fetching users: ' . $e->getMessage()
+        ], 500);
+>>>>>>> new-samad
     }
+}
+
 
     public function getTeamUsers($teamId)
     {

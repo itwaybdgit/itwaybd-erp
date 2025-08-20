@@ -90,6 +90,16 @@
                                         class="form-control">
                                 </div>
 
+                                {{-- invoice_logo --}}
+                                <div class="col-md-4 mb-1">
+                                    <label>Client Logo</label>
+                                    <input type="file" name="invoice_logo" class="form-control">
+                                    @if ($editinfo->invoice_logo)
+                                        <img src="{{ asset($editinfo->invoice_logo) }}" width="100px"
+                                            height="100px" alt="">
+                                    @endif
+                                </div>
+
                                 <div class="col-md-12 mb-1">
                                     <table id="table1" class="w-100">
                                         <thead>
@@ -275,7 +285,7 @@
                                             <div class="col-md-3">
                                                 <label for="">Category</label>
                                                 <select name="category_id[]" id="category_id"
-                                                    class="form-control category_id" required>
+                                                    class="form-control category_id">
                                                     <option value="">Select Category</option>
                                                     @foreach ($categories as $category)
                                                         <option {{ $val->category_id == $category->id ? 'selected' : '' }}

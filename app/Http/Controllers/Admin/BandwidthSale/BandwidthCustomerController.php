@@ -213,6 +213,15 @@ class BandwidthCustomerController extends Controller
             $input['noc2_approve'] = 1;
             $input['billing_approve'] = 1;
             $input['level_confirm'] = 2;
+
+            if ($request->hasFile('invoice_logo')) {
+                $image = $request->file('invoice_logo');
+                $imageName = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('uploads/invoice_logo'), $imageName);
+                $input['invoice_logo'] = "/uploads/invoice_logo/" . $imageName;
+            }
+
+
             $bandwithcustomer =  $this->getModel()->create($input);
 
             for ($i = 0; $i < count($request->item_id); $i++) {
@@ -356,6 +365,23 @@ class BandwidthCustomerController extends Controller
             $update['contact_person_name'] = implode(',', $request->contact_person_name);
             $update['contact_person_phone'] = implode(',', $request->contact_person_phone);
             $update['updated_by'] = auth()->id();
+
+            if ($request->hasFile('invoice_logo')) {
+
+                if($bandwidthCustomer->invoice_logo && file_exists(public_path($bandwidthCustomer->invoice_logo))) {
+                        unlink(public_path($bandwidthCustomer->invoice_logo));
+                }
+
+
+                $image = $request->file('invoice_logo');
+                $imageName = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('uploads/invoice_logo'), $imageName);
+                $update['invoice_logo'] = "/uploads/invoice_logo/" . $imageName;
+            }
+
+
+
+
             $bandwidthCustomer->update($update);
             BandwidthCustomerPackage::where("bandwidht_customer_id", $bandwidthCustomer->id)->delete();
             for ($j = 0; $j < count($request->item_id); $j++) {

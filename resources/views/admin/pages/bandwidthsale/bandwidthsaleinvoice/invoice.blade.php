@@ -119,7 +119,7 @@
                                 {{-- @if (isset($companyInfo->invoice_logo))
                                     {!! $companyInfo->invoice_logo ?? '' !!}
                                 @endif --}}
-                                <img src="{{ asset('storage/'.$business->invoice_logo) }}" id="businessInvoiceLogo" width="200px" height="100px" alt="">
+                                <img src="{{ asset($invoice->customer->invoice_logo) }}" id="businessInvoiceLogo" width="200px" height="100px" alt="">
                             </div>
                               <!-- /.col -->
                             <!-- /.col -->

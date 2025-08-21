@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Crm\AdminApproveController;
 use App\Http\Controllers\Admin\Crm\BillingApproveController;
+use App\Http\Controllers\Admin\Crm\BranchController;
 use App\Http\Controllers\Admin\Crm\ConfirmBillingApproveController;
 use App\Http\Controllers\Admin\Crm\FollowUpListController;
 use App\Http\Controllers\Admin\Crm\LeadGenerationController;
@@ -54,6 +55,16 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth'])->group(function
     Route::name('followup.')->prefix('followup')->group(function () {
         Route::get('/list', [FollowUpListController::class, 'index'])->name('index');
         Route::get('/dataProcessing', [FollowUpListController::class, 'dataProcessing'])->name('dataProcessing');
+    });
+    Route::name('branch.')->prefix('branch')->group(function () {
+        Route::get('/list', [BranchController::class, 'index'])->name('index');
+        Route::get('/dataProcessing', [BranchController::class, 'dataProcessing'])->name('dataProcessing');
+        Route::get('/create', [BranchController::class, 'create'])->name('create');
+        Route::post('/store', [BranchController::class, 'store'])->name('store');
+        Route::get('/edit/{branch:id}', [BranchController::class, 'edit'])->name('edit');
+        Route::post('/update/{branch:id}', [BranchController::class, 'update'])->name('update');
+        Route::get('/delete/{branch:id}', [BranchController::class, 'destroy'])->name('destroy');
+
     });
 
     Route::name('meeting.')->prefix('meeting')->group(function () {

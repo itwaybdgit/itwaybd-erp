@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Crm;
 use App\Http\Controllers\Controller;
 use App\Models\BandwidthCustomer;
 use App\Models\BandwidthCustomerPackage;
+use App\Models\Branch;
 use App\Models\ConnectedPath;
 use App\Models\DataSource;
 use App\Models\District;
@@ -173,6 +174,8 @@ class LeadGenerationController extends Controller
         $districts = District::get();
         $upazilas = Upozilla::get();
         $categories = ItemCategory::get();
+        $branches = Branch::get();
+        $company = auth()->user()->company;
         $datasources = DataSource::get();
         return view($this->viewName . '.create', get_defined_vars());
     }

@@ -32,6 +32,7 @@
                     $table->timestamps();
                 });
 
+
                 // Ensure task_messages table exists
 
             }
@@ -41,7 +42,6 @@
              */
             public function down(): void
             {
-
                 Schema::dropIfExists('tasks');
             }
         };

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Company extends Model
 {
     use HasFactory;
+    protected $casts = [
+        'lead_fields' => 'array',
+    ];
 
     protected $fillable = [
         'logo',
@@ -33,6 +36,7 @@ class Company extends Model
         'bill_exp_warning_msg',
         "follow_up_message_time",
         "meeting_message_time",
+        "lead_fields",
     ];
 
 

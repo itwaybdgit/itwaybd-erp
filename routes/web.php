@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\LeaveApplication\LeaveApplicationController;
 use App\Http\Controllers\Admin\LoneApplication\LoneApplicationController;
 use App\Http\Controllers\Admin\LeaveApplication\LeaveApplicationApproveController;
 use App\Http\Controllers\Admin\LoneApplication\LoneApplicationApproveController;
+use App\Http\Controllers\Admin\Setup\LeadModuleController;
 use App\Http\Controllers\Admin\User\UserController;
 use App\Http\Controllers\Admin\Account\AccountController;
 use App\Http\Controllers\Admin\Account\BillTransferController;
@@ -1120,6 +1121,16 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth'])->group(function
         Route::get('/edit/{company:id}', [CompanyController::class, 'edit'])->name('edit');
         Route::post('/update/{company:id}', [CompanyController::class, 'update'])->name('update');
         Route::get('/delete/{company:id}', [CompanyController::class, 'destroy'])->name('destroy');
+    });
+    Route::name('lead-module.')->prefix('lead-module')->group(function () {
+        Route::get('/list', [LeadModuleController::class, 'index'])->name('index');
+        Route::get('/dataProcessing', [LeadModuleController::class, 'dataProcessing'])->name('dataProcessing');
+        // Route::get('/create', [CompanyController::class, 'create'])->name('create');
+        // Route::post('/store', [CompanyController::class, 'store'])->name('store');
+        Route::get('/show/{company:id}', [LeadModuleController::class, 'show'])->name('show');
+        Route::get('/edit/{company:id}', [LeadModuleController::class, 'edit'])->name('edit');
+        Route::post('/update/{company:id}', [LeadModuleController::class, 'update'])->name('update');
+        Route::get('/delete/{company:id}', [LeadModuleController::class, 'destroy'])->name('destroy');
     });
     //Brand end
 
@@ -2275,7 +2286,7 @@ Route::prefix('bandwidthcustomer')->name('bandwidthcustomer.')->namespace('Admin
     Route::name('bandwidthsaleinvoice.')->prefix('bandwidthsaleinvoice')->group(function () {
         Route::get('/list', [CustomerBandwidthSaleInvoiceController::class, 'index'])->name('index');
         Route::get('/dataProcessing', [CustomerBandwidthSaleInvoiceController::class, 'dataProcessing'])->name('dataProcessing');
-        
+
         Route::get('/invoice/{banseidthsaleinvoice:id}', [CustomerBandwidthSaleInvoiceController::class, 'invoice'])->name('invoice');
     });
     //Bandwidth Sale Invoice end

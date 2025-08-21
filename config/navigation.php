@@ -26,6 +26,10 @@ $menus =  [
                 'label' => 'Business Type',
                 'route' => 'licensetype.index',
             ],
+            [
+                'label' => 'Branches',
+                'route' => 'branch.index',
+            ],
 
             // [
             //     'label' => 'Zone',
@@ -1219,6 +1223,10 @@ $menus =  [
             [
                 'label' => 'Company Setup',
                 'route' => 'companies.index',
+            ],
+            [
+                'label' => 'Lead Module Setup',
+                'route' => 'lead-module.index',
             ],
         ]
     ],

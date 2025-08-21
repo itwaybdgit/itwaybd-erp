@@ -33,9 +33,13 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
 
 
 Route::middleware(['web', 'auth'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/tasks/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/summary/dashboard', [DashboardController::class, 'index'])->name('task.dashboard');
+    Route::get('summary/dashboard/filter', [DashboardController::class, 'filter'])->name('summary.dashboard.filter');
+
+
+
+    Route::get('/projects/ongoing', [DashboardController::class, 'ongoingProjects'])->name('project.ongoing');
     Route::get('/tasks/today', [DashboardController::class, 'today'])->name('task.today');
-    Route::get('/tasks/ongoing', [DashboardController::class, 'ongoing'])->name('task.ongoing');
     Route::get('/tasks/pending', [DashboardController::class, 'pending'])->name('task.pending');
     Route::get('/tasks/delayed', [DashboardController::class, 'delayed'])->name('task.delayed');
 });

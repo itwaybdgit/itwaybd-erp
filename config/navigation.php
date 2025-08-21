@@ -10,15 +10,15 @@ $menus =  [
         'submenu' =>  [
             [
                 'label' => 'Dashboard',
-                'route' => 'admin.dashboard',
+                'route' => 'admin.task.dashboard',
+            ],
+            [
+                'label' => 'Live Ongoing Projects',
+                'route' => 'admin.project.ongoing',
             ],
             [
                 'label' => 'Today’s Created Tasks',
                 'route' => 'admin.task.today',
-            ],
-            [
-                'label' => 'Live Ongoing Tasks',
-                'route' => 'admin.task.ongoing',
             ],
             [
                 'label' => 'Pending Tasks',

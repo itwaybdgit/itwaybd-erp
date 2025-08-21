@@ -29,7 +29,7 @@ class CreateEmployeesTable extends Migration
             $table->time('last_in_time');
             $table->string('reference')->nullable();
             $table->longText('experience')->nullable();
-            $table->longText('present_address')->nullable();
+            $table->longText('Active_address')->nullable();
             $table->longText('permanent_address')->nullable();
             $table->foreignId('department_id')->nullable();
             $table->foreignId('designation_id')->nullable();

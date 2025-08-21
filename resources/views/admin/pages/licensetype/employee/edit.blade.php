@@ -75,9 +75,9 @@
                             </textarea>
                             </div>
                             <div class="col-md-4 mb-1">
-                                <label for="">Present Address</label>
-                                <textarea name="present_address" class="form-control input-rounded">
-                                {{ old('present_address') ?? $editinfo->present_address }}
+                                <label for="">Active Address</label>
+                                <textarea name="Active_address" class="form-control input-rounded">
+                                {{ old('Active_address') ?? $editinfo->Active_address }}
                             </textarea>
                             </div>
                             <div class="col-md-4 mb-1">

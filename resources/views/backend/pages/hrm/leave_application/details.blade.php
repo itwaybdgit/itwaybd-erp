@@ -40,7 +40,7 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Branch</th>
+                                    <th>Department</th>
                                     <th>Application Date</th>
                                     <th>Application End Date</th>
                                     <th>Reason</th>
@@ -49,13 +49,15 @@
                                 </tr>
                             </thead>
                             <tbody>
+
+                  
                                 <tr>
-                                    <td>{{ $leave->employee->name }}</td>
-                                    <td>{{ $leave->department->name }}</td>
-                                    <td>{{ $leave->apply_date }}</td>
-                                    <td>{{ $leave->end_date }}</td>
-                                    <td>{{ $leave->reason }}</td>
-                                    <td>{{ $leave->payment_status }}</td>
+                                    <td>{{ $leave->employee->name  ?? ''}}</td>
+                                    <td>{{ $leave->department->name ?? '' }}</td>
+                                    <td>{{ $leave->apply_date  ?? ''}}</td>
+                                    <td>{{ $leave->end_date ?? '' }}</td>
+                                    <td>{{ $leave->reason ?? '' }}</td>
+                                    <td>{{ $leave->payment_status ?? 'paid'}}</td>
                                     <td>{{ $leave->status }}</td>
                                 </tr>
                             </tbody>

@@ -79,6 +79,7 @@ class EmployeeController extends Controller
      */
     public function create()
     {
+
         $title = 'Add New Employee';
         $designations = Designation::get();
         $teams = Team::get();
@@ -131,7 +132,9 @@ class EmployeeController extends Controller
         }
         $title = 'Add New Employee';
         // $userRoll = $this->userRoleService->getAllRole();
+
         $teams = Team::get();
+
         $userrolls = RollPermission::get();
         $departments = Department::get();
         $zones = Zone::get();

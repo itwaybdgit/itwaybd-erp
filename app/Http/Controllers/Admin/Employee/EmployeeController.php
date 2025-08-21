@@ -81,7 +81,7 @@ class EmployeeController extends Controller
                 'label' => 'Team',
                 'data' => 'name',
                 'searchable' => false,
-                 'relation' => 'teams',
+                'relation' => 'teams',
             ],
 
             [
@@ -94,7 +94,7 @@ class EmployeeController extends Controller
                 'label' => 'Department',
                 'data' => 'name',
                 'searchable' => true,
-                 'relation' => 'departments',
+                'relation' => 'departments',
             ],
             [
                 'label' => 'Action',
@@ -197,7 +197,7 @@ class EmployeeController extends Controller
             'last_in_time' => ['nullable'],
             'reference' => ['nullable'],
             'experience' => ['nullable'],
-            'present_address' => ['nullable'],
+            'Active_address' => ['nullable'],
             'permanent_address' => ['nullable'],
             'department_id' => ['nullable'],
             'designation_id' => ['nullable'],
@@ -243,7 +243,7 @@ class EmployeeController extends Controller
                 $userDs = User::create($user);
                 $valideted['user_id'] = $userDs->id;
             }
-            $valideted['received_documents_checkbox'] = implode(',',$request->received_documents_checkbox ?? []);
+            $valideted['received_documents_checkbox'] = implode(',', $request->received_documents_checkbox ?? []);
             $image = $request->file('image');
             if (isset($image)) {
                 $currentDate = Carbon::now()->toDateString();
@@ -277,7 +277,7 @@ class EmployeeController extends Controller
             $valideted['type'] = implode(',', $request->type ?? []);
 
             $valideted['emp_signature'] = $imageName;
-            if($request->password){
+            if ($request->password) {
                 $valideted['password'] = $request->password;
             }
             $employee = Employee::create($valideted);
@@ -348,7 +348,7 @@ class EmployeeController extends Controller
             'last_in_time' => ['nullable'],
             'reference' => ['nullable'],
             'experience' => ['nullable'],
-            'present_address' => ['nullable'],
+            'Active_address' => ['nullable'],
             'permanent_address' => ['nullable'],
             'department_id' => ['nullable'],
             'designation_id' => ['nullable'],
@@ -419,8 +419,8 @@ class EmployeeController extends Controller
             }
             $valideted['type'] = implode(',', $request->type ?? []);
 
-            $valideted['received_documents_checkbox'] = implode(',',$request->received_documents_checkbox ?? []);
-            if($request->password){
+            $valideted['received_documents_checkbox'] = implode(',', $request->received_documents_checkbox ?? []);
+            if ($request->password) {
                 $valideted['password'] = $request->password;
             }
             $employee->update($valideted);

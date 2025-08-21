@@ -23,12 +23,12 @@ return new class extends Migration
                 $table->string('guardian_nid')->nullable()->after('guardian_number');
             }
 
-            if (!Schema::hasColumn('employees', 'employee_status')) {
-                $table->string('employee_status')->nullable()->after('guardian_nid');
+            if (!Schema::hasColumn('employees', 'status')) {
+                $table->string('status')->nullable()->after('guardian_nid');
             }
 
             if (!Schema::hasColumn('employees', 'am_name')) {
-                $table->string('am_name')->nullable()->after('employee_status');
+                $table->string('am_name')->nullable()->after('status');
             }
 
             if (!Schema::hasColumn('employees', 'area')) {
@@ -67,7 +67,7 @@ return new class extends Migration
             $table->dropColumn([
                 'guardian_number',
                 'guardian_nid',
-                'employee_status',
+                'status',
                 'am_name',
                 'area',
                 'device_id',

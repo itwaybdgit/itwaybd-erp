@@ -14,6 +14,7 @@ use App\Models\RollPermission;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
 class RevertController extends Controller
 
 {
@@ -98,11 +99,11 @@ class RevertController extends Controller
     {
         $revert = Revert::where('status', 0)->pluck('table_id');
         $employeecheck = auth()->user()->employee;
-         if($employeecheck){
-             $model = $this->getModel()->whereIn('id',$revert)->where('created_by', auth()->user()->id);
-            }else{
-             $model = $this->getModel()->whereIn('id',$revert);
-         }
+        if ($employeecheck) {
+            $model = $this->getModel()->whereIn('id', $revert)->where('created_by', auth()->user()->id);
+        } else {
+            $model = $this->getModel()->whereIn('id', $revert);
+        }
         return $this->getDataResponse(
             //Model Instance
             $model,
@@ -166,7 +167,7 @@ class RevertController extends Controller
             return back()->with('success', 'Data Store Successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e->getMessage(),$e->getLine());
+            dd($e->getMessage(), $e->getLine());
             return back()->with('failed', $this->getError($e));
         }
     }
@@ -180,7 +181,7 @@ class RevertController extends Controller
     {
         $modal_title = 'Customer Details';
         $customer = $customer;
-        $revert = Revert::where('table_id',$customer->id)->orderBy('id','DESC')->first();
+        $revert = Revert::where('table_id', $customer->id)->orderBy('id', 'DESC')->first();
         $html = view($this->viewName . '.show', get_defined_vars())->render();
         return $html;
     }
@@ -188,16 +189,16 @@ class RevertController extends Controller
     public function reject(Revert $revert)
     {
         $revert->update([
-            'status'=> 2,
+            'status' => 2,
         ]);
 
         $revert->bandwidthcustomer->update([
-            'sales_approve'=> 1,
-            'legal_approve'=> 1,
-            'transmission_approve'=> 1,
-            'noc_approve'=> 1,
-            'noc2_approve'=> 1,
-            'billing_approve'=> 1,
+            'sales_approve' => 1,
+            'legal_approve' => 1,
+            'transmission_approve' => 1,
+            'noc_approve' => 1,
+            'noc2_approve' => 1,
+            'billing_approve' => 1,
         ]);
 
         return redirect()->route('reverts.index')->with('success', 'Data Update Successfully');
@@ -206,11 +207,11 @@ class RevertController extends Controller
     public function confirm(Revert $revert)
     {
         $revert->update([
-            'status'=> 1,
+            'status' => 1,
         ]);
 
         $revert->bandwidthcustomer->update([
-            'reject_sales_approve'=> 0,
+            'reject_sales_approve' => 0,
         ]);
 
 
@@ -261,7 +262,7 @@ class RevertController extends Controller
             'last_in_time' => ['nullable'],
             'reference' => ['nullable'],
             'experience' => ['nullable'],
-            'present_address' => ['nullable'],
+            'Active_address' => ['nullable'],
             'permanent_address' => ['nullable'],
             'department_id' => ['nullable'],
             'designation_id' => ['nullable'],

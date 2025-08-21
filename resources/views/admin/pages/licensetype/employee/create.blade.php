@@ -125,9 +125,9 @@
                                 @enderror
                             </div>
                             <div class="col-md-4 mb-1">
-                                <label for="">Present Address</label>
-                                <textarea value="{{ old('present_address') }}" name="present_address" class="form-control input-rounded"></textarea>
-                                @error('present_address')
+                                <label for="">Active Address</label>
+                                <textarea value="{{ old('Active_address') }}" name="Active_address" class="form-control input-rounded"></textarea>
+                                @error('Active_address')
                                     <span class=" error text-red text-bold">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -209,10 +209,10 @@
                                 <select name="team" class="form-control">
 
                                     @php
-                                    use App\Models\Team;
-                                    $teams = Team::all();
-                                @endphp
-                                    <option selected disabled>Choose  Team</option>
+                                        use App\Models\Team;
+                                        $teams = Team::all();
+                                    @endphp
+                                    <option selected disabled>Choose Team</option>
                                     @foreach ($teams as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
                                     @endforeach

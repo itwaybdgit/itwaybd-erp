@@ -56,7 +56,6 @@ class LeaveApplicationController extends Controller
     {
 
         $json_data = $this->systemService->getList($request);
-
         return json_encode($this->systemTransformer->dataTable($json_data));
     }
 

@@ -41,7 +41,7 @@ class CreateNewConnectionsTable extends Migration
             $table->foreignId('upazila')->nullable();
             $table->string('roadnumber')->nullable();
             $table->string('housenumber')->nullable();
-            $table->string('presentaddress')->nullable();
+            $table->string('Activeaddress')->nullable();
             $table->string('permanentaddress')->nullable();
             $table->foreignId('zone')->nullable();
             $table->foreignId('subzone')->nullable();

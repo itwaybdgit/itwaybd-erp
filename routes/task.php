@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Task\MytaskController;
+use App\Http\Controllers\Admin\TaskSummary\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')->middleware(['auth'])->group(function () {
@@ -28,7 +29,18 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
     Route::get('/my-active-timer', [MytaskController::class, 'getActiveTimer']);
     Route::post('/subtasks/{subtaskId}/auto-save-timer', [MytaskController::class, 'autoSaveTimer']);
     Route::get('/my-timer-history', [MytaskController::class, 'getTimerHistory']);
-
-
 });
+
+
+Route::middleware(['web', 'auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/tasks/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/tasks/today', [DashboardController::class, 'today'])->name('task.today');
+    Route::get('/tasks/ongoing', [DashboardController::class, 'ongoing'])->name('task.ongoing');
+    Route::get('/tasks/pending', [DashboardController::class, 'pending'])->name('task.pending');
+    Route::get('/tasks/delayed', [DashboardController::class, 'delayed'])->name('task.delayed');
+});
+
+
+
+
 require __DIR__ . '/auth.php';

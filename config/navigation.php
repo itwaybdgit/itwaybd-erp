@@ -2,6 +2,35 @@
 
 $menus =  [
     [
+        'label' => 'Admin Dashboard',
+        'route' => null,
+        'icon' => 'fas fa-tachometer-alt',
+        'access' => 'admin-dashboard',
+        'parent_id' => 0,
+        'submenu' =>  [
+            [
+                'label' => 'Dashboard',
+                'route' => 'admin.dashboard',
+            ],
+            [
+                'label' => 'Today’s Created Tasks',
+                'route' => 'admin.task.today',
+            ],
+            [
+                'label' => 'Live Ongoing Tasks',
+                'route' => 'admin.task.ongoing',
+            ],
+            [
+                'label' => 'Pending Tasks',
+                'route' => 'admin.task.pending',
+            ],
+            [
+                'label' => 'Delayed Tasks',
+                'route' => 'admin.task.delayed',
+            ],
+        ]
+    ],
+    [
         'label' => 'Setup',
         'route' => null,
         'icon' => 'fas fa-cog',

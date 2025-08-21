@@ -133,15 +133,9 @@
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-<<<<<<< HEAD
-                                                             @foreach($task->assignedUsers as $user)
-            <span class="badge bg-primary me-1">{{ $user->name }}</span>
-        @endforeach
-=======
                                                         @foreach ($task->assignedUsers as $user)
                                                             <span class="badge bg-primary me-1">{{ $user->name }}</span>
                                                         @endforeach
->>>>>>> new-samad
 
                                                     </div>
                                                 </td>

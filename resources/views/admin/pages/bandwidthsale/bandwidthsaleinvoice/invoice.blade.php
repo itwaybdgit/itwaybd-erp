@@ -229,8 +229,24 @@
                             </div>
                         </div>
 
-                        <div class="invoice p-3 mb-3" id="DivIdToPrint{{ $lo }}">
-                            <!-- title row -->
+
+                    <div class="invoice p-3 mb-3" id="DivIdToPrint{{$lo}}">
+                        <!-- title row -->
+                        <!-- info row -->
+                        <div class="row invoice-info">
+                            <div class="col-sm-4 " style="">
+                                {{-- @if (isset($companyInfo->invoice_logo))
+                                    {!! $companyInfo->invoice_logo ?? '' !!}
+                                @endif --}}
+                                <img src="{{ asset($invoice->customer->invoice_logo) }}" id="businessInvoiceLogo" width="200px" height="100px" alt="">
+                            </div>
+                              <!-- /.col -->
+                            <!-- /.col -->
+                            <div class="col-sm-4 invoice-col" style="text-align: center" >
+                                <b style="font-size : 20px"> {{ $invoice->customer->company_name ?? 'N/A' }} </b>
+                                <br>
+                                Invoice: {{ $invoice->invoice_no ?? 'N/A' }} <br>
+
 
                             <div class="header-section">
                                 <!-- Logo -->

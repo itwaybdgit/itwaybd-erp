@@ -2275,6 +2275,7 @@ Route::prefix('bandwidthcustomer')->name('bandwidthcustomer.')->namespace('Admin
     Route::name('bandwidthsaleinvoice.')->prefix('bandwidthsaleinvoice')->group(function () {
         Route::get('/list', [CustomerBandwidthSaleInvoiceController::class, 'index'])->name('index');
         Route::get('/dataProcessing', [CustomerBandwidthSaleInvoiceController::class, 'dataProcessing'])->name('dataProcessing');
+        
         Route::get('/invoice/{banseidthsaleinvoice:id}', [CustomerBandwidthSaleInvoiceController::class, 'invoice'])->name('invoice');
     });
     //Bandwidth Sale Invoice end

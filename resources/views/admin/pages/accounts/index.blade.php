@@ -12,7 +12,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">{{ $page_heading ?? 'Create' }}</h4>
-                        <a href="{{ $create_url }}" class="btn btn-dark">Create</a>
+                        <a href="{{ route('accounts.create.page') }}" class="btn btn-dark">Create</a>
                     </div>
                     <div class="card-datatable table-responsive">
                         <x-alert />

@@ -187,7 +187,7 @@
                                                         <label for="subtask_title_{{ $index + 1 }}" class="form-label">Subtask Title</label>
                                                         <input type="text" class="form-control" id="subtask_title_{{ $index + 1 }}"
                                                                name="subtasks[{{ $index + 1 }}][title]"
-                                                               value="{{ old('subtasks.'.($index + 1).'.title', $subtask->title) }}" readonly>
+                                                               value="{{ old('subtasks.'.($index + 1).'.title', $subtask->title) }}">
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label for="subtask_user_{{ $index + 1 }}" class="form-label">Assign To</label>
@@ -525,7 +525,7 @@
                         <label for="subtask_title_${subtaskCounter}" class="form-label">Subtask Title</label>
                         <input type="text" class="form-control" id="subtask_title_${subtaskCounter}"
                                name="subtasks[${subtaskCounter}][title]"
-                               value="${subtaskTitle}" readonly>
+                               value="${subtaskTitle}">
                     </div>
                     <div class="col-md-4">
                         <label for="subtask_user_${subtaskCounter}" class="form-label">Assign To</label>
@@ -600,7 +600,7 @@
                 setTimeout(() => {
                     subtaskItem.remove();
                     renumberSubtasks();
-                    updateSubtaskTitles();
+                    // updateSubtaskTitles();
 
                     // Show empty message if no subtasks left
                     const subtasksContainer = document.getElementById('subtasksContainer');

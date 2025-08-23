@@ -21,11 +21,13 @@ use App\Models\Zone;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use App\Helpers\DataProcessingFile\CustomerDataProcessing;
+use App\Models\Account;
 use App\Models\Billing;
 use App\Models\Box;
 use App\Models\Splitter;
 use App\Models\Tj;
 use App\Models\Transaction;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class CustomerController extends Controller
@@ -428,6 +430,19 @@ class CustomerController extends Controller
             } else {
                 return  $response;
                 return back()->with('failed', 'OOps.., something was wrong Mikrotik');
+            }
+            if($customer){
+                $Accounts = new Account();
+                $Accounts->account_name = $request->name;
+                $Accounts->parent_id = 5;
+                $Accounts->accountable_id = $customer->id;
+                $Accounts->accountable_type = "App\Models\Customer";
+                $Accounts->bill_by_bill = 1;
+                $Accounts->branch_id = $request->branch_id;
+
+                $Accounts->status = 'Active';
+                $Accounts->created_by = Auth::user()->id;
+                $Accounts->save();
             }
 
             $message = messageconvert($customer, $customer->getCompany->create_msg);

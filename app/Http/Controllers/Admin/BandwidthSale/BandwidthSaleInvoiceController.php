@@ -273,6 +273,7 @@ class BandwidthSaleInvoiceController extends Controller
         $items = Item::where('status', 'active')->get();
         $detals = $banseidthsaleinvoice->detaile->groupBy('business_id');
         $companyInfo = Company::find(auth()->user()->company_id);
+
         $business = Business::where('id', $banseidthsaleinvoice->customer->business_id)->first();
         return view($this->viewName . '.invoice', get_defined_vars());
     }

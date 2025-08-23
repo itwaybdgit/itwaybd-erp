@@ -324,6 +324,10 @@
             padding-top: 20px;
             border-top: 1px solid #ecf0f1;
         }
+        .subtasks-list{
+            max-height: 220px; 
+            overflow-y: auto;
+        }
 
         .subtasks-header {
             display: flex;
@@ -1127,7 +1131,7 @@
                             <button type="button" id="add-subtask-btn" onclick="addNewSubtask(${task.id})" class="btn btn-sm btn-primary">+ Add Subtask</button>
                         </div>
                         <div class="subtasks-list">
-                            ${task.subtasks.slice(0, 3).map(subtask => {
+                            ${task.subtasks.map(subtask => {
                                 const isActiveTimer = activeSubtaskTimers[subtask.id];
                                 return `
                                     <div class="subtask-item ${isActiveTimer ? 'active-timer' : ''}" data-subtask-id="${subtask.id}" style="display: flex; flex-direction: column; width: 100%;">
@@ -1171,7 +1175,7 @@
                                     </div>
                                 `;
                             }).join('')}
-                            ${task.subtasks.length > 3 ? `<small style="color: #7f8c8d;">+${task.subtasks.length - 3} more subtasks</small>` : ''}
+                            
 
                             <div class="subtasks-containerr" id="subtasks-container-${task.id}"></div>
 

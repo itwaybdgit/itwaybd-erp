@@ -25,10 +25,12 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label>Invoice Logo</label>
-                                    <input type="file" value="{{$editinfo->invoice_logo}}" class="form-control mb-1 input-rounded"
-                                        name="invoice_logo">
-                                        <img src="{{asset('storage/'.$editinfo->invoice_logo)}}" width="20%" alt="">
+                                    <input type="file" class="form-control mb-1 input-rounded" name="invoice_logo">
+                                    @if(!empty($editinfo->invoice_logo))
+                                        <img src="{{ asset('storage/'.$editinfo->invoice_logo) }}" width="20%" alt="">
+                                    @endif
                                 </div>
+
                                 <div class="col-md-6 mb-3">
                                     <label>Company Name</label>
                                     <input type="text" value="{{$editinfo->business_name}}" class="form-control input-rounded" value="{{old('company name')}}"

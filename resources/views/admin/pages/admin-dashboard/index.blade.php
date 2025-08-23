@@ -7,33 +7,31 @@
 @section('style')
 <style>
     .custom-btn {
-    display: inline-block;
-    font-weight: 400;
-    text-align: center;
-    vertical-align: middle;
-    user-select: none;
-    border: 1px solid transparent;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem; 
-    line-height: 1.5;
-    border-radius: 0.25rem;
-    transition: all 0.15s ease-in-out;
-    color: #fff;
-    background-color: #0dcaf0;
-    border-color: #0dcaf0;
-}
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        vertical-align: middle;
+        user-select: none;
+        border: 1px solid transparent;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem; 
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        transition: all 0.15s ease-in-out;
+        color: #fff;
+        background-color: #0dcaf0;
+        border-color: #0dcaf0;
+    }
 
-.custom-btn:hover {
-    background-color: #31d2f2;
-    border-color: #31d2f2;
-}
+    .custom-btn:hover {
+        background-color: #31d2f2;
+        border-color: #31d2f2;
+    }
 
-/* Optional: active styling */
-.filter-btn.active {
-    background-color: #7367f0 !important;
-    color: #fff !important;
-}
-
+    .filter-btn.active {
+        background-color: #7367f0 !important;
+        color: #fff !important;
+    }
 
 </style>
 @endsection
@@ -139,17 +137,17 @@
 
     <!-- Charts -->
     <div class="row g-4">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="card shadow-sm border-0 rounded-3">
                 <div class="card-header bg-white">
                     <h5 class="mb-0">Tasks Status Overview</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="tasksBarChart" style="width:100%; height:300px;"></canvas>
+                    <canvas id="tasksBarChart" style="width:100%; height:100%;"></canvas>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card shadow-sm border-0 rounded-3">
                 <div class="card-header bg-white">
                     <h5 class="mb-0">Priority Distribution</h5>
@@ -164,7 +162,6 @@
 @endsection
 
 @section('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         let barChart, pieChart;
 

@@ -16,18 +16,6 @@ $menus =  [
                 'label' => 'Live Ongoing Projects',
                 'route' => 'admin.project.ongoing',
             ],
-            [
-                'label' => 'Today’s Created Tasks',
-                'route' => 'admin.task.today',
-            ],
-            [
-                'label' => 'Pending Tasks',
-                'route' => 'admin.task.pending',
-            ],
-            [
-                'label' => 'Delayed Tasks',
-                'route' => 'admin.task.delayed',
-            ],
         ]
     ],
     [

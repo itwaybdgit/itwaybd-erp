@@ -39,9 +39,6 @@ Route::middleware(['web', 'auth'])->prefix('admin')->name('admin.')->group(funct
 
 
     Route::get('/projects/ongoing', [DashboardController::class, 'ongoingProjects'])->name('project.ongoing');
-    Route::get('/tasks/today', [DashboardController::class, 'today'])->name('task.today');
-    Route::get('/tasks/pending', [DashboardController::class, 'pending'])->name('task.pending');
-    Route::get('/tasks/delayed', [DashboardController::class, 'delayed'])->name('task.delayed');
 });
 
 

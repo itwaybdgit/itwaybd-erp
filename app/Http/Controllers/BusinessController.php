@@ -206,15 +206,15 @@ class BusinessController extends Controller {
      */
     public function update(Request $request, Business $businesses)
     {
-        $valideted = $this->validate($request, [
-            "logo" => ['image'],
-            "invoice_logo" => ['image'],
-            "business_name" => ['string'],
-            "website" => ['string'],
-            "phone" => ['string'],
-            "email" => ['email'],
-            "address" => ['string'],
-            "message" => ['string','nullable'],
+        $validated = $this->validate($request, [
+            "logo" => ['nullable','image'],
+            "invoice_logo" => ['nullable','image'],
+            "business_name" => ['nullable','string'],
+            "website" => ['nullable','string'],
+            "phone" => ['nullable','string'],
+            "email" => ['nullable','email'],
+            "address" => ['nullable','string'],
+            "message" => ['nullable','string'],
             "mail_mailer" => ['nullable'],
             "mail_host" => ['nullable'],
             "mail_port" => ['nullable'],
@@ -224,35 +224,61 @@ class BusinessController extends Controller {
             "mail_from_address" => ['nullable'],
             "mail_from_name" => ['nullable'],
         ]);
-        // dd($valideted);
+
         try {
             DB::beginTransaction();
 
-            if ($request->hasFile('logo')) {
-                if ($businesses->logo) {
-                    Storage::disk('public')->delete($businesses->logo);
+            if ($request->hasFile('logo') && $request->file('logo')->isValid()) {
+                $file = $request->file('logo');
+
+                $filename = uniqid() . '_' . preg_replace('/[^A-Za-z0-9\-_\.]/', '_', $file->getClientOriginalName());
+
+                $targetPath = storage_path('app/public/business/' . $filename);
+                if (!file_exists(storage_path('app/public/business'))) {
+                    mkdir(storage_path('app/public/business'), 0755, true);
                 }
-                $path =  $request->file('logo')->store('business', 'public');
-                $valideted['logo'] = $path;
-            }
-            if ($request->hasFile('invoice_logo')) {
-                if ($businesses->invoice_logo) {
-                    Storage::disk('public')->delete($businesses->invoice_logo);
-                }
-                $path =  $request->file('invoice_logo')->store('business', 'public');
-                $valideted['invoice_logo'] = $path;
+
+                $file->move(storage_path('app/public/business'), $filename);
+                $validated['logo'] = 'business/' . $filename;
             }
 
-            $valideted['update_by'] = auth()->id();
-            $businesses->update($valideted);
+
+            if ($request->hasFile('invoice_logo') && $request->file('invoice_logo')->isValid()) {
+                $file = $request->file('invoice_logo');
+
+                // Clean filename
+                $filename = uniqid() . '_' . preg_replace('/[^A-Za-z0-9\-_\.]/', '_', $file->getClientOriginalName());
+
+                // Define target path
+                $targetPath = storage_path('app/public/business/' . $filename);
+
+                // Make sure directory exists
+                if (!file_exists(storage_path('app/public/business'))) {
+                    mkdir(storage_path('app/public/business'), 0755, true);
+                }
+
+                // Move file manually
+                $file->move(storage_path('app/public/business'), $filename);
+
+                // Save relative path in DB
+                $validated['invoice_logo'] = 'business/' . $filename;
+            }
+
+
+   
+
+            $validated['update_by'] = auth()->id();
+            $businesses->update($validated);
+
 
             DB::commit();
             return back()->with('success', 'Data Updated Successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('failed', 'Oops! Something was wrong. Message: ' . $e->getMessage() . ' Line: ' . $e->getLine() . 'File: ' . $e->getFile());
+            return back()->with('failed', 'Oops! Something was wrong. Message: '.$e->getMessage());
         }
     }
+
 
     /**
      * Remove the specified resource from storage.

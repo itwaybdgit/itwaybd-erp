@@ -46,6 +46,7 @@
 <!-- BEGIN: Custom CSS-->
 <link rel="stylesheet" type="text/css" href="{{ asset('admin_assets/assets/css/style.css') }}">
 <!-- END: Custom CSS-->
+@stack('style')
 @yield('style')
 <style>
     body {

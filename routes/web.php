@@ -438,7 +438,7 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth'])->group(function
         Route::get('/list', [AccountController::class, 'index'])->name('index');
         Route::get('/dataProcessing', [AccountController::class, 'dataProcessing'])->name('dataProcessing');
         Route::get('/dataProcessingsubAccount/{account:id}', [AccountController::class, 'dataProcessingsubAccount'])->name('dataProcessingsubAccount');
-        Route::get('/create', [AccountController::class, 'create'])->name('create');
+        Route::get('/create', [AccountController::class, 'create'])->name('create.page');
         Route::post('/store', [AccountController::class, 'store'])->name('store');
         Route::get('/subaccount/{account:id}', [AccountController::class, 'subaccount'])->name('subaccount');
         Route::get('/edit/{account:id}', [AccountController::class, 'edit'])->name('edit');

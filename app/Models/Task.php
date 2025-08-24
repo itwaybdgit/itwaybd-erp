@@ -123,6 +123,12 @@ class Task extends Model
         return $this->hasManyThrough(Employee::class, Subtask::class, 'task_id', 'id', 'id', 'user_id');
     }
 
+    // Task.php
+    public function employee(){
+        return $this->belongsTo(Employee::class, 'user_id', 'id');
+    }
+
+
     /**
      * Get the image URL attribute.
      */

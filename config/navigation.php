@@ -2,6 +2,23 @@
 
 $menus =  [
     [
+        'label' => 'Admin Dashboard',
+        'route' => null,
+        'icon' => 'fas fa-tachometer-alt',
+        'access' => 'admin-dashboard',
+        'parent_id' => 0,
+        'submenu' =>  [
+            [
+                'label' => 'Dashboard',
+                'route' => 'admin.task.dashboard',
+            ],
+            [
+                'label' => 'Live Ongoing Projects',
+                'route' => 'admin.project.ongoing',
+            ],
+        ]
+    ],
+    [
         'label' => 'Setup',
         'route' => null,
         'icon' => 'fas fa-cog',

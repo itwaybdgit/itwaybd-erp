@@ -89,7 +89,7 @@
                                 <div class="form-group">
                                     <label for="email-id-column">Account Head</label>
                                     <select class="select2 form-control 2nd" name="account_id">
-                                        <option selected disabled> Selecte Account </option>
+                                        <option selected disabled> Select Account </option>
                                         @foreach ($accounts as $account)
                                             <option value="{{ $account->id }}">({{ $account->head_code }})
                                                 {{ $account->account_name }}</option>

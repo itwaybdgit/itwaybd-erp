@@ -184,6 +184,24 @@ class DailyIncomeController extends Controller
             $valideted['created_by'] = auth()->id();
             $dailyincome = DailyIncome::create($valideted);
 
+            $customer = BandwidthCustomer::where('id', $valideted['customer_id'])->first();
+
+            if($dailyincome){
+                $accounts = new Account();
+                $accounts->account_name = $customer->company_name;
+                $accounts->parent_id = $valideted['account_id'];
+                $accounts->is_transaction = 1;
+
+                $accounts->accountable_id = $dailyincome->id;
+                $accounts->accountable_type = "App\Models\DailyIncome";
+                $accounts->bill_by_bill = 1;
+                $accounts->branch_id = $input['branch_id'] ?? null;
+
+                $accounts->status = 'Active';
+                $accounts->created_by = Auth::user()->id;
+                $accounts->save();
+            }
+
             $invoice = AccountTransaction::accountInvoice();
             $transaction['invoice'] = $invoice;
             $transaction['table_id'] = $dailyincome->id;
@@ -294,7 +312,15 @@ class DailyIncomeController extends Controller
             // $valideted['account_3rd'] = $request->account_4th;
             $valideted['company_id'] = auth()->user()->company_id;
             $valideted['created_by'] = auth()->id();
-            $dailyincome->update($valideted);
+            $updatedIncome = $dailyincome->update($valideted);
+
+            // if($updatedIncome){
+            //     $accounts = new Account();
+            //     $accounts->account_name = $valideted['account_id'];
+            //     $accounts->branch_id = $input['branch_id'] ?? null;
+            //     $accounts->updated_by = Auth::user()->id;
+            //     $accounts->update();
+            // }
 
             AccountTransaction::where('table_id', $dailyincome->id)->where('type', 1)->delete();
 

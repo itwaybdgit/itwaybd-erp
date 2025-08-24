@@ -79,7 +79,6 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-
         $title = 'Add New Employee';
         $designations = Designation::get();
         $teams = Team::get();

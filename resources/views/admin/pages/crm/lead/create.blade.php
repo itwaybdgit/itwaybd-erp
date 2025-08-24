@@ -46,7 +46,7 @@
 
                                         <div class="col-md-4 mb-1">
                                             <label>Email Address</label>
-                                            <input type="email" name="email" class="form-control">
+                                            <input type="email" name="contact_person_email[]" class="form-control">
                                         </div>
 
                                         <div class="col-md-4 mb-1">
@@ -129,9 +129,9 @@
                                             </div>
 
                                             <!-- Companies Table -->
-                                            <div class="col-md-8 mb-3">
+                                            <div class="col-md-10 mb-3">
                                                 <h6 class="mb-2">Companies in Group</h6>
-                                                <div class="table-responsive">
+                                                <div class="">
                                                     <table id="companiesTable" class="table table-bordered">
                                                         <thead>
                                                         <tr>
@@ -146,7 +146,12 @@
                                                                 <input type="text" name="group_companies[0][company_name]" class="form-control" required>
                                                             </td>
                                                             <td>
-                                                                <input type="text" name="group_companies[0][business_type]" class="form-control">
+                                                                <select name="group_companies[0][business_type_id]" class="form-control select2 ">
+                                                                    <option value="">Select</option>
+                                                                    @foreach ($licenses as $val)
+                                                                        <option value="{{ $val->id }}">{{ $val->name }}</option>
+                                                                    @endforeach
+                                                                </select>
                                                             </td>
                                                             <td class="text-center">
                                                                 <button type="button" class="btn btn-danger btn-sm remove-company">
@@ -288,46 +293,61 @@
 
 @section('scripts')
     <script>
+        const licenseOptions = `
+        <option value="">Select</option>
+        @foreach($licenses as $val)
+        <option value="{{ $val->id }}">{{ $val->name }}</option>
+        @endforeach
+        `;
+
         $(document).ready(function() {
             let companyIndex = 1;
 
-            // Company Group checkbox toggle
+            // ✅ Company Group checkbox toggle
             $('#is_company_group').change(function() {
                 if ($(this).is(':checked')) {
                     $('.single-company-fields').hide();
                     $('.multiple-companies-fields').show();
+
                     // Update validation
-                    $('input[name="company_name"]').attr('required', false);
-                    $('input[name="group_name"]').attr('required', true);
+                    $('input[name="company_name"]').prop('required', false);
+                    $('input[name="group_name"]').prop('required', true);
+                    $('input[name^="group_companies"]').prop('required', true);
                 } else {
                     $('.single-company-fields').show();
                     $('.multiple-companies-fields').hide();
-                    // Update validation
-                    $('input[name="company_name"]').attr('required', true);
-                    $('input[name="group_name"]').attr('required', false);
-                }
-            });
 
-            // Add new company to group
+                    // Update validation
+                    $('input[name="company_name"]').prop('required', true);
+                    $('input[name="group_name"]').prop('required', false);
+                    $('input[name^="group_companies"]').prop('required', false);
+                }
+            }).trigger('change'); // 🔑 run once on load
+
+            // ✅ Add new company to group
             $('#addCompany').on('click', function() {
                 const newCompanyRow = `<tr>
-                    <td>
-                        <input type="text" name="group_companies[${companyIndex}][company_name]" class="form-control" required>
-                    </td>
-                    <td>
-                        <input type="text" name="group_companies[${companyIndex}][business_type]" class="form-control">
-                    </td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-danger btn-sm remove-company">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </td>
-                </tr>`;
+                <td>
+                    <input type="text" name="group_companies[${companyIndex}][company_name]"
+                           class="form-control" required>
+                </td>
+                <td>
+                    <select name="group_companies[${companyIndex}][business_type_id]"
+                            class="form-control select2">
+                        ${licenseOptions}
+                    </select>
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-danger btn-sm remove-company">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>`;
                 $('.companies_row').append(newCompanyRow);
                 companyIndex++;
             });
 
-            // Remove company from group
+            // ✅ Remove company from group
             $(document).on('click', '.remove-company', function() {
                 if ($('.companies_row tr').length > 1) {
                     $(this).closest('tr').remove();
@@ -336,110 +356,109 @@
                 }
             });
 
-            // Tab change event to track lead type
+            // ✅ Tab change event to track lead type
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 const targetTab = $(e.target).attr('aria-controls');
                 $('#lead_type').val(targetTab);
 
-                // Handle required field validation based on active tab
                 if (targetTab === 'personal') {
-                    $('input[name="full_name"]').attr('required', true);
-                    $('input[name="phone"]').attr('required', true);
-                    $('input[name="company_name"]').attr('required', false);
-                    $('input[name="group_name"]').attr('required', false);
+                    $('input[name="full_name"]').prop('required', true);
+                    $('input[name="phone"]').prop('required', true);
+                    $('input[name="company_name"]').prop('required', false);
+                    $('input[name="group_name"]').prop('required', false);
+                    $('input[name^="group_companies"]').prop('required', false);
                 } else if (targetTab === 'business') {
-                    // Check if company group is selected
                     if ($('#is_company_group').is(':checked')) {
-                        $('input[name="group_name"]').attr('required', true);
-                        $('input[name="company_name"]').attr('required', false);
+                        $('input[name="group_name"]').prop('required', true);
+                        $('input[name="company_name"]').prop('required', false);
+                        $('input[name^="group_companies"]').prop('required', true);
                     } else {
-                        $('input[name="company_name"]').attr('required', true);
-                        $('input[name="group_name"]').attr('required', false);
+                        $('input[name="company_name"]').prop('required', true);
+                        $('input[name="group_name"]').prop('required', false);
+                        $('input[name^="group_companies"]').prop('required', false);
                     }
-                    $('input[name="full_name"]').attr('required', false);
-                    $('input[name="phone"]').attr('required', false);
+                    $('input[name="full_name"]').prop('required', false);
+                    $('input[name="phone"]').prop('required', false);
                 }
             });
 
+            // 🔑 Run tab handler on first load
+            const activeTab = $('a[data-toggle="tab"].active').attr('aria-controls');
+            $('a[data-toggle="tab"][aria-controls="' + activeTab + '"]').trigger('shown.bs.tab');
+
+            // ✅ Division change
             $('.division_id').on('change', function() {
                 let self = $(this);
                 $.ajax({
-                    "url": "{{ route('lead.division') }}",
-                    "type": "GET",
-                    "data": {
-                        division_id: self.val()
-                    },
+                    url: "{{ route('lead.division') }}",
+                    type: "GET",
+                    data: { division_id: self.val() },
                     cache: false,
                     success: function(data) {
                         $('.district_id').html(data);
                     }
                 });
-            })
+            });
 
+            // ✅ District change
             $('.district_id').on('change', function() {
                 let self = $(this);
                 $.ajax({
-                    "url": "{{ route('lead.upazila') }}",
-                    "type": "GET",
-                    "data": {
-                        district_id: self.val()
-                    },
+                    url: "{{ route('lead.upazila') }}",
+                    type: "GET",
+                    data: { district_id: self.val() },
                     cache: false,
                     success: function(data) {
                         $('.upazila_id').html(data);
                     }
                 });
-            })
+            });
+
+            // ✅ Add contact row
+            $('#newrow').on('click', function() {
+                const addrow = `<tr>
+                <td><input type="text" name="contact_person_name[]" class="form-control"></td>
+                <td><input type="text" name="contact_person_email[]" class="form-control"></td>
+                <td><input type="tel" name="contact_person_phone[]" class="form-control"></td>
+                <td>
+                    <button type="button" class="btn btn-danger delete w-100">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>`;
+                $('.contact_row').append(addrow);
+            });
+
+            // ✅ Delete contact row
+            $(document).on('click', '.delete', function() {
+                if ($('.contact_row tr').length > 1) {
+                    $(this).closest('tr').remove();
+                } else {
+                    alert('At least one contact person is required.');
+                }
+            });
+
+            $(document).on('click', '.remove', function() {
+                $(this).closest('tr').remove();
+            });
         });
 
-        $('#newrow').on('click', function() {
-            const addrow = `<tr>
-                                                <td>
-                                                    <input type="text" name="contact_person_name[]" class="form-control" >
-                                                </td>
-                                                <td>
-                               <input type="text" name="contact_person_email[]" class="form-control" >
-                           </td>
-                                                <td>
-                                                    <input type="tel" name="contact_person_phone[]" class="form-control" >
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-danger delete w-100">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-              `;
-            $('.contact_row').append(addrow);
-        })
-
-        $(document).on('click', '.delete', function() {
-            if ($('.contact_row tr').length > 1) {
-                $(this).closest('tr').remove();
-            } else {
-                alert('At least one contact person is required.');
-            }
-        })
-
-        $(document).on('click', '.remove', function() {
-            $(this).closest('tr').remove();
-        })
-
+        // Utility functions
         function totalvalue() {
             let grandtotal = 0;
             $.each($('.total'), function(index, item) {
-                total = Number($(item).val());
+                let total = Number($(item).val());
                 grandtotal += total;
                 $('#GrandTotal').val(grandtotal);
             });
         }
 
         function getDay(formday, today) {
-            const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+            const oneDay = 24 * 60 * 60 * 1000;
             const firstDate = new Date(formday);
             const secondDate = new Date(today);
-            const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay)) + 1;
-            return diffDays;
+            return Math.round(Math.abs((firstDate - secondDate) / oneDay)) + 1;
         }
     </script>
 @endsection
+

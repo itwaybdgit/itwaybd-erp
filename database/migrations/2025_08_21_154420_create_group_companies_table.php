@@ -15,9 +15,9 @@ class CreateGroupCompaniesTable extends Migration
     {
         Schema::create('group_companies', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('company_id')->nullable();
+            $table->bigInteger('lead_generation_id')->nullable();
             $table->string('company_name')->nullable();
-            $table->string('business_type')->nullable();
+            $table->bigInteger('business_type_id')->nullable();
             $table->timestamps();
         });
     }

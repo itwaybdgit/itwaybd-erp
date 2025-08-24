@@ -14,4 +14,8 @@ class LeadGeneration extends Model
    function meeting() {
     return $this->hasMany(MeetingTime::class,'lead_id','id');
    }
+    public function groupCompanies()
+    {
+        return $this->hasMany(GroupCompany::class);
+    }
 }

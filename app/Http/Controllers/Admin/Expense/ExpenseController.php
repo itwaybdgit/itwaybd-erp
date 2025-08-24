@@ -182,6 +182,25 @@ class ExpenseController extends Controller
             $valideted['company_id'] = auth()->user()->company_id;
             $expense =  Expense::create($valideted);
 
+            $account = Account::where('id', $valideted['account_id'])->first();
+            $customer = BandwidthCustomer::where('id', $valideted['customer_id'])->first();
+            
+            if($expense){
+                $accounts = new Account();
+                $accounts->account_name = $customer->company_name;
+                $accounts->parent_id = $valideted['account_id'];
+                $accounts->is_transaction = 1;
+
+                $accounts->accountable_id = $expense->id;
+                $accounts->accountable_type = "App\Models\Expense";
+                $accounts->bill_by_bill = 1;
+                $accounts->branch_id = $input['branch_id'] ?? null;
+
+                $accounts->status = 'Active';
+                $accounts->created_by = Auth::user()->id;
+                $accounts->save();
+            }
+
             $invoice = AccountTransaction::accountInvoice();
             $transaction['invoice'] = $invoice;
             $transaction['table_id'] = $expense->id;
@@ -279,7 +298,18 @@ class ExpenseController extends Controller
             // $valideted['account_3rd'] = $request->account_4th;
             $valideted['created_by'] = auth()->id();
             $valideted['company_id'] = auth()->user()->company_id;
-            $expense->update($valideted);
+            $updatedExpence = $expense->update($valideted);
+
+            // if($updatedExpence){
+            //     $accounts = new Account();
+            //     $accounts->account_name = $valideted['account_id'];
+            //     $accounts->branch_id = $input['branch_id'] ?? null;
+            //     $accounts->updated_by = Auth::user()->id;
+            //     $accounts->update();
+            // }
+
+
+
 
             AccountTransaction::where('type', 2)->where('table_id', $expense->id)->delete();
 

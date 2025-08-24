@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin\Supplier;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class SupplierController extends Controller
@@ -138,7 +140,25 @@ class SupplierController extends Controller
         try {
             DB::beginTransaction();
             $valideted['company_id'] = auth()->user()->company_id;
-            Supplier::create($valideted);
+            $supplier = Supplier::create($valideted);
+
+
+            if ($supplier) {
+                $accounts = new Account();
+                $accounts->account_name = $supplier->name;
+                $accounts->parent_id = 13;
+
+                $accounts->accountable_id = $supplier->id;
+                $accounts->accountable_type = "App\Models\Supplier";
+                $accounts->bill_by_bill = 1;
+                $accounts->branch_id = $input['branch_id'] ?? null;
+
+                $accounts->status = 'Active';
+                $accounts->created_by = Auth::user()->id;
+                $accounts->save();
+            }
+
+
 
             DB::commit();
             return back()->with('success', 'Data Store Successfully');

@@ -48,7 +48,7 @@
         position: absolute;
         top: 0;
         right: 0;
-        width: 85%;
+        width: 90%;
         transform: rotate(180deg) scaleX(1);
         /* 🔄 Rotate & Flip horizontally */
         object-fit: cover;
@@ -62,7 +62,7 @@
 
     .header-text {
         position: absolute;
-        top: 40%;
+        top: 30%;
         right: 43px;
         transform: translateY(-50%);
         color: #fff;
@@ -240,16 +240,10 @@
                                 @endif --}}
                                 {{-- <img src="{{ asset($invoice->customer->invoice_logo) }}" id="businessInvoiceLogo" width="200px" height="100px" alt=""> --}}
                             {{-- </div> --}}
-                            <div class="col-sm-12 invoice-col" style="text-align: center" >
-                                <b style="font-size : 20px"> {{ $invoice->customer->company_name ?? 'N/A' }} </b>
-                                <br>
-                                Invoice: {{ $invoice->invoice_no ?? 'N/A' }} <br>
-
-
-
+                            <div class="col-sm-12 invoice-col" style="text-align: center">
                                 <div class="header-section">
                                     <!-- Logo -->
-                                    <div class="header-logo">
+                                    <div class="header-logo" style="text-align: left; margin: 0">
                                         <img src="{{ $business->business_name == 'ISP BILLING PRO'
                                             ? 'https://ispbillingpro.com/wp-content/uploads/2020/10/cropped-WhatsApp_Image_2023-04-04_at_3.04.37_PM-removebg-preview-300x112.png'
                                             : asset('storage/'. $companyInfo->getRawOriginal('invoice_logo')) }}"
@@ -271,10 +265,10 @@
 
                                 <br>
                                 <!-- /.row -->
-                                <div class="row mt-3 mb-3 align-content-center">
+                                <div class="row mt-3 mb-3 align-content-center" style="margin: 0 15px;">
                                     <div class="col-md-8">
-                                        <div class="invoice-details">
-                                            <div class="mb-2">
+                                        <div class="invoice-details" style="text-align: left;">
+                                            <div class="mb-0">
                                                 <span class="fw-bold text-decoration-underline">Invoice No:</span>
                                                 {{ $invoice->invoice_no ?? 'N/A' }}
                                             </div>
@@ -286,12 +280,15 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="text-end invoice-details">
-                                            <div class="fw-bold">Month: {{ $invoice->billing_month ?? 'N/A' }}</div>
+                                            <div style="text-align: right;font-weight: 400;font-size: medium;">
+                                                Date: {{ \Carbon\Carbon::now()->format('d-m-Y') }}
+                                            </div>
+                                            {{-- <div class="fw-bold">Month: {{ $invoice->billing_month ?? 'N/A' }}</div> --}}
                                         </div>
                                     </div>
                                 </div>
                                 <!-- Table row -->
-                                <div class="row">
+                                <div class="row" style="margin: 0 15px;">
                                     <div class="col-12 table-responsive">
                                         <table class="table  table-bordered">
                                             <thead>
@@ -348,7 +345,7 @@
                                     </div>
 
                                     <!-- Payment Information -->
-                                    <div class="payment-info mb-4 mt-3">
+                                    <div class="payment-info mb-4 mt-3" style="text-align: left;">
                                         <div class="fw-bold mb-2">Payment Information:</div>
                                         <div class="payment-details">
                                             <div><span class="fw-bold">Nagad Merchant:</span> 01854125454</div>
@@ -374,7 +371,7 @@
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                <div class="row" style="margin: 0 15px;">
 
                                     <div class="col-6 mt-3 text-left">
                                         <p>Received by:_____________<br />

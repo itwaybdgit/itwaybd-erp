@@ -3,6 +3,7 @@
 namespace App\Repositories\Hrm;
 
 use App\Helpers\Helper;
+use App\Models\Account;
 use App\Models\Accounts;
 use App\Models\Employee;
 use Carbon\Carbon;
@@ -222,6 +223,22 @@ class EmployeeRepositories
         $valideted['zone_id'] = implode(",", $request->zone_id ?? []);
         $valideted['subzone_id'] = implode(",", $request->subzone_id ?? []);
         $employee = Employee::create($valideted);
+
+        if($employee){
+            $accounts = new Account();
+            $accounts->account_name = $request->name;
+            $accounts->parent_id = 16;
+            $accounts->accountable_id = $employee->id;
+            $accounts->accountable_type = "App\Models\Employee";
+            $accounts->bill_by_bill = 1;
+            $accounts->branch_id = $input['branch_id'] ?? null;
+
+            $accounts->status = 'Active';
+            $accounts->created_by = Auth::user()->id;
+            $accounts->save();
+        }
+
+
         DB::commit();
 
 

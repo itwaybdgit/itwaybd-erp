@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\BandwidthSale;
 
 use App\Helpers\ResellerDataProcessing;
 use App\Http\Controllers\Controller;
+use App\Models\Account;
 use App\Models\BandwidthCustomer;
 use App\Models\BandwidthCustomerPackage;
 use App\Models\ConnectedPath;
@@ -16,6 +17,7 @@ use App\Models\LegalInfo;
 use App\Models\ResellerDiscontinue;
 use App\Models\Upozilla;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class BandwidthCustomerController extends Controller
@@ -224,6 +226,20 @@ class BandwidthCustomerController extends Controller
 
             $bandwithcustomer =  $this->getModel()->create($input);
 
+            if($bandwithcustomer){
+                $accounts = new Account();
+                $accounts->account_name = $input['company_name'];
+                $accounts->parent_id = 5;
+                $accounts->accountable_id = $bandwithcustomer->id;
+                $accounts->accountable_type = "App\Models\BandwidthCustomer";
+                $accounts->bill_by_bill = 1;
+                $accounts->branch_id = $input['branch_id'] ?? null;
+
+                $accounts->status = 'Active';
+                $accounts->created_by = Auth::user()->id;
+                $accounts->save();
+            }
+
             for ($i = 0; $i < count($request->item_id); $i++) {
                 $bandwidth = new BandwidthCustomerPackage();
                 $bandwidth->bandwidht_customer_id = $bandwithcustomer->id;
@@ -382,7 +398,18 @@ class BandwidthCustomerController extends Controller
 
 
 
-            $bandwidthCustomer->update($update);
+            $updatedBandwidthCustomer = $bandwidthCustomer->update($update);
+
+            if($updatedBandwidthCustomer){
+                $accounts = new Account();
+                $accounts->account_name = $update['company_name'];
+                $accounts->branch_id = $update['branch_id'] ?? null;
+                $accounts->updated_by = Auth::user()->id;
+                $accounts->update();
+            }
+
+
+
             BandwidthCustomerPackage::where("bandwidht_customer_id", $bandwidthCustomer->id)->delete();
             for ($j = 0; $j < count($request->item_id); $j++) {
                 $installmentField = 'installment_' . $request->uniqueid[$j];

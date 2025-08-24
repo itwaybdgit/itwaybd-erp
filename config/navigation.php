@@ -257,6 +257,10 @@ $menus =  [
                 'route' => 'lead.index',
             ],
             [
+                'label' => 'Opportunity',
+                'route' => 'opportunity.index',
+            ],
+            [
                 'label' => 'Revert List',
                 'route' => 'reverts.index',
             ],

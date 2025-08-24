@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Crm\Level3ApproveController;
 use App\Http\Controllers\Admin\Crm\MeetingDateController;
 use App\Http\Controllers\Admin\Crm\Noc2ApproveController;
 use App\Http\Controllers\Admin\Crm\NocApproveController;
+use App\Http\Controllers\Admin\Crm\OpportunityController;
 use App\Http\Controllers\Admin\Crm\TransmissionApproveController;
 use App\Http\Controllers\ConnectedPathController;
 use App\Http\Controllers\DowngradationListtxpluningController;
@@ -46,6 +47,26 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth'])->group(function
         Route::get('/get-items-by-category/{id}', [LeadGenerationController::class, 'getItemsByCategory']);
         Route::get('/confirm/sale/{lead:id}', [LeadGenerationController::class, 'confirmsale'])->name('confirmsale');
         Route::post('/confirm/sale/store/{lead:id}', [LeadGenerationController::class, 'confirmsalestore'])->name('confirmsale.store');
+
+        Route::GET('/division', [LeadGenerationController::class, 'division'])->name('division');
+        Route::GET('/upazila', [LeadGenerationController::class, 'upazila'])->name('upazila');
+
+    });
+
+    Route::name('opportunity.')->prefix('opportunity')->group(function () {
+        Route::get('/list/{ids?}', [OpportunityController::class, 'index'])->name('index');
+        Route::get('/dataProcessing/{ids?}', [OpportunityController::class, 'dataProcessing'])->name('dataProcessing');
+        Route::get('/create', [OpportunityController::class, 'create'])->name('create');
+        Route::post('/store', [OpportunityController::class, 'store'])->name('store');
+        Route::get('/edit/{lead:id}', [OpportunityController::class, 'edit'])->name('edit');
+        Route::get('/schedule/{lead:id}', [OpportunityController::class, 'schedule'])->name('schedule');
+        Route::post('/schedule/store/{id}', [OpportunityController::class, 'schedulestore'])->name('schedule.store');
+        Route::post('/schedule/update/{schedule:id}', [OpportunityController::class, 'scheduleupdate'])->name('schedule.update');
+        Route::post('/update/{lead:id}', [OpportunityController::class, 'update'])->name('update');
+        Route::get('/destroy/{lead:id}', [OpportunityController::class, 'destroy'])->name('destroy');
+        Route::get('/get-items-by-category/{id}', [OpportunityController::class, 'getItemsByCategory']);
+        Route::get('/confirm/sale/{lead:id}', [OpportunityController::class, 'confirmsale'])->name('confirmsale');
+        Route::post('/confirm/sale/store/{lead:id}', [OpportunityController::class, 'confirmsalestore'])->name('confirmsale.store');
 
         Route::GET('/division', [LeadGenerationController::class, 'division'])->name('division');
         Route::GET('/upazila', [LeadGenerationController::class, 'upazila'])->name('upazila');

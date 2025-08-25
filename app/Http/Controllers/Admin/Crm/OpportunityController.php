@@ -359,11 +359,12 @@ class OpportunityController extends Controller
             $store['quantity'] = implode(',',array_filter($request->quantity));
             $store['asking_price'] = implode(',',array_filter($request->asking_price));
             $store['created_by'] = auth()->id();
-            $opportunity = $this->getModel()->create($store);
+            $opportunity->update($store);
+            $opportunity->products()->delete();
             $this->opportunityProductsStore($opportunity, $request);
 
             DB::commit();
-            return back()->with('success', 'Data Store Successfully');
+            return back()->with('success', 'Data Updated Successfully');
         } catch (\Throwable $e) {
             DB::rollBack();
             return back()->with('failed', 'Oops! Something was wrong. Message: ' . $e->getMessage() . ' Line: ' . $e->getLine() . 'File: ' . $e->getFile());

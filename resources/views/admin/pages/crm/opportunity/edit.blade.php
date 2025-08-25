@@ -645,5 +645,42 @@
                 }
             });
         }
+
+        $('#addrow').on('click', function() {
+            const addrow = `
+        <tr>
+                                                   <th>
+                                                    <!-- Category Dropdown -->
+                                                    <select name="category_id[]" id="category_id" class="form-control category_id" required>
+                                                        <option value="">Select Category</option>
+                                                        @foreach ($categories as $category)
+            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                        @endforeach
+            </select>
+        </th>
+        <th>
+            <!-- Item Dropdown -->
+            <select name="item_id[]" id="item_id" class="form-control item_id" required>
+                <option value="">Select Item</option>
+                <!-- Items will be loaded here based on the selected category -->
+            </select>
+        </th>
+        <th>
+            <input type="number" value="" name="quantity[]"
+                class="form-control qty ">
+        </th>
+        <th>
+            <input type="text" value="" name="asking_price[]"
+                class="form-control rate ">
+        </th>
+        <th>
+            <button class="btn btn-danger remove w-100">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </th>
+    </tr>
+`;
+            $('.package').append(addrow);
+        })
     </script>
 @endsection

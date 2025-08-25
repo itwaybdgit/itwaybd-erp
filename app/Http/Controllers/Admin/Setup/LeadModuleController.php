@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin\Setup;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\District;
+use App\Models\Division;
+use App\Models\Upozilla;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -202,6 +205,9 @@ class LeadModuleController extends Controller
         $back_url = route($this->routeName . '.index');
         $update_url = route($this->routeName . '.update', $company->id);
         $editinfo = $company;
+        $divisions = Division::all();
+        $districts = District::all();
+        $upazilas = Upozilla::all();
         return view($this->viewName . '.lead_module.edit', get_defined_vars());
     }
 

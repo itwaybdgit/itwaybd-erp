@@ -73,50 +73,71 @@ class DashboardController extends Controller
         return response()->json($activeTimers);
     }
 
-    public function calendarData()
+    public function calendarData(Request $request)
     {
-        $tasks = Task::with(['project', 'subtasks.employee.user'])->get();
+        $employeeId = $request->employee_id;
 
-            $events = $tasks->map(function ($task) {
-                $employees = $task->subtasks
-                    ->map(fn($s) => optional(optional($s->employee)->user)->name)
-                    ->filter()
-                    ->unique()
-                    ->values()
-                    ->all();
-                switch ($task->status) {
-                    case \App\Models\Task::STATUS_PENDING:
-                        $color = '#ffc107';
-                        break;
+        $tasksQuery = Task::with(['project', 'subtasks.employee.user']);
 
-                    case \App\Models\Task::STATUS_IN_PROGRESS:
-                        $color = '#0d6efd';
-                        break;
+        if ($employeeId) {
+            $tasksQuery->whereHas('subtasks', function($q) use ($employeeId) {
+                $q->where('user_id', $employeeId);
+            });
+        }
 
-                    case \App\Models\Task::STATUS_COMPLETED:
-                        $color = '#28a745';
-                        break;
+        $tasks = $tasksQuery->get();
 
-                    default:
-                        $color = '#6c757d';
-                }
+        $events = $tasks->map(function ($task) {
+            $employees = $task->subtasks
+                ->map(fn($s) => optional(optional($s->employee)->user)->name)
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
 
-                return [
-                    'id'    => $task->id,
-                    'title' => $task->title,
-                    'start' => optional($task->start_date_time)?->toIso8601String(),
-                    'end'   => optional($task->end_date_time)?->toIso8601String(),
-                    'color' => $color,
-                    'extendedProps' => [
-                        'project'   => $task->project->name ?? 'N/A',
-                        'employee' => implode(', ', $employees) ?: 'N/A',
-                        'status'    => $task->status,
-                        'priority'  => $task->priority,
-                    ],
-                ];
-            })->values();
+            // $subtasks = $task->subtasks;
 
-            return response()->json($events);
+            // foreach ($subtasks as $subtask) {
+            //     $timerLogs = $subtask->timerLogs();
+            //     dd($timerLogs);
+            // }
+
+            // dd($subtasks);
+
+
+            switch ($task->status) {
+                case \App\Models\Task::STATUS_PENDING:
+                    $color = '#ffc107';
+                    break;
+
+                case \App\Models\Task::STATUS_IN_PROGRESS:
+                    $color = '#0d6efd';
+                    break;
+
+                case \App\Models\Task::STATUS_COMPLETED:
+                    $color = '#28a745';
+                    break;
+
+                default:
+                    $color = '#6c757d';
+            }
+
+            return [
+                'id'    => $task->id,
+                'title' => $task->title,
+                'start' => optional($task->start_date_time)?->toIso8601String(),
+                'end'   => optional($task->end_date_time)?->toIso8601String(),
+                'color' => $color,
+                'extendedProps' => [
+                    'project'   => $task->project->name ?? 'N/A',
+                    'employee' => implode(', ', $employees) ?: 'N/A',
+                    'status'    => $task->status,
+                    'priority'  => $task->priority,
+                ],
+            ];
+        })->values();
+
+        return response()->json($events);
     }
 
 

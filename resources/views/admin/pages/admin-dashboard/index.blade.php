@@ -246,7 +246,13 @@
                     <h4>Project Calendar</h4>
                 </div>
                 <div class="card-body">
-                    <div id="adminCalendar"></div>
+                    <select id="employeeFilter" class="select2">
+                        <option value="">All Employees</option>
+                        @foreach($employees as $employee)
+                            <option value="{{ $employee['id'] }}">{{ $employee['name'] }}</option>
+                        @endforeach
+                    </select>
+                    <div class="mt-3" id="adminCalendar"></div>
                 </div>
             </div>
         </div>
@@ -424,7 +430,15 @@
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-                events: "{{ route('admin.calendarData') }}",
+                events: {
+                    url: "{{ route('admin.calendarData') }}",
+                    method: 'GET',
+                    extraParams: function() {
+                        return {
+                            employee_id: document.getElementById('employeeFilter').value
+                        };
+                    }
+                },
 
                 eventContent: function(arg) {
                     let props = arg.event.extendedProps;
@@ -457,8 +471,60 @@
                         `⭐ Priority: ${props.priority}`
                     );
                 }
+                // eventClick: function(info) {
+                //     const props = info.event.extendedProps;
+                //     const subtasks = props.subtasks || [];
+                //     let subtaskHtml = '';
+                //     if(subtasks.length > 0){
+                //         subtaskHtml = `<table style="width:100%; border-collapse: collapse;">
+                //             <thead>
+                //                 <tr>
+                //                     <th style="border:1px solid #ddd; padding:5px;">Subtask</th>
+                //                     <th style="border:1px solid #ddd; padding:5px;">Start</th>
+                //                     <th style="border:1px solid #ddd; padding:5px;">End</th>
+                //                     <th style="border:1px solid #ddd; padding:5px;">Time Logged</th>
+                //                 </tr>
+                //             </thead>
+                //             <tbody>`;
+                //         subtasks.forEach(st => {
+                //             subtaskHtml += `
+                //                 <tr>
+                //                     <td style="border:1px solid #ddd; padding:5px;">${st.title}</td>
+                //                     <td style="border:1px solid #ddd; padding:5px;">${st.start ? new Date(st.start).toLocaleString() : '-'}</td>
+                //                     <td style="border:1px solid #ddd; padding:5px;">${st.end ? new Date(st.end).toLocaleString() : '-'}</td>
+                //                     <td style="border:1px solid #ddd; padding:5px;">${st.time_logged || '00:00:00'}</td>
+                //                 </tr>
+                //             `;
+                //         });
+                //         subtaskHtml += '</tbody></table>';
+                //     } else {
+                //         subtaskHtml = '<p>No subtasks assigned.</p>';
+                //     }
+
+                //     Swal.fire({
+                //         title: `<b>📌 Task: ${info.event.title}</b>`,
+                //         html: `
+                //             <p><strong>Project:</strong> ${props.project || '-'}</p>
+                //             <p><strong>Employee(s):</strong> ${props.employee}</p>
+                //             <p><strong>Status:</strong> ${props.status}</p>
+                //             <p><strong>Priority:</strong> ${props.priority}</p>
+                //             <p><strong>Duration:</strong> ${info.event.start.toLocaleDateString()} → ${info.event.end.toLocaleDateString()}</p>
+                //             <hr>
+                //             <h5>Subtasks</h5>
+                //             ${subtaskHtml}
+                //         `,
+                //         width: '700px',
+                //         showCloseButton: true,
+                //         focusConfirm: false,
+                //         confirmButtonText: 'Close',
+                //     });
+                // }
             });
             calendar.render();
+
+            $('#employeeFilter').on('change', function() {
+                calendar.refetchEvents();
+            });
         });
     </script>
 @endsection

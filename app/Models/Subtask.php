@@ -288,6 +288,12 @@ class Subtask extends Model
         });
     }
 
+    public function timerLogs()
+    {
+        return $this->hasMany(TimerLog::class, 'subtask_id');
+    }
+
+
     /**
      * Boot the model.
      */

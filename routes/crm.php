@@ -58,15 +58,15 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth'])->group(function
         Route::get('/dataProcessing/{ids?}', [OpportunityController::class, 'dataProcessing'])->name('dataProcessing');
         Route::get('/create', [OpportunityController::class, 'create'])->name('create');
         Route::post('/store', [OpportunityController::class, 'store'])->name('store');
-        Route::get('/edit/{lead:id}', [OpportunityController::class, 'edit'])->name('edit');
+        Route::get('/edit/{opportunity:id}', [OpportunityController::class, 'edit'])->name('edit');
         Route::get('/schedule/{lead:id}', [OpportunityController::class, 'schedule'])->name('schedule');
         Route::post('/schedule/store/{id}', [OpportunityController::class, 'schedulestore'])->name('schedule.store');
         Route::post('/schedule/update/{schedule:id}', [OpportunityController::class, 'scheduleupdate'])->name('schedule.update');
-        Route::post('/update/{lead:id}', [OpportunityController::class, 'update'])->name('update');
-        Route::get('/destroy/{lead:id}', [OpportunityController::class, 'destroy'])->name('destroy');
+        Route::post('/update/{opportunity:id}', [OpportunityController::class, 'update'])->name('update');
+        Route::get('/destroy/{opportunity:id}', [OpportunityController::class, 'destroy'])->name('destroy');
         Route::get('/get-items-by-category/{id}', [OpportunityController::class, 'getItemsByCategory']);
-        Route::get('/confirm/sale/{lead:id}', [OpportunityController::class, 'confirmsale'])->name('confirmsale');
-        Route::post('/confirm/sale/store/{lead:id}', [OpportunityController::class, 'confirmsalestore'])->name('confirmsale.store');
+        Route::get('/confirm/sale/{opportunity:id}', [OpportunityController::class, 'confirmsale'])->name('confirmsale');
+        Route::post('/confirm/sale/store/{opportunity:id}', [OpportunityController::class, 'confirmsalestore'])->name('confirmsale.store');
 
         Route::GET('/division', [LeadGenerationController::class, 'division'])->name('division');
         Route::GET('/upazila', [LeadGenerationController::class, 'upazila'])->name('upazila');

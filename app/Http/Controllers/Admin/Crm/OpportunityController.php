@@ -17,6 +17,8 @@ use App\Models\LegalInfo;
 use App\Models\LicenseType;
 use App\Models\MeetingTime;
 use App\Models\Opportunity;
+use App\Models\OpportunityProduct;
+use App\Models\ProductCategory;
 use App\Models\Upozilla;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -47,19 +49,19 @@ class OpportunityController extends Controller
                 'label' => 'Company name',
                 'data' => 'company_name',
                 'searchable' => true,
-                // 'relation' => 'getMProfile',
+                'relation' => 'lead',
             ],
             [
                 'label' => 'Owner name',
                 'data' => 'company_owner_name',
                 'searchable' => true,
-                // 'relation' => 'getMProfile',
+                'relation' => 'lead',
             ],
             [
                 'label' => 'Owner phone',
                 'data' => 'company_owner_phone',
                 'searchable' => true,
-                // 'relation' => 'getMProfile',
+                'relation' => 'lead',
             ],
             [
                 'label' => 'Customer Priority',
@@ -170,120 +172,110 @@ class OpportunityController extends Controller
         $back_url = route($this->routeName . '.index');
         $store_url = route($this->routeName . '.store');
         $items = Item::where('status', 'active')->get();
-        $divisions = Division::get();
-        $licenses = LicenseType::get();
-        $districts = District::get();
-        $upazilas = Upozilla::get();
         $categories = ItemCategory::get();
-        $branches = Branch::get();
+        $category_info  = ProductCategory::withCount('products')->get();
         $leads = LeadGeneration::orderBy('id', 'desc')->where('company_name','!=', null)->orWhere('company_owner_name','!=', null)->get();
-        $company = auth()->user()->company;
-        $datasources = DataSource::get();
         return view($this->viewName . '.create', get_defined_vars());
     }
 
-//    public function store(Request $request) {
-//         $this->validate($request, [
-//            'company_name' => ['required'],
-//            'recurring_type' => ['required'],
-//            'item_id.*' => ['required'],
-//            'quantity.*' => ['required'],
-//            'asking_price.*' => ['required'],
-//            'company_owner_name' => ['nullable'],
-//            'license_type' => ['nullable'],
-//        ]);
-//
-//        DB::beginTransaction();
-//        try {
-//        $store = $request->all();
-//        $store['contact_person_name'] = implode(',', array_filter($request->contact_person_name) ?? []);
-//        $store['contact_person_phone'] = implode(',',array_filter($request->contact_person_phone) ?? []);
-//        $store['contact_person_email'] = implode(',',array_filter($request->contact_person_email) ?? []);
-//
-//
-//        $store['category_id'] = implode(',',array_filter($request->category_id));
-//        $store['item_id'] = implode(',',array_filter($request->item_id));
-//        $store['quantity'] = implode(',',array_filter($request->quantity));
-//        $store['asking_price'] = implode(',',array_filter($request->asking_price));
-//        $store['created_by'] = auth()->id();
-//        $lead = $this->getModel()->create($store);
-//
-//        $meeting['lead_id'] = $lead->id;
-//        $meeting['meeting_date'] = $request->meeting_date;
-//        $meeting['meeting_remarks'] = $request->meeting_remarks;
-//        $meeting['type'] = 'meeting';
-//
-//        $followup['lead_id'] = $lead->id;
-//        $followup['meeting_date'] = $request->follow_up_date;
-//        $followup['meeting_remarks'] = $request->follow_up_remarks;
-//        $followup['type'] = 'followup';
-//
-//        MeetingTime::create($meeting);
-//        MeetingTime::create($followup);
-//
-//        DB::commit();
-//        return back()->with('success', 'Data Store Successfully');
-//        } catch (\Throwable $e) {
-//            DB::rollBack();
-//            return back()->with('failed', 'Oops! Something was wrong. Message: ' . $e->getMessage() . ' Line: ' . $e->getLine() . 'File: ' . $e->getFile());
-//        }
-//    }
     public function store(Request $request) {
 //        return $request;
 
+         $this->validate($request, [
+            'recurring_type' => ['required'],
+            'item_id.*' => ['required'],
+            'quantity.*' => ['required'],
+            'asking_price.*' => ['required'],
+        ]);
+
         DB::beginTransaction();
         try {
-            $store = $request->all();
-            $store['contact_person_name'] = implode(',', array_filter($request->contact_person_name) ?? []);
-            $store['contact_person_phone'] = implode(',',array_filter($request->contact_person_phone) ?? []);
-            $store['contact_person_email'] = implode(',',array_filter($request->contact_person_email) ?? []);
+        $store = $request->all();
+        $store['category_id'] = implode(',',array_filter($request->category_id));
+        $store['item_id'] = implode(',',array_filter($request->item_id));
+        $store['quantity'] = implode(',',array_filter($request->quantity));
+        $store['asking_price'] = implode(',',array_filter($request->asking_price));
+        $store['created_by'] = auth()->id();
+        $opportunity = $this->getModel()->create($store);
+        $this->opportunityProductsStore($opportunity, $request);
 
-
-            $store['created_by'] = auth()->id();
-            $store['group_name'] = $request->group_name;
-            $store['lead_type'] = $request->lead_type;
-            $store['group_owner_name'] = $request->group_owner_name;
-            $store['group_owner_phone'] = $request->group_owner_phone;
-            $store['company_name'] = $request->group_name?$request->group_name:$request->company_name;
-            $store['company_owner_name'] = $request->group_owner_name?$request->group_owner_name:$request->company_owner_name;
-            $store['company_owner_phone'] = $request->group_owner_phone?$request->group_owner_phone:$request->company_owner_phone;
-            $store['branch_id'] = $request->branch_id;
-            $store['purpose'] = $request->purpose;
-            if ($store['lead_type'] == 'personal'){
-                $store['company_owner_name'] = $request->full_name;
-                $store['company_owner_phone'] = $request->phone;
-            }
-
-            $lead = $this->getModel()->create($store);
-
-            if ($request->has('group_companies')) {
-                foreach ($request->group_companies as $gc) {
-                    if (!empty($gc['company_name']) || !empty($gc['business_type_id'])) {
-                        $lead->groupCompanies()->create($gc);
-                    }
-                }
-            }
-
-            $meeting['lead_id'] = $lead->id;
-            $meeting['meeting_date'] = $request->meeting_date;
-            $meeting['meeting_remarks'] = $request->meeting_remarks;
-            $meeting['type'] = 'meeting';
-
-            $followup['lead_id'] = $lead->id;
-            $followup['meeting_date'] = $request->follow_up_date;
-            $followup['meeting_remarks'] = $request->follow_up_remarks;
-            $followup['type'] = 'followup';
-
-            MeetingTime::create($meeting);
-            MeetingTime::create($followup);
-
-            DB::commit();
-            return back()->with('success', 'Data Store Successfully');
+        DB::commit();
+        return back()->with('success', 'Data Store Successfully');
         } catch (\Throwable $e) {
             DB::rollBack();
             return back()->with('failed', 'Oops! Something was wrong. Message: ' . $e->getMessage() . ' Line: ' . $e->getLine() . 'File: ' . $e->getFile());
         }
     }
+    public function opportunityProductsStore($model, $req)
+    {
+        for ($i = 0; $i < count($req->proName); $i++) {
+            $value[] = [
+                'opportunity_id' => $model->id,
+                'product_category_id' => $req->catName[$i],
+                'product_id' => $req->proName[$i],
+                'quantity' => $req->qty[$i],
+                'unit_price' => $req->unitprice[$i],
+                'total_price' => $req->total[$i],
+            ];
+        }
+        OpportunityProduct::insert($value);
+    }
+//    public function store(Request $request) {
+////        return $request;
+//
+//        DB::beginTransaction();
+//        try {
+//            $store = $request->all();
+//            $store['contact_person_name'] = implode(',', array_filter($request->contact_person_name) ?? []);
+//            $store['contact_person_phone'] = implode(',',array_filter($request->contact_person_phone) ?? []);
+//            $store['contact_person_email'] = implode(',',array_filter($request->contact_person_email) ?? []);
+//
+//
+//            $store['created_by'] = auth()->id();
+//            $store['group_name'] = $request->group_name;
+//            $store['lead_type'] = $request->lead_type;
+//            $store['group_owner_name'] = $request->group_owner_name;
+//            $store['group_owner_phone'] = $request->group_owner_phone;
+//            $store['company_name'] = $request->group_name?$request->group_name:$request->company_name;
+//            $store['company_owner_name'] = $request->group_owner_name?$request->group_owner_name:$request->company_owner_name;
+//            $store['company_owner_phone'] = $request->group_owner_phone?$request->group_owner_phone:$request->company_owner_phone;
+//            $store['branch_id'] = $request->branch_id;
+//            $store['purpose'] = $request->purpose;
+//            if ($store['lead_type'] == 'personal'){
+//                $store['company_owner_name'] = $request->full_name;
+//                $store['company_owner_phone'] = $request->phone;
+//            }
+//
+//            $lead = $this->getModel()->create($store);
+//
+//            if ($request->has('group_companies')) {
+//                foreach ($request->group_companies as $gc) {
+//                    if (!empty($gc['company_name']) || !empty($gc['business_type_id'])) {
+//                        $lead->groupCompanies()->create($gc);
+//                    }
+//                }
+//            }
+//
+//            $meeting['lead_id'] = $lead->id;
+//            $meeting['meeting_date'] = $request->meeting_date;
+//            $meeting['meeting_remarks'] = $request->meeting_remarks;
+//            $meeting['type'] = 'meeting';
+//
+//            $followup['lead_id'] = $lead->id;
+//            $followup['meeting_date'] = $request->follow_up_date;
+//            $followup['meeting_remarks'] = $request->follow_up_remarks;
+//            $followup['type'] = 'followup';
+//
+//            MeetingTime::create($meeting);
+//            MeetingTime::create($followup);
+//
+//            DB::commit();
+//            return back()->with('success', 'Data Store Successfully');
+//        } catch (\Throwable $e) {
+//            DB::rollBack();
+//            return back()->with('failed', 'Oops! Something was wrong. Message: ' . $e->getMessage() . ' Line: ' . $e->getLine() . 'File: ' . $e->getFile());
+//        }
+//    }
 
     function schedule(LeadGeneration $lead) {
         $page_heading = "Meeting & Follow up Schedule";
@@ -337,140 +329,44 @@ class OpportunityController extends Controller
         }
     }
 
-    public function edit(LeadGeneration $lead)
+    public function edit(Opportunity $opportunity)
     {
         $page_title = "Opportunity Edit";
         $page_heading = "Opportunity Edit";
         $back_url = route($this->routeName . '.index');
-        $update_url = route($this->routeName . '.update', $lead->id);
-        $editinfo = $lead;
-        $company = auth()->user()->company;
-        $contact_person_names = $lead->contact_person_name ? explode(',', $lead->contact_person_name) : [''];
-        $contact_person_phones = $lead->contact_person_phone ? explode(',', $lead->contact_person_phone) : [''];
-        $contact_person_emails = $lead->contact_person_email ? explode(',', $lead->contact_person_email) : [''];
-
-        // Get districts for selected division
-        $selected_districts = collect();
-        if ($lead->division_id) {
-            $selected_districts = District::where('division_id', $lead->division_id)->get();
-        }
-
-        // Get upazilas for selected district
-        $selected_upazilas = collect();
-        if ($lead->district_id) {
-            $selected_upazilas = Upozilla::where('district_id', $lead->district_id)->get();
-        }
-
-        // Get meeting and followup data
-        $meeting = $lead->meeting->where('type', 'meeting')->first();
-        $followup = $lead->meeting->where('type', 'followup')->first();
-
+        $update_url = route($this->routeName . '.update', $opportunity->id);
+        $editinfo = $opportunity;
         $items = Item::where('status', 'active')->get();
-        $divisions = Division::get();
-        $districts = District::get();
-        $upazilas = Upozilla::get();
         $categories = ItemCategory::get();
-        $datasources = DataSource::get();
-        $licenses = LicenseType::get();
-        $branches = Branch::get();
+        $category_info  = ProductCategory::withCount('products')->get();
+        $leads = LeadGeneration::orderBy('id', 'desc')->where('company_name','!=', null)->orWhere('company_owner_name','!=', null)->get();
         return view($this->viewName . '.edit', get_defined_vars());
     }
 
-    public function update(Request $request, $id) {
+    public function update(Request $request, Opportunity $opportunity) {
         $this->validate($request, [
-            'lead_type' => ['required', 'in:personal,business'],
-            // Personal validation
-            'full_name' => ['required_if:lead_type,personal'],
-            'phone' => ['required_if:lead_type,personal'],
-            // Business validation
-            'company_name' => ['required_if:lead_type,business'],
-            'group_name' => ['required_if:is_company_group,1'],
-            'group_companies.*.company_name' => ['required_if:is_company_group,1'],
+            'recurring_type' => ['required'],
+            'item_id.*' => ['required'],
+            'quantity.*' => ['required'],
+            'asking_price.*' => ['required'],
         ]);
 
         DB::beginTransaction();
         try {
-            $lead = $this->getModel()->findOrFail($id);
-
-            $update = $request->all();
-            $update['contact_person_name'] = implode(',', array_filter($request->contact_person_name ?? []));
-            $update['contact_person_phone'] = implode(',', array_filter($request->contact_person_phone ?? []));
-            $update['contact_person_email'] = implode(',', array_filter($request->contact_person_email ?? []));
-
-            $update['updated_by'] = auth()->id();
-
-            // Handle company group logic
-            if ($request->is_company_group) {
-                $update['group_name'] = $request->group_name;
-                $update['group_owner_name'] = $request->group_owner_name;
-                $update['group_owner_phone'] = $request->group_owner_phone;
-                $update['company_name'] = $request->group_name;
-                $update['company_owner_name'] = $request->group_owner_name;
-                $update['company_owner_phone'] = $request->group_owner_phone;
-            } else {
-                $update['company_name'] = $request->company_name;
-                $update['company_owner_name'] = $request->company_owner_name;
-                $update['company_owner_phone'] = $request->company_owner_phone;
-                // Clear group fields if not a group
-                $update['group_name'] = null;
-                $update['group_owner_name'] = null;
-                $update['group_owner_phone'] = null;
-            }
-            $store['lead_type'] = $request->lead_type;
-            if ($store['lead_type'] == 'personal'){
-                $update['company_owner_name'] = $request->full_name;
-                $update['company_owner_phone'] = $request->phone;
-            }
-
-            $update['branch_id'] = $request->branch_id;
-            $update['purpose'] = $request->purpose;
-
-            $lead->update($update);
-
-            // Handle group companies
-            if ($request->is_company_group && $request->group_companies) {
-                // Delete existing group companies
-                $lead->groupCompanies()->delete();
-
-                foreach ($request->group_companies as $gc) {
-                    if (!empty($gc['company_name']) || !empty($gc['business_type_id'])) {
-                        $lead->groupCompanies()->create($gc);
-                    }
-                }
-            } else {
-                // Clear group companies if not a group
-                $lead->groupCompanies()->delete();
-            }
-
-            // Handle meeting times
-            $lead->meeting()->delete(); // Remove existing records
-
-            if ($request->meeting_date || $request->meeting_remarks) {
-                $meeting = [
-                    'lead_id' => $lead->id,
-                    'meeting_date' => $request->meeting_date,
-                    'meeting_remarks' => $request->meeting_remarks,
-                    'type' => 'meeting'
-                ];
-                MeetingTime::create($meeting);
-            }
-
-            if ($request->follow_up_date || $request->follow_up_remarks) {
-                $followup = [
-                    'lead_id' => $lead->id,
-                    'meeting_date' => $request->follow_up_date,
-                    'meeting_remarks' => $request->follow_up_remarks,
-                    'type' => 'followup'
-                ];
-                MeetingTime::create($followup);
-            }
+            $store = $request->all();
+            $store['category_id'] = implode(',',array_filter($request->category_id));
+            $store['item_id'] = implode(',',array_filter($request->item_id));
+            $store['quantity'] = implode(',',array_filter($request->quantity));
+            $store['asking_price'] = implode(',',array_filter($request->asking_price));
+            $store['created_by'] = auth()->id();
+            $opportunity = $this->getModel()->create($store);
+            $this->opportunityProductsStore($opportunity, $request);
 
             DB::commit();
-            return redirect()->route($this->routeName . '.index')->with('success', 'Lead updated successfully');
-
+            return back()->with('success', 'Data Store Successfully');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('failed', 'Oops! Something went wrong. Message: ' . $e->getMessage() . ' Line: ' . $e->getLine() . ' File: ' . $e->getFile());
+            return back()->with('failed', 'Oops! Something was wrong. Message: ' . $e->getMessage() . ' Line: ' . $e->getLine() . 'File: ' . $e->getFile());
         }
     }
 

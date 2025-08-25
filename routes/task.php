@@ -35,6 +35,12 @@ Route::prefix('api')->middleware(['auth'])->group(function () {
 Route::middleware(['web', 'auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/summary/dashboard', [DashboardController::class, 'index'])->name('task.dashboard');
     Route::get('summary/dashboard/filter', [DashboardController::class, 'filter'])->name('summary.dashboard.filter');
+    Route::get('employee-tasks/{id}', [DashboardController::class, 'employeeTaskDetail'])->name('employee.tasks.detail');
+
+
+    Route::get('/active-timers', [DashboardController::class, 'getActiveTimers'])->name('activeTimers');
+    Route::get('/calendar-data', [DashboardController::class, 'calendarData'])->name('calendarData');
+
 
 
 

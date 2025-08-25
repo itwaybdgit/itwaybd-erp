@@ -5,6 +5,7 @@
 
 
 @section('style')
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 <style>
     .custom-btn {
         display: inline-block;
@@ -102,12 +103,12 @@
                 </div>
             </a>
         </div>
-        <div class="col-md-3" id="ongoingTasksCard">
+        <div class="col-md-3" id="completedTasksCard">
             <div class="card text-center shadow-sm">
                 <div class="card-body">
                     <i class="fas fa-tasks fa-2x text-success"></i>
-                    <h3 class="mt-2">{{ $tasks['ongoingTasks'] }}</h3>
-                    <p class="text-muted mb-0">Ongoing Tasks</p>
+                    <h3 class="mt-2">{{ $tasks['completedTasks'] }}</h3>
+                    <p class="text-muted mb-0">Completed Tasks</p>
                 </div>
             </div>
         </div>
@@ -158,10 +159,160 @@
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Employee Task Table (Detailed)</h4>
+                </div>
+                <div class="card-body">
+                    <table id="employeeTaskTable" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Total Tasks</th>
+                                <th>Completed</th>
+                                <th>Active</th>
+                                <th>Overdue</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($employees as $emp)
+                            <tr>
+                                <td>{{ $emp['name'] }}</td>
+                                <td>{{ $emp['totalTasks'] }}</td>
+                                <td>{{ $emp['completedTasks'] }}</td>
+                                <td>{{ $emp['activeTasks'] }}</td>
+                                <td>{{ $emp['overdueTasks'] }}</td>
+                                <td>
+                                    <a href="{{ route('admin.employee.tasks.detail', $emp['id']) }}" class="btn btn-sm btn-primary">
+                                        View Work
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h4>Active Tasks / Subtasks</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped" id="activeTimersTable">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Task</th>
+                                <th>Subtask</th>
+                                <th>Started At</th>
+                                <th>Current Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($activeTimers as $timer)
+                                <tr>
+                                    <td>{{ $timer['employee_name'] }}</td>
+                                    <td>{{ $timer['task_title'] }}</td>
+                                    <td>{{ $timer['subtask_title'] }}</td>
+                                    <td>{{ $timer['started_at'] }}</td>
+                                    <td class="duration">{{ $timer['duration'] }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">No active timers found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h4>Project Calendar</h4>
+                </div>
+                <div class="card-body">
+                    <div id="adminCalendar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 
 @section('scripts')
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('#employeeTaskTable').DataTable({
+                "ordering": true,
+                "searching": true,
+                "paging": true
+            });
+        });
+    </script>
+
+    <script>
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600).toString().padStart(2,'0');
+            const m = Math.floor((seconds % 3600) / 60).toString().padStart(2,'0');
+            const s = Math.floor(seconds % 60).toString().padStart(2,'0');
+            return `${h}:${m}:${s}`;
+        }
+
+        function fetchActiveTimers() {
+            $.get("{{ route('admin.activeTimers') }}", function(data) {
+                const tbody = $("#activeTimersTable tbody");
+                tbody.empty();
+
+                if(data.length === 0){
+                    tbody.append(`
+                        <tr>
+                            <td colspan="5" class="text-center">No active timers found.</td>
+                        </tr>
+                    `);
+                    return;
+                }
+
+                data.forEach(timer => {
+                    const start = new Date(timer.started_at);
+                    const elapsed = Math.floor((new Date() - start)/1000);
+                    tbody.append(`
+                        <tr>
+                            <td>${timer.employee_name}</td>
+                            <td>${timer.task_title}</td>
+                            <td>${timer.subtask_title}</td>
+                            <td>${timer.started_at}</td>
+                            <td>${formatTime(elapsed)}</td>
+                        </tr>
+                    `);
+                });
+            });
+        }
+
+
+
+        // Fetch every 5 seconds
+        setInterval(fetchActiveTimers, 5000);
+        fetchActiveTimers();
+    </script>
+
     <script>
         let barChart, pieChart;
 
@@ -234,7 +385,7 @@
                     data: data,
                     success: function(tasks){
                         $('#todayTasksCard h3').text(tasks.todayTasks);
-                        $('#ongoingTasksCard h3').text(tasks.ongoingTasks);
+                        $('#completedTasksCard h3').text(tasks.completedTasks);
                         $('#pendingTasksCard h3').text(tasks.pendingTasks);
                         $('#delayedTasksCard h3').text(tasks.delayedTasks);
 
@@ -259,5 +410,55 @@
             });
         });
 
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('adminCalendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: "auto",
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: "{{ route('admin.calendarData') }}",
+
+                eventContent: function(arg) {
+                    let props = arg.event.extendedProps;
+                    let html = `
+                        <div style="font-size:12px; line-height:1.3;">
+                            <b>📌 ${arg.event.title}</b><br>
+                            📂 ${props.project}<br>
+                            👤 ${props.employee}
+                        </div>
+                    `;
+                    return { html: html };
+                },
+
+                eventDidMount: function(info) {
+                    const props = info.event.extendedProps;
+                    info.el.setAttribute('title', 
+                        `Project: ${props.project}\nEmployee: ${props.employee}\nStatus: ${props.status}`
+                    );
+                },
+
+                eventClick: function(info) {
+                    const props = info.event.extendedProps;
+                    console.log(props);
+                    alert(
+                        `📌 Task: ${info.event.title}\n` +
+                        `📂 Project: ${props.project}\n` +
+                        `👤 Employee: ${props.employee}\n` +
+                        `📅 From: ${info.event.start.toLocaleDateString()} → To: ${info.event.end.toLocaleDateString()}\n` +
+                        `⚡ Status: ${props.status}\n` +
+                        `⭐ Priority: ${props.priority}`
+                    );
+                }
+            });
+            calendar.render();
+        });
     </script>
 @endsection

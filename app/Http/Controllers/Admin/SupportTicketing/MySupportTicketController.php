@@ -128,7 +128,7 @@ class MySupportTicketController extends Controller
     public function index($id = null)
     {
         $page_title = "My Ticket";
-        $page_heading = "My Ticket List";
+        $page_heading = "Tickets Assigned To Me";
         $ajax_url = route($this->routeName . '.dataProcessing', $id);
         $is_show_checkbox = false;
         $columns = $this->reformatForRelationalColumnName(

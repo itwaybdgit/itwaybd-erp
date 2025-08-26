@@ -33,6 +33,9 @@
         background-color: #7367f0 !important;
         color: #fff !important;
     }
+    .modal-body p{
+        margin-bottom: 5px;
+    }
 
 </style>
 @endsection
@@ -273,6 +276,8 @@
                 <div>
                     <p><strong>👤 Employee:</strong> <span id="taskEmployee"></span></p>
                     <p><strong>📂 Project:</strong> <span id="taskProject"></span></p>
+                    <p><strong>📌 Task:</strong> <span id="taskTitle"></span></p>
+                    <p><strong>📅 Date:</strong> <span id="taskDate"></span></p>
                     <p><strong>⚡ Status:</strong> <span id="taskStatus" class="badge bg-warning"></span></p>
                     <p><strong>⭐ Priority:</strong> <span id="taskPriority" class="badge bg-danger"></span></p>
                 </div>
@@ -502,9 +507,14 @@
                 },
                 eventClick: function(info) {
                     const props = info.event.extendedProps;
+                    let options = { day: '2-digit', month: 'short', year: 'numeric' };
+                    let startDate = new Date(info.event.start).toLocaleDateString('en-GB', options);
+                    let endDate   = new Date(info.event.end).toLocaleDateString('en-GB', options);
 
                     document.getElementById("taskEmployee").innerText = props.employee;
                     document.getElementById("taskProject").innerText = props.project;
+                    document.getElementById("taskTitle").innerText = info.event.title;
+                    document.getElementById("taskDate").innerText = `Date: ${startDate} to ${endDate}`;
                     document.getElementById("taskStatus").innerText = props.status;
                     document.getElementById("taskPriority").innerText = props.priority;
 

@@ -140,8 +140,8 @@ class SupportTicketController extends Controller
     }
     public function index($id = null)
     {
-        $page_title = "Ticket";
-        $page_heading = "Ticket List";
+        $page_title = "My Created Tickets";
+        $page_heading = "Tickets I Created";
         $ajax_url = route($this->routeName . '.dataProcessing', $id);
         $create_url = route($this->routeName . '.create');
         $is_show_checkbox = false;
@@ -159,7 +159,7 @@ class SupportTicketController extends Controller
      */
     public function dataProcessing(Request $request, $id = null)
     {
-        $model = $this->getModel();
+        $model = $this->getModel()->with(['assignUser', 'createBy']);
 
         if (auth()->user()->is_admin == 1) {
             if ($id != "All" && $id != null) {
@@ -170,7 +170,7 @@ class SupportTicketController extends Controller
                 $model = $model->whereIn("status", [1, 2]);
             }
         } else {
-            $model = $model->where('assign_to', auth()->id());
+            $model = $model->where('created_by', auth()->id());
 
             if ($id != "All" && $id != null) {
                 $model = $model->whereIn("status", [$id]);

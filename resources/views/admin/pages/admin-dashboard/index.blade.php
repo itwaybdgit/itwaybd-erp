@@ -5,6 +5,7 @@
 
 
 @section('style')
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 <style>
     .custom-btn {
         display: inline-block;
@@ -102,12 +103,12 @@
                 </div>
             </a>
         </div>
-        <div class="col-md-3" id="ongoingTasksCard">
+        <div class="col-md-3" id="completedTasksCard">
             <div class="card text-center shadow-sm">
                 <div class="card-body">
                     <i class="fas fa-tasks fa-2x text-success"></i>
-                    <h3 class="mt-2">{{ $tasks['ongoingTasks'] }}</h3>
-                    <p class="text-muted mb-0">Ongoing Tasks</p>
+                    <h3 class="mt-2">{{ $tasks['completedTasks'] }}</h3>
+                    <p class="text-muted mb-0">Completed Tasks</p>
                 </div>
             </div>
         </div>
@@ -158,10 +159,209 @@
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Employee Task Table (Detailed)</h4>
+                </div>
+                <div class="card-body">
+                    <table id="employeeTaskTable" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Total Tasks</th>
+                                <th>Completed</th>
+                                <th>Active</th>
+                                <th>Overdue</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($employees as $emp)
+                            <tr>
+                                <td>{{ $emp['name'] }}</td>
+                                <td>{{ $emp['totalTasks'] }}</td>
+                                <td>{{ $emp['completedTasks'] }}</td>
+                                <td>{{ $emp['activeTasks'] }}</td>
+                                <td>{{ $emp['overdueTasks'] }}</td>
+                                <td>
+                                    <a href="{{ route('admin.employee.tasks.detail', $emp['id']) }}" class="btn btn-sm btn-primary">
+                                        View Work
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h4>Active Tasks / Subtasks</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped" id="activeTimersTable">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Task</th>
+                                <th>Subtask</th>
+                                <th>Started At</th>
+                                <th>Current Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($activeTimers as $timer)
+                                <tr>
+                                    <td>{{ $timer['employee_name'] }}</td>
+                                    <td>{{ $timer['task_title'] }}</td>
+                                    <td>{{ $timer['subtask_title'] }}</td>
+                                    <td>{{ $timer['started_at'] }}</td>
+                                    <td class="duration">{{ $timer['duration'] }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">No active timers found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h4>Project Calendar</h4>
+                </div>
+                <div class="card-body">
+                    <select id="employeeFilter" class="select2">
+                        <option value="">All Employees</option>
+                        @foreach($employees as $employee)
+                            <option value="{{ $employee['id'] }}">{{ $employee['name'] }}</option>
+                        @endforeach
+                    </select>
+                    <div class="mt-3" id="adminCalendar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+{{-- modal of task details --}}
+<div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-labelledby="taskDetailsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content rounded-3 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title text-light" id="taskDetailsLabel">Task Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Task Info -->
+                <div>
+                    <p><strong>👤 Employee:</strong> <span id="taskEmployee"></span></p>
+                    <p><strong>📂 Project:</strong> <span id="taskProject"></span></p>
+                    <p><strong>⚡ Status:</strong> <span id="taskStatus" class="badge bg-warning"></span></p>
+                    <p><strong>⭐ Priority:</strong> <span id="taskPriority" class="badge bg-danger"></span></p>
+                </div>
+
+                <!-- Time Logged -->
+                <h6 class="mt-2">⏱️ Time Logs</h6>
+                <table class="table table-bordered table-striped">
+                    <thead class="table-light">
+                        <tr>
+                        <th>#</th>
+                        <th>Subtask</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Logged Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="timeLogTableBody">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('#employeeTaskTable').DataTable({
+                "ordering": true,
+                "searching": true,
+                "paging": true
+            });
+        });
+    </script>
+
+    <script>
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600).toString().padStart(2,'0');
+            const m = Math.floor((seconds % 3600) / 60).toString().padStart(2,'0');
+            const s = Math.floor(seconds % 60).toString().padStart(2,'0');
+            return `${h}:${m}:${s}`;
+        }
+
+        function fetchActiveTimers() {
+            $.get("{{ route('admin.activeTimers') }}", function(data) {
+                const tbody = $("#activeTimersTable tbody");
+                tbody.empty();
+
+                if(data.length === 0){
+                    tbody.append(`
+                        <tr>
+                            <td colspan="5" class="text-center">No active timers found.</td>
+                        </tr>
+                    `);
+                    return;
+                }
+
+                data.forEach(timer => {
+                    const start = new Date(timer.started_at);
+                    const elapsed = Math.floor((new Date() - start)/1000);
+                    tbody.append(`
+                        <tr>
+                            <td>${timer.employee_name}</td>
+                            <td>${timer.task_title}</td>
+                            <td>${timer.subtask_title}</td>
+                            <td>${timer.started_at}</td>
+                            <td>${formatTime(elapsed)}</td>
+                        </tr>
+                    `);
+                });
+            });
+        }
+
+
+
+        // Fetch every 5 seconds
+        setInterval(fetchActiveTimers, 5000);
+        fetchActiveTimers();
+    </script>
+
     <script>
         let barChart, pieChart;
 
@@ -234,11 +434,11 @@
                     data: data,
                     success: function(tasks){
                         $('#todayTasksCard h3').text(tasks.todayTasks);
-                        $('#ongoingTasksCard h3').text(tasks.ongoingTasks);
+                        $('#completedTasksCard h3').text(tasks.completedTasks);
                         $('#pendingTasksCard h3').text(tasks.pendingTasks);
                         $('#delayedTasksCard h3').text(tasks.delayedTasks);
 
-                        initCharts(tasks); // update charts dynamically
+                        initCharts(tasks);
                     }
                 });
             }
@@ -246,7 +446,6 @@
     </script>
 
     <script>
-        // filtering functionality
         const filterButtons = document.querySelectorAll('.filter-btn');
 
         filterButtons.forEach(btn => {
@@ -259,5 +458,110 @@
             });
         });
 
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('adminCalendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: "auto",
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: {
+                    url: "{{ route('admin.calendarData') }}",
+                    method: 'GET',
+                    extraParams: function() {
+                        return {
+                            employee_id: document.getElementById('employeeFilter').value
+                        };
+                    }
+                },
+
+                eventContent: function(arg) {
+                    let props = arg.event.extendedProps;
+                    let html = `
+                        <div style="font-size:12px; line-height:1.3;">
+                            <b>📌 ${arg.event.title}</b><br>
+                            📂 ${props.project}<br>
+                            👤 ${props.employee}
+                        </div>
+                    `;
+                    return { html: html };
+                },
+
+                eventDidMount: function(info) {
+                    const props = info.event.extendedProps;
+                    info.el.setAttribute('title', 
+                        `Project: ${props.project}\nEmployee: ${props.employee}\nStatus: ${props.status}`
+                    );
+                },
+                eventClick: function(info) {
+                    const props = info.event.extendedProps;
+
+                    document.getElementById("taskEmployee").innerText = props.employee;
+                    document.getElementById("taskProject").innerText = props.project;
+                    document.getElementById("taskStatus").innerText = props.status;
+                    document.getElementById("taskPriority").innerText = props.priority;
+
+                    function formatDateTime(dateStr) {
+                        if (!dateStr) return 'N/A';
+                        return new Intl.DateTimeFormat('en-GB', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: true
+                        }).format(new Date(dateStr));
+                    }
+
+                    function formatDuration(seconds) {
+                        if (!seconds) return 'N/A';
+                        const h = Math.floor(seconds / 3600);
+                        const m = Math.floor((seconds % 3600) / 60);
+                        const s = seconds % 60;
+                        return [
+                            h > 0 ? `${h}h` : '',
+                            m > 0 ? `${m}m` : '',
+                            `${s}s`
+                        ].filter(Boolean).join(" ");
+                    }
+
+                    // Time Logs Render
+                    let tbody = "";
+                    if (Array.isArray(props.time_logged) && props.time_logged.length > 0) {
+                        props.time_logged.forEach((log, index) => {
+                            tbody += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${log.title}</td>
+                                <td>${formatDateTime(log.started_at)}</td>
+                                <td>${formatDateTime(log.ended_at)}</td>
+                                <td>${formatDuration(log.duration_seconds)}</td>
+                            </tr>
+                            `;
+                        });
+                    } else {
+                        tbody = `
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No Time Logs Available</td>
+                        </tr>`;
+                    }
+                    document.getElementById("timeLogTableBody").innerHTML = tbody;
+                    new bootstrap.Modal(document.getElementById("taskDetailsModal")).show();
+                }
+            });
+            calendar.render();
+
+            $('#employeeFilter').on('change', function() {
+                calendar.refetchEvents();
+            });
+        });
     </script>
 @endsection

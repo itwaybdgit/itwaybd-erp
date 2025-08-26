@@ -258,10 +258,53 @@
         </div>
     </div>
 </div>
+
+
+{{-- modal of task details --}}
+<div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-labelledby="taskDetailsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content rounded-3 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title text-light" id="taskDetailsLabel">Task Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Task Info -->
+                <div class="mb-3">
+                <p><strong>👤 Employee:</strong> <span id="taskEmployee"></span></p>
+                <p><strong>📂 Project:</strong> <span id="taskProject"></span></p>
+                <p><strong>⚡ Status:</strong> <span id="taskStatus" class="badge bg-warning"></span></p>
+                <p><strong>⭐ Priority:</strong> <span id="taskPriority" class="badge bg-danger"></span></p>
+                </div>
+
+                <!-- Time Logged -->
+                <h6 class="mt-4">⏱️ Time Logs</h6>
+                <table class="table table-bordered table-striped">
+                    <thead class="table-light">
+                        <tr>
+                        <th>#</th>
+                        <th>Subtask</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Logged Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="timeLogTableBody">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
     <script>
@@ -458,19 +501,77 @@
                         `Project: ${props.project}\nEmployee: ${props.employee}\nStatus: ${props.status}`
                     );
                 },
-
                 eventClick: function(info) {
                     const props = info.event.extendedProps;
-                    console.log(props);
-                    alert(
-                        `📌 Task: ${info.event.title}\n` +
-                        `📂 Project: ${props.project}\n` +
-                        `👤 Employee: ${props.employee}\n` +
-                        `📅 From: ${info.event.start.toLocaleDateString()} → To: ${info.event.end.toLocaleDateString()}\n` +
-                        `⚡ Status: ${props.status}\n` +
-                        `⭐ Priority: ${props.priority}`
-                    );
+
+                    // Task Info Set
+                    document.getElementById("taskEmployee").innerText = props.employee;
+                    document.getElementById("taskProject").innerText = props.project;
+                    document.getElementById("taskStatus").innerText = props.status;
+                    document.getElementById("taskPriority").innerText = props.priority;
+
+                    function formatDateTime(dateStr) {
+                        if (!dateStr) return 'N/A';
+                        return new Intl.DateTimeFormat('en-GB', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: true
+                        }).format(new Date(dateStr));
+                    }
+
+                    function formatDuration(seconds) {
+                        if (!seconds) return 'N/A';
+                        const h = Math.floor(seconds / 3600);
+                        const m = Math.floor((seconds % 3600) / 60);
+                        const s = seconds % 60;
+                        return [
+                            h > 0 ? `${h}h` : '',
+                            m > 0 ? `${m}m` : '',
+                            `${s}s`
+                        ].filter(Boolean).join(" ");
+                    }
+
+                    // Time Logs Render
+                    let tbody = "";
+                    if (Array.isArray(props.time_logged) && props.time_logged.length > 0) {
+                        props.time_logged.forEach((log, index) => {
+                            tbody += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${log.title}</td>
+                                <td>${formatDateTime(log.started_at)}</td>
+                                <td>${formatDateTime(log.ended_at)}</td>
+                                <td>${formatDuration(log.duration_seconds)}</td>
+                            </tr>
+                            `;
+                        });
+                    } else {
+                        tbody = `
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No Time Logs Available</td>
+                        </tr>`;
+                    }
+                    document.getElementById("timeLogTableBody").innerHTML = tbody;
+                    new bootstrap.Modal(document.getElementById("taskDetailsModal")).show();
                 }
+
+
+                // eventClick: function(info) {
+                //     const props = info.event.extendedProps;
+                //     console.log(props);
+                //     alert(
+                //         `📌 Task: ${info.event.title}\n` +
+                //         `📂 Project: ${props.project}\n` +
+                //         `👤 Employee: ${props.employee}\n` +
+                //         `📅 From: ${info.event.start.toLocaleDateString()} → To: ${info.event.end.toLocaleDateString()}\n` +
+                //         `⚡ Status: ${props.status}\n` +
+                //         `⭐ Priority: ${props.priority}`
+                //     );
+                // }
                 // eventClick: function(info) {
                 //     const props = info.event.extendedProps;
                 //     const subtasks = props.subtasks || [];

@@ -95,14 +95,7 @@ class DashboardController extends Controller
                 ->values()
                 ->all();
 
-            // $subtasks = $task->subtasks;
-
-            // foreach ($subtasks as $subtask) {
-            //     $timerLogs = $subtask->timerLogs();
-            //     dd($timerLogs);
-            // }
-
-            // dd($subtasks);
+            $timerLogs = TimerLog::where('task_id', $task->id)->get();
 
 
             switch ($task->status) {
@@ -133,6 +126,7 @@ class DashboardController extends Controller
                     'employee' => implode(', ', $employees) ?: 'N/A',
                     'status'    => $task->status,
                     'priority'  => $task->priority,
+                    'time_logged' => $timerLogs
                 ],
             ];
         })->values();

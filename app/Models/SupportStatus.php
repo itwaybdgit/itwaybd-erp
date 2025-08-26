@@ -10,4 +10,10 @@ class SupportStatus extends Model
     use HasFactory;
 
     protected $guarded = ["id"];
+
+    public function tickets()
+    {
+        return $this->hasMany(SupportTicket::class, 'status', 'id');
+    }
+
 }

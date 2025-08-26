@@ -95,7 +95,7 @@
                                                 </span>
                                                 <span class="h3 font-bold mb-0"
                                                     style="color:#fff !important; white-space: nowrap;">
-                                                    {{ ticket_count() }}
+                                                    {{ $supportstatus->sum('ticket_count') }}
                                                 </span>
                                             </div>
                                             <!-- Right Side: Icon -->
@@ -112,32 +112,27 @@
                         @foreach ($supportstatus as $value)
                             <div class="col-md-3">
                                 <a href="{{ route('supportticket.index', $value->id) }}">
-                                    <div
-                                        class="card shadow border-0 {{ $value->id == 1 ? 'gr_1_color' : ($value->id == 2 ? 'gr_2_color' : 'gr_3_color') }} gr_1_color">
+                                    <div class="card shadow border-0 {{ $value->id == 1 ? 'gr_1_color' : ($value->id == 2 ? 'gr_2_color' : 'gr_3_color') }}">
                                         <div class="card-body text-white">
                                             <div class="d-flex align-items-center justify-content-between">
-                                                <!-- Left Side: Amount -->
                                                 <div>
-                                                    <span class="h6 font-semibold text-sm d-block mb-2"
-                                                        style="color:#fff !important; white-space: nowrap;">
+                                                    <span class="h6 font-semibold text-sm d-block mb-2" style="color:#fff !important; white-space: nowrap;">
                                                         {{ $value->name }}
                                                     </span>
-                                                    <span class="h3 font-bold mb-0"
-                                                        style="color:#fff !important; white-space: nowrap;">
-                                                        {{ ticket_count($value->id) }}
+                                                    <span class="h3 font-bold mb-0" style="color:#fff !important; white-space: nowrap;">
+                                                        {{ $value->ticket_count }}
                                                     </span>
                                                 </div>
-                                                <!-- Right Side: Icon -->
                                                 <div>
                                                     <i class="fas fa-receipt fa-3x" style="color: #fff;"></i>
-
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </a>
                             </div>
-                        @endforeach
+                            @endforeach
+
                     </div>
                     <div class="card-datatable table-responsive">
                         <x-alert></x-alert>

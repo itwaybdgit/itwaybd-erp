@@ -134,7 +134,11 @@ class MySupportTicketController extends Controller
         $columns = $this->reformatForRelationalColumnName(
             $this->tableColumnNames()
         );
-        $supportstatus = SupportStatus::whereIn("id", [1, 2])->get();
+        $supportstatus = SupportStatus::whereIn('id', [1,2])
+            ->withCount(['tickets as ticket_count' => function($query){
+                $query->where('assign_to', auth()->id());
+            }])
+            ->get();
         return view($this->viewName . '.my_ticket', get_defined_vars());
     }
 

@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\TransactionHistory;
+use Illuminate\Support\Facades\Route;
 
 trait bandwidthcustomersale
 {
@@ -173,14 +174,26 @@ trait bandwidthcustomersale
                                         $nestedData['action'] .= $this->destroyBtn(route($routeName . '.destroy', $item->id));
                                     }
                                 } else if (is_array($action)) {
-                                    if(has_route($routeName . '.' . $action['method_name'])){
+                                    
+                                        
+                                    
+
+                                    $onclick = '';
+                                    if(strtolower($action['method_name']) == 'print') {
+                                        $onclick = "openPrintModal({$item->id})";
+                                        $url = '#';
+                                    } else {
+                                        $url = route($routeName . '.' . $action['method_name'], $item->id);
+                                    }
+                                    if(Route::has($routeName . '.' . $action['method_name'])){
                                         $nestedData['action'] .= $this->customBtn(
-                                            route($routeName . '.' . $action['method_name'], $item->id),
+                                            $url,
                                             $action['class'],
                                             $action['fontawesome'],
                                             $action['text'],
                                             $action['title'],
                                             $action['code'] ?? "",
+                                            $onclick
                                         );
                                     }
                               }

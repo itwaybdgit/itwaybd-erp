@@ -50,9 +50,75 @@
         </div>
     </section>
 
+    <!-- Print Modal -->
+    <div class="modal fade" id="printModal" tabindex="-1" aria-labelledby="printModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title text-light" id="printModalLabel">Invoice Preview</h5>
+                    <button type="button" class="btn-close btn-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="printModalContent">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="mt-2">Fetching invoice...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 @endsection
 
 @section('datatablescripts')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <script>
+        function openPrintModal(invoiceId) {
+            $('#printModalContent').html(`
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <div class="mt-2">Fetching invoice...</div>
+                </div>
+            `);
+
+            var modal = new bootstrap.Modal(document.getElementById('printModal'), {});
+            modal.show();
+
+            $.ajax({
+                url: '/admin/bandwidthsaleinvoice/invoices/print/' + invoiceId,
+                type: 'GET',
+                success: function(data) {
+                    $('#printModalContent').html(data);
+                },
+                error: function() {
+                    $('#printModalContent').html('<div class="text-danger text-center py-5">Failed to load invoice!</div>');
+                }
+            });
+        }
+
+        function printModalContent() {
+            var printContents = document.getElementById('printModalContent').innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
+        }
+
+
+    </script>
+
+
+
+
+
     <!-- Datatable -->
     <script type="text/javascript">
         let table = $('#server_side_lode').dataTable({

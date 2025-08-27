@@ -1505,6 +1505,9 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth'])->group(function
         Route::get('/create', [BandwidthSaleInvoiceController::class, 'create'])->name('create');
         Route::post('/store', [BandwidthSaleInvoiceController::class, 'store'])->name('store');
         Route::get('/invoice/{banseidthsaleinvoice:id}', [BandwidthSaleInvoiceController::class, 'invoice'])->name('invoice');
+
+        Route::get('/invoices/print/{banseidthsaleinvoice:id}', [BandwidthSaleInvoiceController::class, 'printInvoice'])->name('print');
+
         Route::match(['get', 'post'], '/mail-invoice/{business}/{saleinvoiceid:id}', [BandwidthSaleInvoiceController::class, 'mail_invoice'])->name('mail.invoice');
         Route::get('/mail-invoice2/{business}/{saleinvoiceid:id}', [BandwidthSaleInvoiceController::class, 'mail_invoice2'])->name('mail.invoice2');
         Route::get('/edit/{banseidthsaleinvoice:id}', [BandwidthSaleInvoiceController::class, 'edit'])->name('edit');

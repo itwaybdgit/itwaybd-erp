@@ -15,12 +15,15 @@ trait Component
      * @var $title
      */
 
-    protected function btn($url, $className = 'btn-default',  $fontawesome = null, $text = null, $title = null, $code = null)
+    protected function btn($url, $className = 'btn-default',  $fontawesome = null, $text = null, $title = null, $code = null, $onclick = null)
     {
         $html = '<a href="' . $url . '" class="mr-1 btn btn-sm ' . $className . '"';
 
         if ($title) {
             $html .= 'title="' . $title . '"';
+        }
+        if ($onclick) {
+            $html .= ' onclick="' . $onclick . '"';
         }
         if ($code) {
             $html .=  $code;
@@ -39,15 +42,17 @@ trait Component
         return $html;
     }
 
-    protected function customBtn($url, $className = 'btn-warning', $fontawesome = 'fa fa-check', $text = '', $title = "custom", $code = "")
+    protected function customBtn($url, $className = 'btn-warning', $fontawesome = 'fa fa-check', $text = '', $title = "custom", $code = "", $onclick = "")
     {
+        $onclickAttr = $onclick ? $onclick : "";
         return $this->btn(
             $url,
             $className,
             $fontawesome,
             $text,
             $title,
-            $code
+            $code,
+            $onclickAttr
         );
     }
     protected function editBtn($url, $className = 'btn-info', $fontawesome = 'fa fa-edit', $text = '', $title = "Edit")

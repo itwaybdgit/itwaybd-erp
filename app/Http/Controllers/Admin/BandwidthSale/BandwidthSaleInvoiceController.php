@@ -129,6 +129,13 @@ class BandwidthSaleInvoiceController extends Controller
             true,
             [
                 [
+                    'method_name' => 'print',
+                    'class' => 'btn-success  btn-sm',
+                    'fontawesome' => '',
+                    'text' => 'Print',
+                    'title' => 'Print',
+                ],
+                [
                     'method_name' => 'invoice',
                     'class' => 'btn-info  btn-sm',
                     'fontawesome' => '',
@@ -159,11 +166,22 @@ class BandwidthSaleInvoiceController extends Controller
             ]
         );
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
+
+    public function printInvoice(BandwidthSaleInvoice $banseidthsaleinvoice)
+    {
+        $page_title = "Bandwidth Sale Invoice Print";
+        $page_heading = "Bandwidth Sale Invoice Print";
+        $back_url = route($this->routeName . '.index');
+        $editinfo = $banseidthsaleinvoice;
+        $customers = BandwidthCustomer::get();
+        $items = Item::where('status', 'active')->get();
+        $detals = $banseidthsaleinvoice->detaile->groupBy('business_id');
+        $companyInfo = Company::find(auth()->user()->company_id);
+
+        $business = Business::where('id', $banseidthsaleinvoice->customer->business_id)->first();
+        return view($this->viewName . '.print', get_defined_vars());
+    }
 
 
     /**

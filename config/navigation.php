@@ -1229,8 +1229,8 @@ $menus =  [
                 'route' => 'companies.index',
             ],
             [
-                'label' => 'Lead Module Setup',
-                'route' => 'lead-module.index',
+                'label' => 'Location Setup',
+                'route' => 'company_location.index',
             ],
         ]
     ],

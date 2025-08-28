@@ -1122,16 +1122,7 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth'])->group(function
         Route::post('/update/{company:id}', [CompanyController::class, 'update'])->name('update');
         Route::get('/delete/{company:id}', [CompanyController::class, 'destroy'])->name('destroy');
     });
-    Route::name('lead-module.')->prefix('lead-module')->group(function () {
-        Route::get('/list', [LeadModuleController::class, 'index'])->name('index');
-        Route::get('/dataProcessing', [LeadModuleController::class, 'dataProcessing'])->name('dataProcessing');
-        // Route::get('/create', [CompanyController::class, 'create'])->name('create');
-        // Route::post('/store', [CompanyController::class, 'store'])->name('store');
-        Route::get('/show/{company:id}', [LeadModuleController::class, 'show'])->name('show');
-        Route::get('/edit/{company:id}', [LeadModuleController::class, 'edit'])->name('edit');
-        Route::post('/update/{company:id}', [LeadModuleController::class, 'update'])->name('update');
-        Route::get('/delete/{company:id}', [LeadModuleController::class, 'destroy'])->name('destroy');
-    });
+
     //Brand end
 
     Route::name('businesses.')->prefix('businesses')->group(function () {

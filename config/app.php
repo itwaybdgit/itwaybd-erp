@@ -170,6 +170,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\HelperServiceProvider::class,
+        Modules\Crm\Providers\CrmServiceProvider::class,
+        Modules\Crm\Providers\RouteServiceProvider::class,
+        Modules\Crm\Providers\HelperServiceProvider::class,
     ],
 
     /*

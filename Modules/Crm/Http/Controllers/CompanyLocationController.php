@@ -2,7 +2,7 @@
 
 namespace Modules\Crm\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\Company;
 use App\Models\District;
 use App\Models\Division;
@@ -18,7 +18,7 @@ class CompanyLocationController extends Controller
      * String property
      */
     protected $routeName =  'company_location';
-    protected $viewName =  'admin.pages.companies';
+    protected $viewName =  'crm::admin.pages.companies';
 
     protected function getModel()
     {
@@ -86,9 +86,15 @@ class CompanyLocationController extends Controller
             //     'searchable' => false,
             // ],
             [
-                'label' => 'Company Name',
-                'data' => 'company_id',
+                'label' => 'ID',
+                'data' => 'id',
                 'searchable' => false,
+            ],
+            [
+                'label' => 'Company Name',
+                'data' => 'company_name',
+                'searchable' => false,
+                'relation' => 'company',
             ],
             [
                 'label' => 'Branch Name',
@@ -125,19 +131,19 @@ class CompanyLocationController extends Controller
         $columns = $this->reformatForRelationalColumnName(
             $this->tableColumnNames()
         );
-        return view('admin.pages.index', get_defined_vars());
+        return view('crm::admin.pages.index', get_defined_vars());
     }
     public function locationList(Company $company)
     {
         $page_title = "Company";
         $page_heading = "Company Setup";
-        $ajax_url = route($this->routeName . '.location.dataProcessing');
-        // $create_url = route($this->routeName . '.create');
+        $ajax_url = route($this->routeName . '.location.dataProcessing',[$company->id]);
+//         $create_url = route($this->routeName . '.create');
         $is_show_checkbox = false;
         $columns = $this->reformatForRelationalColumnName(
             $this->LocationtableColumnNames()
         );
-        return view('admin.pages.index', get_defined_vars());
+        return view('crm::admin.pages.index', get_defined_vars());
     }
 
     /**
@@ -145,7 +151,7 @@ class CompanyLocationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function dataProcessing(Request $request, Company $company)
+    public function dataProcessing(Request $request)
     {
         $employeecheck = auth()->user()->employee;
         if($employeecheck){
@@ -162,18 +168,31 @@ class CompanyLocationController extends Controller
             $this->routeName,
             true,
             [
-                'locationList'
+                [
+                    'method_name' => 'locationList',
+                    'class' => 'btn-warning btn-sm',
+                    'fontawesome' => 'fa fa-map-marker',
+                    'text' => '',
+                    'title' => 'View Locations',
+                ]
             ]
-
         );
     }
-    public function locationDataProcessing($company)
+    public function locationDataProcessing($company_id)
     {
+        $query = CompanyLocation::where('company_id', $company_id);
+
+        if (!$query->exists()) {
+            CompanyLocation::create([
+                'company_id' => $company_id,
+            ]);
+        }
+        $query = CompanyLocation::where('company_id', $company_id);
         return $this->getDataResponse(
         //Model Instance
-            CompanyLocation::where('company_id', $company),
+            $query,
             //Table Columns Name
-            $this->tableColumnNames(),
+            $this->LocationtableColumnNames(),
             //Route name
             $this->routeName,
             true,
@@ -269,17 +288,18 @@ class CompanyLocationController extends Controller
      * @param  \App\Models\Company $company
      * @return \Illuminate\Http\Response
      */
-    public function edit(Company $company)
+    public function edit(CompanyLocation $companylocation)
     {
-        $page_title = "Company Lead Module Edit";
-        $page_heading = "Company Lead Module Edit";
+        $page_title = "Company Location Edit";
+        $page_heading = "Company Location Edit";
         $back_url = route($this->routeName . '.index');
-        $update_url = route($this->routeName . '.update', $company->id);
-        $editinfo = $company;
+        $update_url = route($this->routeName . '.update', $companylocation->id);
+        $editinfo = $companylocation;
         $divisions = Division::all();
         $districts = District::all();
         $upazilas = Upozilla::all();
-        return view($this->viewName . '.lead_module.edit', get_defined_vars());
+        $branches = Branch::all();
+        return view($this->viewName . '.location.edit', get_defined_vars());
     }
 
     /**
@@ -289,18 +309,22 @@ class CompanyLocationController extends Controller
      * @param  \App\Models\Company $company
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Company $company)
+    public function update(Request $request, CompanyLocation $companylocation)
     {
         $validated = $request->validate([
-            'lead_fields' => ['nullable', 'array'],
-            'lead_fields.*' => ['string']
+            'fields' => ['nullable', 'array'],
+            'fields.*' => ['string']
         ]);
 
         try {
             DB::beginTransaction();
 
-            $company->update([
-                'lead_fields' => $validated['lead_fields'] ?? [],
+            $companylocation->update([
+                'fields' => $validated['fields'] ?? [],
+                'branch_id' => $request->branch_id,
+                'division_id' => $request->division_id,
+                'district_id' => $request->district_id,
+                'upazila_id' => $request->upazila_id,
             ]);
 
             DB::commit();

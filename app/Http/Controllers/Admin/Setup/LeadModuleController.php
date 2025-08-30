@@ -208,7 +208,7 @@ class LeadModuleController extends Controller
         $divisions = Division::all();
         $districts = District::all();
         $upazilas = Upozilla::all();
-        return view($this->viewName . '.lead_module.edit', get_defined_vars());
+        return view($this->viewName . '.location.edit', get_defined_vars());
     }
 
     /**

@@ -180,7 +180,7 @@ class BandwidthSaleInvoiceController extends Controller
         $companyInfo = Company::find(auth()->user()->company_id);
 
         $business = Business::where('id', $banseidthsaleinvoice->customer->business_id)->first();
-        return view($this->viewName . '.print', get_defined_vars());
+        return view($this->viewName . '.print-old', get_defined_vars());
     }
 
 

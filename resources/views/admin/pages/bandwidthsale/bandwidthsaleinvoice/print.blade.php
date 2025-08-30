@@ -1,416 +1,306 @@
 @extends('admin.master-invoice')
 
 <style>
-    .payment-info.mb-4 {
-        margin-top: 26px;
-        margin-left: 20px;
-        font-size: px;
+/* ===== General Invoice Styling ===== */
+.invoice {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+    position: relative;
+}
 
-    }
+/* ===== Header Section ===== */
+.header-section {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
+    position: relative;
+}
 
-    @media print {
-        .invoice {
-            page-break-after: auto;
-        }
-    }
-</style>
+.header-logo {
+    flex: 0 0 220px;
+    margin: 0 20px;
+    z-index: 2;
+}
+
+.header-logo img {
+    max-width: 220px;
+    height: auto;
+}
+
+.header-banner {
+    flex: 1;
+    height: 180px;
+    position: relative;
+}
+
+.header-banner img.rotated-bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 90%;
+    transform: rotate(180deg);
+    object-fit: cover;
+    z-index: 1;
+}
+
+.header-text {
+    position: absolute;
+    top: 30%;
+    right: 40px;
+    transform: translateY(-50%);
+    color: #fff;
+    font-weight: bold;
+    font-size: 2rem;
+    text-align: right;
+    z-index: 2;
+    white-space: nowrap;
+}
+
+/* ===== Invoice Info ===== */
+.invoice-details {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.invoice-details div {
+    margin-bottom: 5px;
+}
+
+/* ===== Table Styling ===== */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+.table th, .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.table th {
+    background-color: #f2f2f2;
+}
+
+tfoot th {
+    text-align: right;
+}
+
+/* ===== Payment Info & Notes ===== */
+.payment-info, .note-section {
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+.payment-info div {
+    margin-bottom: 3px;
+}
+
+/* ===== Footer Section ===== */
+/* Footer fixed at bottom */
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-top: 2px solid #ddd;
+    background: #fff;
+    padding: 10px 0;
+    text-align: center;
+    z-index: 10;
+}
 
 
-<style>
-    .header-section {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        width: 100%;
-        position: relative;
-        background-color: #ffffff;
-    }
 
-    .header-logo {
-        flex: 0 0 220px;
-        /* padding: 34px 115px; */
-        margin-top: 80px;
-        margin-left: 90px;
-        z-index: 2;
-    }
+.footer h3 {
+    margin-bottom: 10px;
+}
 
-    .row.mt-3.mb-3 {
-        align-items: center;
-    }
+.footer img.rotated-bg {
+    width: 100%;
+    max-width: 50%;
+    display: block;
+    margin: 0 auto;
+}
 
-    .header-banner {
-        flex: 1;
-        /* position: relative; */
-        height: 180px;
-    }
-
-    .header-banner img.rotated-bg {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 90%;
-        transform: rotate(180deg) scaleX(1);
-        /* 🔄 Rotate & Flip horizontally */
-        object-fit: cover;
-        z-index: 1;
-    }
-
-    .invoice-details {
-        font-size: 20px;
-        font-weight: 800;
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .header-section, .invoice-details {
+        flex-direction: column;
+        text-align: center;
     }
 
     .header-text {
+        text-align: center;
+        position: relative;
+        transform: none;
+        margin-top: 10px;
+    }
+}
+
+/* ===== Print Styles ===== */
+@media print {
+    body * {
+        visibility: hidden;
+        margin-bottom: 150px;
+    }
+
+    .invoice, .invoice * {
+        visibility: visible;
+    }
+
+    .invoice {
         position: absolute;
-        top: 30%;
-        right: 43px;
-        transform: translateY(-50%);
-        color: #fff;
-        font-weight: bold;
-        font-size: 2.0rem;
-        text-align: right;
-        z-index: 2;
-        white-space: nowrap;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
     }
 
-    img.rotated-bg {
-        width: 50%;
+    /* Flex fallback for print */
+    .header-section, .invoice-details {
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-        .header-section {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .header-logo {
-            text-align: center;
-            width: 100%;
-        }
-
-        .header-banner {
-            width: 80%;
-            height: 120px;
-        }
-
-        .header-banner img.rotated-bg {
-            object-fit: cover;
-            height: 120px;
-        }
-
-        .header-text {
-            font-size: 1.1rem;
-            right: 15px;
-            text-align: center;
-            width: 100%;
-        }
+    .header-logo, .header-banner, .header-text {
+        float: none !important;
+        margin: 0 auto !important;
+        text-align: center !important;
+        position: relative !important;
     }
+
+    .table th, .table td {
+        font-size: 12px;
+    }
+
+    .payment-info, .note-section {
+        font-size: 11px;
+    }
+
+    .footer img.rotated-bg {
+        width: 100% !important;
+        height: auto !important;
+    }
+    .footer {
+        position: fixed; /* maintain at bottom */
+        bottom: 0;
+        width: 100%;
+        background: #fff;
+        z-index: 10;
+    }
+}
 </style>
 
-
-
 @section('content')
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card card-default">
-                <div class="card-header">
-                    <h3 class="card-title">Invoice</h3>
-                </div>
-                @foreach ($detals as $lo => $itellist)
-                    @php
-                        $business = App\Models\Business::where('id', $itellist->first()->business_id)->first();
-                        $invoice = $itellist->first()->getInvoice;
-                        $description = $itellist->first()->description;
-                    @endphp
-                    <div class="card-body">
-                        <div class="row no-print">
-                            <div class="col-6">
-                                @if (has_route('bandwidthsaleinvoice.mail.invoice'))
-                                    <button type="button" class="btn btn-info float-left my-2 modelclick"
-                                        model-id="{{ $lo }}" data-toggle="modal" data-target=".sendMailModal">
-                                        <i class="fas fa-mail"></i> Mail
-                                    </button>
-                                @endif
-                                <div class="modal fade sendMailModal{{ $lo }}" id="" tabindex="-1"
-                                    role="dialog" aria-labelledby="sendMailModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                            <!-- Modal Header -->
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="sendMailModalLabel">Send Mail</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <form
-                                                action="{{ route('bandwidthsaleinvoice.mail.invoice', ['business' => $business->id, 'saleinvoiceid' => $itellist->first()->bandwidth_sale_invoice_id]) }}"
-                                                method="get">
-                                                <!-- Modal Body -->
-                                                <div class="modal-body">
-                                                    @php
-                                                        $ccsemail = explode(
-                                                            ',',
-                                                            $invoice->customer->billing_email ?? '',
-                                                        );
-                                                    @endphp
+@foreach ($detals as $lo => $itellist)
+@php
+$business = App\Models\Business::where('id', $itellist->first()->business_id)->first();
+$invoice = $itellist->first()->getInvoice;
+$description = $itellist->first()->description;
+@endphp
 
-                                                    <div class="form-group package">
-                                                        <label for="email">To</label>
-                                                        <input type="text" name="email"
-                                                            value="{{ $ccsemail[0] ?? '' }}" class="form-control sakib">
-                                                        <div>
-                                                            <div
-                                                                class="remove d-flex justify-content-center align-items-center mt-1">
-                                                                <button type="button" class="btn btn-success"
-                                                                    id="addrow">Add New</button>
-                                                            </div>
-                                                        </div>
-                                                        @for ($j = 1; $j < count($ccsemail); $j++)
-                                                            <div class="form-group d-flex mt-1">
-                                                                <input type="text" name="cc_email[]"
-                                                                    value="{{ $ccsemail[$j] }}" class="form-control">
-                                                                <div class="remove-container ">
-                                                                    <button class="btn btn-danger remove"><i
-                                                                            class="fas fa-trash-alt"></i></button>
-                                                                </div>
-                                                            </div>
-                                                        @endfor
-                                                    </div>
+<div class="invoice" id="DivIdToPrint{{$lo}}">
 
-                                                    <div class="form-group">
-                                                        <label for="subject">Subject</label>
-                                                        <input type="text" value="Invoice : #{{ $invoice->invoice_no }}"
-                                                            name="subject" class="form-control">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label for="message">Message</label>
-                                                        <textarea name="message" id="message" class="form-control summernote">Dear {{ $invoice->customer->company_name ?? 'N/A' }} &#013; {!! $business->message !!}
-                                                    </textarea>
-                                                    </div>
-
-                                                </div>
-
-                                                <!-- Modal Footer -->
-                                                <div class="modal-footer">
-
-                                                    <div class="d-inline">
-                                                        <button class="btn btn-info float-left my-2"><i
-                                                                class="fas fa-mail"></i>
-                                                            Send Mail</button>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <button type="button" class="btn btn-danger w-50"
-                                                            data-dismiss="modal">Close</button>
-                                                    </div>
-
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                <script>
-                                    $(document).ready(function() {
-                                        $('.modelclick').click(function(event) {
-                                            event.preventDefault();
-                                            let id = $(this).attr("model-id");
-                                            $(this).closest('div').find('.sendMailModal' + id).modal('show');
-                                        });
-                                    });
-                                </script>
-                            </div>
-
-                            <div class="col-6">
-                                <a onclick='printDiv("DivIdToPrint{{ $lo }}")'
-                                    class="btn btn-default float-right my-2"><i class="fas fa-print"></i>
-                                    Print</a>
-                            </div>
-                        </div>
-
-
-                    <div class="invoice printDiv p-3 mb-3" id="DivIdToPrint{{$lo}}">
-                        <!-- title row -->
-                        <!-- info row -->
-                        <div class="row invoice-info">
-                            {{-- <div class="col-sm-4 " style=""> --}}
-                                {{-- @if (isset($companyInfo->invoice_logo))
-                                    {!! $companyInfo->invoice_logo ?? '' !!}
-                                @endif --}}
-                                {{-- <img src="{{ asset($invoice->customer->invoice_logo) }}" id="businessInvoiceLogo" width="200px" height="100px" alt=""> --}}
-                            {{-- </div> --}}
-                            <div class="col-sm-12 invoice-col" style="text-align: center">
-                                <div class="header-section">
-                                    <!-- Logo -->
-                                    <div class="header-logo" style="text-align: left; margin: 0">
-                                        <img src="{{ $business->business_name == 'ISP BILLING PRO'
-                                            ? 'https://ispbillingpro.com/wp-content/uploads/2020/10/cropped-WhatsApp_Image_2023-04-04_at_3.04.37_PM-removebg-preview-300x112.png'
-                                            : asset('storage/'. $companyInfo->getRawOriginal('invoice_logo')) }}"
-                                            id="businessInvoiceLogo" width="220px" height="90px" alt="Company Logo">
-                                    </div>
-
-                                    <!-- Banner -->
-                                    <div class="header-banner">
-                                        <img src="{{ asset('admin_assets/shade1.png') }}" class="rotated-bg"
-                                            alt="Header Background">
-                                        <div class="header-text">
-                                            Leading Website & Software Development<br>
-                                            Company in Bangladesh
-                                        </div>
-                                    </div>
-                                </div>
-
-
-
-                                <br>
-                                <!-- /.row -->
-                                <div class="row mt-3 mb-3 align-content-center" style="margin: 0 15px;">
-                                    <div class="col-md-8">
-                                        <div class="invoice-details" style="text-align: left;">
-                                            <div class="mb-0">
-                                                <span class="fw-bold text-decoration-underline">Invoice No:</span>
-                                                {{ $invoice->invoice_no ?? 'N/A' }}
-                                            </div>
-                                            <div>
-                                                <span class="fw-bold text-decoration-underline">Invoice to:</span>
-                                                <span class="fw-bold">{{ $invoice->customer->company_name ?? 'N/A' }} </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="text-end invoice-details">
-                                            <div style="text-align: right;font-weight: 400;font-size: medium;">
-                                                Date: {{ \Carbon\Carbon::now()->format('d-m-Y') }}
-                                            </div>
-                                            {{-- <div class="fw-bold">Month: {{ $invoice->billing_month ?? 'N/A' }}</div> --}}
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Table row -->
-                                <div class="row" style="margin: 0 15px;">
-                                    <div class="col-12 table-responsive">
-                                        <table class="table  table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>SL</th>
-                                                    <th>Item</th>
-                                                    <th>Qty</th>
-                                                    <th>Rate</th>
-                                                    <th>Vat</th>
-                                                    <th>From date</th>
-                                                    <th>To date</th>
-                                                    <th>Total</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @php
-                                                    $total = 0;
-                                                @endphp
-                                                @foreach ($itellist as $detail)
-                                                    <tr>
-                                                        <td>{{ 1 }}</td>
-                                                        <td>{{ $detail->getItem->name }}</td>
-                                                        <td>{{ $detail->qty }}</td>
-                                                        <td>{{ $detail->rate }}</td>
-                                                        <td>{{ $detail->vat }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($detail->from_date)->format('d-m-Y') }}
-                                                        </td>
-                                                        <td>{{ \Carbon\Carbon::parse($detail->to_date)->format('d-m-Y') }}</td>
-                                                        <td>{{ number_format($detail->total, 2) }}</td>
-                                                    </tr>
-                                                    @php
-                                                        $total += $detail->total;
-                                                    @endphp
-                                                @endforeach
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <th colspan="7" class="text-right">Total :
-                                                    </th>
-                                                    <th>{{ number_format($total, 2) }}</th>
-
-                                                </tr>
-
-                                            </tfoot>
-                                        </table>
-                                    </div>
-
-                                    <div class="col-12 mt-2 ">
-                                        <p>
-                                            <b>Remarks:</b>
-
-                                            {{ $description ?? 'N/A' }}
-                                        </p>
-                                    </div>
-
-                                    <!-- Payment Information -->
-                                    <div class="payment-info mb-4 mt-3" style="text-align: left;">
-                                        <div class="fw-bold mb-2">Payment Information:</div>
-                                        <div class="payment-details">
-                                            <div><span class="fw-bold">Nagad Merchant:</span> 01854125454</div>
-                                            <div><span class="fw-bold">Bkash/Nagad Personal:</span> 01844690700</div>
-                                            <div><span class="fw-bold">Upay:</span> 01854125454</div>
-                                            <div class="fw-bold fst-italic small">2% charge applicable for Bkash & Nagad
-                                                payment.</div>
-                                            <div class="fw-bold">Dutch Bangla Bank</div>
-                                            <div class="fw-bold">Uttara Branch</div>
-                                            <div><span class="fw-bold">Account Name:</span> IT WAY BD</div>
-                                            <div class="fw-bold">Account Number:</div>
-                                            <div>117110004832</div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-
-                                <!-- Note -->
-                                <div class="note-section mb-4">
-                                    <div class="fw-bold fst-italic">Note: VAT(Exempted) & Tax not included with the
-                                        mentioned Price
-                                    </div>
-                                </div>
-
-                                <div class="row" style="margin: 0 15px;">
-
-                                    <div class="col-6 mt-3 text-left">
-                                        <p>Received by:_____________<br />
-                                            Date:____________________
-                                        </p>
-                                    </div>
-
-                                    <div class="col-6 mt-3 text-right">
-                                        <p>Authorized by:________________<br />
-                                            Date:_________________</p>
-                                    </div>
-                                </div>
-
-                                <hr>
-
-                                <div class="col-12">
-                                    <h3>Our Products : </h3>
-                                </div>
-
-                                <div class="row">
-
-
-                                    <img src="{{ asset('admin_assets/shade1.png') }}" class="rotated-bg"
-                                        alt="Header Background">
-
-                                </div>
-                            </div>
-                            <!-- /.row -->
-
-                            <!-- this row will not appear when printing -->
-
-                        </div>
-                    </div>
-                @endforeach
-
+    <!-- Header -->
+    <div class="header-section">
+        <div class="header-logo">
+            <img src="{{ asset('storage/'.$companyInfo->getRawOriginal('invoice_logo')) }}" alt="Logo">
+        </div>
+        <div class="header-banner">
+            <img src="{{ asset('admin_assets/shade1.png') }}" class="rotated-bg" alt="Header Background">
+            <div class="header-text">
+                Leading Website & Software Development<br>
+                Company in Bangladesh
             </div>
         </div>
     </div>
+
+    <!-- Invoice Info -->
+    <div class="invoice-details">
+        <div>
+            <strong>Invoice No:</strong> {{ $invoice->invoice_no ?? 'N/A' }}<br>
+            <strong>Invoice to:</strong> {{ $invoice->customer->company_name ?? 'N/A' }}
+        </div>
+        <div>
+            <strong>Date:</strong> {{ \Carbon\Carbon::now()->format('d-m-Y') }}
+        </div>
+    </div>
+
+    <!-- Items Table -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>SL</th>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Vat</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @php $total = 0; @endphp
+            @foreach ($itellist as $i => $detail)
+            <tr>
+                <td>{{ $i+1 }}</td>
+                <td>{{ $detail->getItem->name }}</td>
+                <td>{{ $detail->qty }}</td>
+                <td>{{ $detail->rate }}</td>
+                <td>{{ $detail->vat }}</td>
+                <td>{{ \Carbon\Carbon::parse($detail->from_date)->format('d-m-Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($detail->to_date)->format('d-m-Y') }}</td>
+                <td>{{ number_format($detail->total,2) }}</td>
+            </tr>
+            @php $total += $detail->total; @endphp
+            @endforeach
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="7">Total</th>
+                <th>{{ number_format($total,2) }}</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- Payment Info -->
+    <div class="payment-info">
+        <strong>Payment Information:</strong><br>
+        Nagad Merchant: 01854125454<br>
+        Bkash/Nagad Personal: 01844690700<br>
+        Upay: 01854125454<br>
+        <em>2% charge applicable for Bkash & Nagad payment.</em><br>
+        Dutch Bangla Bank, Uttara Branch<br>
+        Account Name: IT WAY BD<br>
+        Account Number: 117110004832
+    </div>
+
+    <!-- Remarks / Notes -->
+    <div class="note-section">
+        <em>Remarks: {{ $description ?? 'N/A' }}</em><br>
+        <em>Note: VAT(Exempted) & Tax not included with the mentioned price.</em>
+    </div>
+
+    <!-- Footer / Our Products -->
+    <div class="footer">
+        <h3>Our Products:</h3>
+        <img src="{{ asset('admin_assets/shade1.png') }}" class="rotated-bg" alt="Products Banner">
+    </div>
+
+</div>
+@endforeach
 @endsection
+
 <script>
     window.onload = function() {
         var printContents = document.querySelector('.printDiv').innerHTML;

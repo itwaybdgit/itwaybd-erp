@@ -175,13 +175,10 @@ trait bandwidthcustomersale
                                     }
                                 } else if (is_array($action)) {
                                     
-                                        
-                                    
-
                                     $onclick = '';
                                     if(strtolower($action['method_name']) == 'print') {
                                         $onclick = "openPrintModal({$item->id})";
-                                        $url = '#';
+                                        $url = 'javascript:void(0)';
                                     } else {
                                         $url = route($routeName . '.' . $action['method_name'], $item->id);
                                     }

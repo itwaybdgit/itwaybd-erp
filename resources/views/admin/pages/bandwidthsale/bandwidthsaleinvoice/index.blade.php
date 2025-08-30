@@ -79,28 +79,46 @@
 
 
     <script>
+        // function openPrintModal(invoiceId) {
+        //     $('#printModalContent').html(`
+        //         <div class="text-center py-5">
+        //             <div class="spinner-border text-primary" role="status"></div>
+        //             <div class="mt-2">Fetching invoice...</div>
+        //         </div>
+        //     `);
+
+        //     var modal = new bootstrap.Modal(document.getElementById('printModal'), {});
+        //     modal.show();
+
+        //     $.ajax({
+        //         url: '/admin/bandwidthsaleinvoice/invoices/print/' + invoiceId,
+        //         type: 'GET',
+        //         success: function(data) {
+        //             $('#printModalContent').html(data);
+        //         },
+        //         error: function() {
+        //             $('#printModalContent').html('<div class="text-danger text-center py-5">Failed to load invoice!</div>');
+        //         }
+        //     });
+        // }
+
         function openPrintModal(invoiceId) {
-            $('#printModalContent').html(`
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status"></div>
-                    <div class="mt-2">Fetching invoice...</div>
-                </div>
-            `);
-
-            var modal = new bootstrap.Modal(document.getElementById('printModal'), {});
-            modal.show();
-
+            // var printWindow = window.open('', '_blank', 'width=1200,height=900');
+            var printWindow = window.open('', '_blank');
             $.ajax({
                 url: '/admin/bandwidthsaleinvoice/invoices/print/' + invoiceId,
                 type: 'GET',
                 success: function(data) {
-                    $('#printModalContent').html(data);
+                    printWindow.document.open();
+                    printWindow.document.write(data);
+                    printWindow.document.close();
                 },
                 error: function() {
-                    $('#printModalContent').html('<div class="text-danger text-center py-5">Failed to load invoice!</div>');
+                    printWindow.document.write('<div style="color:red;text-align:center;margin-top:50px;">Failed to load invoice!</div>');
                 }
             });
         }
+
 
         function printModalContent() {
             var printContents = document.getElementById('printModalContent').innerHTML;

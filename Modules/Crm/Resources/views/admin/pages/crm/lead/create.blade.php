@@ -224,38 +224,7 @@
                             </div>
 
                             <div class="row">
-                                {{$loci}}
-                                <!-- Common fields for both tabs -->
 
-                                <!-- Common Address Fields -->
-                                @if(in_array('upazila', $loci->fields ?? []) || in_array('division', $loci->fields ?? []) || in_array('district', $loci->fields ?? []))
-                                    <div class="col-md-4 mb-1">
-                                        <label>Division</label>
-                                        <select name="division_id" class="form-control select2 division_id">
-                                            <option value="">Select</option>
-                                            @foreach ($divisions as $val)
-                                                <option value="{{ $val->id }}">{{ $val->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
-
-                                @if(in_array('district', $loci->fields ?? []) || in_array('upazila', $loci->fields ?? []))
-                                <div class="col-md-4 mb-1">
-                                    <label>District</label>
-                                    <select name="district_id" class="form-control select2 district_id">
-
-                                    </select>
-                                </div>
-                                @endif
-                                @if(in_array('upazila', $loci->fields ?? []))
-                                <div class="col-md-4 mb-1">
-                                    <label>Upazila/Thana</label>
-                                    <select name="upazila_id" class="form-control select2 upazila_id">
-
-                                    </select>
-                                </div>
-                                @endif
                                 <div class="col-md-4 mb-1">
                                     <label>Branch</label>
                                     <select name="branch_id" class="form-control select2 branch_id">

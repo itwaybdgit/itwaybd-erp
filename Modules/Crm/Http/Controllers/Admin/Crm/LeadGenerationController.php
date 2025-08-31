@@ -178,6 +178,7 @@ class LeadGenerationController extends Controller
         $upazilas = Upozilla::get();
         $categories = ItemCategory::get();
         $branches = Branch::get();
+
         $company = auth()->user()->company;
 
         $datasources = DataSource::get();

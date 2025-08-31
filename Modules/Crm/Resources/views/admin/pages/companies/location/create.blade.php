@@ -13,8 +13,9 @@
                     <x-alert></x-alert>
 
                     <div class="basic-form">
-                        <form action="{{ $update_url ?? '#' }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ $store_url ?? '#' }}" method="POST" enctype="multipart/form-data">
                             @csrf
+                            @method('POST')
                             <div class="row">
                                 <h3 class="mb-2">Input Fields to show while creating lead:</h3>
 
@@ -27,7 +28,7 @@
                                                 <option value="">Select Default Division</option>
                                                 @foreach($branches ?? [] as $division_item)
                                                     <option value="{{ $division_item->id }}"
-                                                        {{ ($editinfo->branch_id ?? '') == $division_item->id ? 'selected' : '' }}>
+                                                        >
                                                         {{ $division_item->name }}
                                                     </option>
                                                 @endforeach
@@ -37,18 +38,18 @@
                                     <div class="row">
                                         <div class="col-md-2 form-check mb-3">
                                             <input class="form-check-input" type="checkbox" id="division" name="fields[]" value="division"
-                                                {{ in_array('division', ($editinfo->fields) ?? ['jj']) ? 'checked' : '' }}>
+                                                >
                                             <label class="form-check-label" for="division">
                                                 <strong>Division</strong>
                                             </label>
                                         </div>
-                                        <div id="division_default" class="col-md-4 ms-4 mb-3" style="display: {{ in_array('division', ($editinfo->fields) ?? []) ? 'block' : 'none' }};">
+                                        <div id="division_default" class="col-md-4 ms-4 mb-3" >
                                             <label for="division_default_value" class="form-label">Default Division:</label>
                                             <select class="form-control" id="division_default_value" name="division_id">
                                                 <option value="">Select Default Division</option>
                                                 @foreach($divisions ?? [] as $division_item)
                                                     <option value="{{ $division_item->id }}"
-                                                        {{ ($editinfo->division_id ?? '') == $division_item->id ? 'selected' : '' }}>
+                                                       >
                                                         {{ $division_item->name }}
                                                     </option>
                                                 @endforeach
@@ -59,18 +60,18 @@
                                     <div class="row">
                                         <div class="col-md-2 form-check mb-3">
                                             <input class="form-check-input" type="checkbox" id="district" name="fields[]" value="district"
-                                                {{ in_array('district', ($editinfo->fields) ?? ['jj']) ? 'checked' : '' }}>
+                                                >
                                             <label class="form-check-label" for="district">
                                                 <strong>District</strong>
                                             </label>
                                         </div>
-                                        <div id="district_default" class="col-md-4 ms-4 mb-3" style="display: {{ in_array('district', ($editinfo->fields) ?? []) ? 'block' : 'none' }};">
+                                        <div id="district_default" class="col-md-4 ms-4 mb-3" >
                                             <label for="district_default_value" class="form-label">Default District:</label>
                                             <select class="form-control" id="district_default_value" name="district_id">
                                                 <option value="">Select Default District</option>
                                                 @foreach($districts ?? [] as $district_item)
                                                     <option value="{{ $district_item->id }}"
-                                                        {{ ($editinfo->district_id ?? '') == $district_item->id ? 'selected' : '' }}>
+                                                       >
                                                         {{ $district_item->district_name }}
                                                     </option>
                                                 @endforeach
@@ -81,18 +82,18 @@
                                     <div class="row">
                                         <div class="col-md-2 form-check mb-3">
                                             <input class="form-check-input" type="checkbox" id="upazila" name="fields[]" value="upazila"
-                                                {{ in_array('upazila', ($editinfo->fields) ?? ['jj']) ? 'checked' : '' }}>
+                                                >
                                             <label class="form-check-label" for="upazila">
                                                 <strong>Upazila</strong>
                                             </label>
                                         </div>
-                                        <div id="upazila_default" class="col-md-4 ms-4 mb-3" style="display: {{ in_array('upazila', ($editinfo->fields) ?? []) ? 'block' : 'none' }};">
+                                        <div id="upazila_default" class="col-md-4 ms-4 mb-3" >
                                             <label for="upazila_default_value" class="form-label">Default Upazila:</label>
                                             <select class="form-control" id="upazila_default_value" name="upazila_id">
                                                 <option value="">Select Default Upazila</option>
                                                 @foreach($upazilas ?? [] as $upazila_item)
                                                     <option value="{{ $upazila_item->id }}"
-                                                        {{ ($editinfo->upazila_id ?? '') == $upazila_item->id ? 'selected' : '' }}>
+                                                       >
                                                         {{ $upazila_item->upozilla_name }}
                                                     </option>
                                                 @endforeach

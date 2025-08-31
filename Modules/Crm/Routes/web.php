@@ -50,8 +50,8 @@ Route::name('company_location.')->prefix('company_location')->group(function () 
     Route::get('/location-list/{company:id}', [CompanyLocationController::class, 'locationList'])->name('locationList');
     Route::get('/dataProcessing', [CompanyLocationController::class, 'dataProcessing'])->name('dataProcessing');
     Route::get('/location/dataProcessing/{company_id}', [CompanyLocationController::class, 'locationDataProcessing'])->name('location.dataProcessing');
-    // Route::get('/create', [CompanyController::class, 'create'])->name('create');
-    // Route::post('/store', [CompanyController::class, 'store'])->name('store');
+    Route::get('/create/{company:id}', [CompanyLocationController::class, 'create'])->name('create');
+    Route::post('/store/{company:id}', [CompanyLocationController::class, 'store'])->name('store');
     Route::get('/show/{companylocation:id}', [CompanyLocationController::class, 'show'])->name('show');
     Route::get('/edit/{companylocation:id}', [CompanyLocationController::class, 'edit'])->name('edit');
     Route::post('/update/{companylocation:id}', [CompanyLocationController::class, 'update'])->name('update');

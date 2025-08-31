@@ -306,51 +306,51 @@
 {{--                                {{$company->lead_fields}}--}}
 
                                 <!-- Common Address Fields -->
-                                @if(in_array('upazila', $company->lead_fields ?? []) || in_array('division', $company->lead_fields ?? []) || in_array('district', $company->lead_fields ?? []))
-                                    <div class="col-md-4 mb-1">
-                                        <label>Division</label>
-                                        <select name="division_id" class="form-control select2 division_id">
-                                            <option value="">Select</option>
-                                            @foreach ($divisions as $val)
-                                                <option value="{{ $val->id }}"
-                                                    {{ old('division_id', $lead->division_id) == $val->id ? 'selected' : '' }}>
-                                                    {{ $val->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
+{{--                                @if(in_array('upazila', $company->lead_fields ?? []) || in_array('division', $company->lead_fields ?? []) || in_array('district', $company->lead_fields ?? []))--}}
+{{--                                    <div class="col-md-4 mb-1">--}}
+{{--                                        <label>Division</label>--}}
+{{--                                        <select name="division_id" class="form-control select2 division_id">--}}
+{{--                                            <option value="">Select</option>--}}
+{{--                                            @foreach ($divisions as $val)--}}
+{{--                                                <option value="{{ $val->id }}"--}}
+{{--                                                    {{ old('division_id', $lead->division_id) == $val->id ? 'selected' : '' }}>--}}
+{{--                                                    {{ $val->name }}--}}
+{{--                                                </option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select>--}}
+{{--                                    </div>--}}
+{{--                                @endif--}}
 
-                                <!-- District and Upazila HTML Section -->
-                                @if(in_array('district', $company->lead_fields ?? []) || in_array('upazila', $company->lead_fields ?? []))
-                                    <div class="col-md-4 mb-1">
-                                        <label>District</label>
-                                        <select name="district_id" class="form-control select2 district_id">
-                                            <option value="">Select</option>
-                                            @foreach ($selected_districts as $val)
-                                                <option value="{{ $val->id }}"
-                                                    {{ old('district_id', $lead->district_id) == $val->id ? 'selected' : '' }}>
-                                                    {{ $val->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
+{{--                                <!-- District and Upazila HTML Section -->--}}
+{{--                                @if(in_array('district', $company->lead_fields ?? []) || in_array('upazila', $company->lead_fields ?? []))--}}
+{{--                                    <div class="col-md-4 mb-1">--}}
+{{--                                        <label>District</label>--}}
+{{--                                        <select name="district_id" class="form-control select2 district_id">--}}
+{{--                                            <option value="">Select</option>--}}
+{{--                                            @foreach ($selected_districts as $val)--}}
+{{--                                                <option value="{{ $val->id }}"--}}
+{{--                                                    {{ old('district_id', $lead->district_id) == $val->id ? 'selected' : '' }}>--}}
+{{--                                                    {{ $val->name }}--}}
+{{--                                                </option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select>--}}
+{{--                                    </div>--}}
+{{--                                @endif--}}
 
-                                @if(in_array('upazila', $company->lead_fields ?? []))
-                                    <div class="col-md-4 mb-1">
-                                        <label>Upazila/Thana</label>
-                                        <select name="upazila_id" class="form-control select2 upazila_id">
-                                            <option value="">Select</option>
-                                            @foreach ($selected_upazilas as $val)
-                                                <option value="{{ $val->id }}"
-                                                    {{ old('upazila_id', $lead->upazila_id) == $val->id ? 'selected' : '' }}>
-                                                    {{ $val->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
+{{--                                @if(in_array('upazila', $company->lead_fields ?? []))--}}
+{{--                                    <div class="col-md-4 mb-1">--}}
+{{--                                        <label>Upazila/Thana</label>--}}
+{{--                                        <select name="upazila_id" class="form-control select2 upazila_id">--}}
+{{--                                            <option value="">Select</option>--}}
+{{--                                            @foreach ($selected_upazilas as $val)--}}
+{{--                                                <option value="{{ $val->id }}"--}}
+{{--                                                    {{ old('upazila_id', $lead->upazila_id) == $val->id ? 'selected' : '' }}>--}}
+{{--                                                    {{ $val->name }}--}}
+{{--                                                </option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select>--}}
+{{--                                    </div>--}}
+{{--                                @endif--}}
 
                                 <div class="col-md-4 mb-1">
                                     <label>Branch</label>

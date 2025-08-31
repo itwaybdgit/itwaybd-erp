@@ -12,7 +12,7 @@ use App\Models\District;
 use App\Models\Division;
 use App\Models\Item;
 use App\Models\ItemCategory;
-use App\Models\LeadGeneration;
+use Modules\Crm\Entities\LeadGeneration;
 use App\Models\LegalInfo;
 use App\Models\LicenseType;
 use Modules\Crm\Entities\MeetingTime;

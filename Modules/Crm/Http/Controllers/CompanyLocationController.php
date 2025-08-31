@@ -10,6 +10,7 @@ use App\Models\Employee;
 use App\Models\Upozilla;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Modules\Crm\Entities\CompanyLocation;
 
 class CompanyLocationController extends Controller
@@ -23,6 +24,10 @@ class CompanyLocationController extends Controller
     protected function getModel()
     {
         return new Company();
+    }
+    protected function getLocModel()
+    {
+        return new CompanyLocation();
     }
 
     protected function tableColumnNames()
@@ -98,13 +103,27 @@ class CompanyLocationController extends Controller
             ],
             [
                 'label' => 'Branch Name',
-                'data' => 'branch_id',
+                'data' => 'name',
                 'searchable' => false,
+                'relation' => 'branch',
             ],
             [
                 'label' => 'Division Name',
-                'data' => 'division_id',
+                'data' => 'name',
                 'searchable' => false,
+                'relation' => 'division',
+            ],
+            [
+                'label' => 'District Name',
+                'data' => 'district_name',
+                'searchable' => false,
+                'relation' => 'district',
+            ],
+            [
+                'label' => 'Upazila Name',
+                'data' => 'upozilla_name',
+                'searchable' => false,
+                'relation' => 'upazilla',
             ],
             [
                 'label' => 'Action',
@@ -138,7 +157,7 @@ class CompanyLocationController extends Controller
         $page_title = "Company";
         $page_heading = "Company Setup";
         $ajax_url = route($this->routeName . '.location.dataProcessing',[$company->id]);
-//         $create_url = route($this->routeName . '.create');
+         $create_url = route($this->routeName . '.create', [$company->id]);
         $is_show_checkbox = false;
         $columns = $this->reformatForRelationalColumnName(
             $this->LocationtableColumnNames()
@@ -209,13 +228,15 @@ class CompanyLocationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Company $company)
     {
-        $page_title = "Company Create";
-        $page_heading = "Company Create";
+        $page_title = "Company Location Create";
+        $page_heading = "Company Location Create";
         $back_url = route($this->routeName . '.index');
-        $store_url = route($this->routeName . '.store');
-        return view($this->viewName . '.create', get_defined_vars());
+        $store_url = route($this->routeName . '.store',[$company->id]);
+        $divisions = Division::all();
+        $branches = Branch::all();
+        return view($this->viewName . '.location.create', get_defined_vars());
     }
 
     /**
@@ -224,47 +245,38 @@ class CompanyLocationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Company $company)
     {
 
-        $valideted = $this->validate($request, [
-            "logo" => ['image'],
-            "favicon" => ['image'],
-            "invoice_logo" => ['image'],
-            "company_name" => ['string'],
-            "website" => ['string'],
-            "phone" => ['string'],
-            "email" => ['email'],
-            "address" => ['string'],
-            "account_info" => ['string', 'nullable'],
-            "mobile_banking" => ['string', 'nullable'],
-            "prefix" => ['string', 'nullable']
+        $validated = $request->validate([
+            'branch_id' => ['required', 'unique:company_locations,branch_id'],
+            'fields' => ['nullable', 'array'],
+            'fields.*' => ['string']
         ]);
 
         try {
             DB::beginTransaction();
 
-            if ($request->hasFile('logo')) {
-                $path =  $request->file('logo')->store('compnay', 'public');
-                $valideted['logo'] = $path;
-            }
-            if ($request->hasFile('favicon')) {
-                $path =  $request->file('favicon')->store('compnay', 'public');
-                $valideted['favicon'] = $path;
-            }
-            if ($request->hasFile('invoice_logo')) {
-                $path =  $request->file('invoice_logo')->store('compnay', 'public');
-                $valideted['invoice_logo'] = $path;
-            }
-
-            $valideted['create_by'] = auth()->id();
-            $this->getModel()->create($valideted);
+            $this->getLocModel()->create([
+                'fields' => $validated['fields'] ?? [],
+                'branch_id' => $request->branch_id,
+                'division_id' => $request->division_id,
+                'district_id' => $request->district_id,
+                'upazila_id' => $request->upazila_id,
+                'company_id' => $company->id,
+            ]);
 
             DB::commit();
-            return back()->with('success', 'Data Store Successfully');
+            return back()->with('success', 'Data Created Successfully');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('failed', 'Something was wrong' . $e->getMessage() . 'Line' . $e->getLine() . 'File' . $e->getFile());
+            return back()->with(
+                'failed',
+                'Oops! Something was wrong. Message: '.$e->getMessage().
+                ' Line: '.$e->getLine().
+                ' File: '.$e->getFile()
+            );
         }
     }
 
@@ -312,6 +324,10 @@ class CompanyLocationController extends Controller
     public function update(Request $request, CompanyLocation $companylocation)
     {
         $validated = $request->validate([
+            'branch_id' => [
+                'required',
+                Rule::unique('company_locations', 'branch_id')->ignore($companylocation->id)
+            ],
             'fields' => ['nullable', 'array'],
             'fields.*' => ['string']
         ]);

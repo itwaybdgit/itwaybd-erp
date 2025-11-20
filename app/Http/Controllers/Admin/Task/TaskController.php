@@ -57,7 +57,7 @@ class TaskController extends Controller
     //     $tasks = Task::get();
 
 
-    
+
     //     return view('admin.pages.ProjectManagement.task.index', get_defined_vars());
     // }
 
@@ -134,72 +134,132 @@ class TaskController extends Controller
     }
 
 
+//    public function store(Request $request)
+//    {
+//        dd($request->all());
+//        $request->validate([
+//            'title' => 'required|string|max:255',
+//            'description' => 'required|string',
+//            'team_id' => 'required',
+//            'start_date_time' => 'required|date',
+//            'end_date_time' => 'required|date',
+//            // 'status' => 'required|in:Pending,In Progress,Completed',
+//            // 'priority' => 'required|in:Low,Medium,High',
+//            // 'project_id' => 'required|exists:projects,id',
+//            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+//            'subtasks.*.title' => 'required|string|max:255',
+//            'subtasks.*.user_id' => 'required',
+//            'subtasks.*.description' => 'nullable|string',
+//            'subtasks.*.priority' => 'nullable|in:Low,Medium,High,Critical',
+//            'subtasks.*.status' => 'nullable|in:Pending,In Progress,Completed',
+//        ]);
+//
+//        DB::beginTransaction();
+//
+//        try {
+//            $imagePath = null;
+//            if ($request->hasFile('image')) {
+//                $imagePath = $request->file('image')->store('tasks', 'public');
+//            }
+//
+//            $task = Task::create([
+//                'title' => $request->title,
+//                'description' => $request->description,
+//                'start_date_time' => $request->start_date_time,
+//                'end_date_time' => $request->end_date_time,
+//                'status' => $request->status,
+//                'team_id' => $request->team_id,
+//                'priority' => $request->priority,
+//                'project_id' => $request->project_id,
+//                'image' => $imagePath,
+//                'created_by' => Auth::id(),
+//            ]);
+//
+//            if ($request->has('subtasks') && is_array($request->subtasks)) {
+//                foreach ($request->subtasks as $subtaskData) {
+//                    Subtask::create([
+//                        'task_id' => $task->id,
+//                        'title' => $subtaskData['title'],
+//                        'project_id' => $request->project_id,
+//                        'description' => $subtaskData['description'] ?? '',
+//                        'user_id' => $subtaskData['user_id'],
+//                        'priority' => $subtaskData['priority'] ?? 'Medium',
+//                        'status' => $subtaskData['status'] ?? 'Pending',
+//                    ]);
+//                }
+//            }
+//
+//            DB::commit();
+//
+//            return redirect()->route('task.index')
+//                ->with('success', 'Task created successfully with ' . count($request->subtasks ?? []) . ' subtasks!');
+//        } catch (\Exception $e) {
+//            DB::rollBack();
+//
+//            if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+//                Storage::disk('public')->delete($imagePath);
+//            }
+//            return back()->withErrors(['error' => 'Failed to create task: ' . $e->getMessage()])
+//                ->withInput();
+//        }
+//    }
+
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'team_id' => 'required',
-            'start_date_time' => 'required|date',
-            'end_date_time' => 'required|date',
-            // 'status' => 'required|in:Pending,In Progress,Completed',
-            // 'priority' => 'required|in:Low,Medium,High',
-            // 'project_id' => 'required|exists:projects,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'subtasks.*.title' => 'required|string|max:255',
-            'subtasks.*.user_id' => 'required',
-            'subtasks.*.description' => 'nullable|string',
-            'subtasks.*.priority' => 'nullable|in:Low,Medium,High,Critical',
-            'subtasks.*.status' => 'nullable|in:Pending,In Progress,Completed',
+        // Validate the request
+        $validated = $request->validate([
+            'project_id' => 'required|exists:projects,id',
+            'module_id' => 'nullable|exists:modules,id',
+            'sub_module_id' => 'nullable|exists:submodules,id',
+            'task_name' => 'required|array|min:1',
+            'task_name.*' => 'required|string|max:255',
+            'task_details' => 'required|array|min:1',
+            'task_details.*' => 'required|string',
         ]);
 
-        DB::beginTransaction();
-
         try {
-            $imagePath = null;
-            if ($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('tasks', 'public');
-            }
+            DB::beginTransaction();
 
-            $task = Task::create([
-                'title' => $request->title,
-                'description' => $request->description,
-                'start_date_time' => $request->start_date_time,
-                'end_date_time' => $request->end_date_time,
-                'status' => $request->status,
-                'team_id' => $request->team_id,
-                'priority' => $request->priority,
-                'project_id' => $request->project_id,
-                'image' => $imagePath,
-                'created_by' => Auth::id(),
-            ]);
+            $createdTasks = [];
+            $taskNames = $request->input('task_name');
+            $taskDetails = $request->input('task_details');
 
-            if ($request->has('subtasks') && is_array($request->subtasks)) {
-                foreach ($request->subtasks as $subtaskData) {
-                    Subtask::create([
-                        'task_id' => $task->id,
-                        'title' => $subtaskData['title'],
-                        'project_id' => $request->project_id,
-                        'description' => $subtaskData['description'] ?? '',
-                        'user_id' => $subtaskData['user_id'],
-                        'priority' => $subtaskData['priority'] ?? 'Medium',
-                        'status' => $subtaskData['status'] ?? 'Pending',
-                    ]);
-                }
+            // Loop through each task and create them
+            foreach ($taskNames as $index => $taskName) {
+                $task = Task::create([
+                    'projects_id' => $validated['project_id'],
+                    'project_id' => $validated['project_id'],
+                    'module_id' => $validated['module_id'],
+                    'sub_module_id' => $validated['sub_module_id'],
+                    'task_name' => $taskName,
+                    'task_details' => $taskDetails[$index],
+                    'status' => 'Pending', // or your default status
+                    'users_id' => auth()->id(), // if you track who created it
+                ]);
+
+                $createdTasks[] = $task;
             }
 
             DB::commit();
 
-            return redirect()->route('task.index')
-                ->with('success', 'Task created successfully with ' . count($request->subtasks ?? []) . ' subtasks!');
+            // Success message
+            $taskCount = count($createdTasks);
+            $message = $taskCount === 1
+                ? 'Task created successfully!'
+                : "{$taskCount} tasks created successfully!";
+
+            return redirect()
+                ->route('task.index')
+                ->with('success', $message);
+
         } catch (\Exception $e) {
             DB::rollBack();
+            dd($e->getMessage());
 
-            if ($imagePath && Storage::disk('public')->exists($imagePath)) {
-                Storage::disk('public')->delete($imagePath);
-            }
-            return back()->withErrors(['error' => 'Failed to create task: ' . $e->getMessage()])
-                ->withInput();
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to create task(s): ' . $e->getMessage());
         }
     }
 

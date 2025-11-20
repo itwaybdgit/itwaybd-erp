@@ -40,4 +40,8 @@ class Project extends Model
     {
         return $this->hasMany(Task::class, 'project_id');
     }
+    public function modules()
+    {
+        return $this->hasMany(Modules::class);
+    }
 }

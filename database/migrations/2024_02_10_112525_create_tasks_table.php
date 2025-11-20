@@ -18,6 +18,11 @@
                 // Create the correct tasks table
                 Schema::create('tasks', function (Blueprint $table) {
                     $table->id();
+                    $table->integer('project_id');
+                    $table->integer('module_id');
+                    $table->integer('sub_module_id');
+                    $table->string('task_name');
+                    $table->text('task_details');
                     $table->string('title');
                     $table->text('description');
                     $table->dateTime('start_date_time');

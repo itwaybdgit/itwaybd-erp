@@ -2216,6 +2216,13 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth'])->group(function
         route::put('/update/{id}', [ProjectController::class, 'update'])->name('update');
         route::delete('/destroy/{id}', [ProjectController::class, 'destroy'])->name('destroy');
     });
+    Route::post('project/store-ajax', [ProjectController::class, 'storeAjax'])->name('project.store.ajax');
+    Route::get('project/{project}/modules', [ProjectController::class, 'getModules']);
+
+    // Module routes
+    Route::post('module/store-ajax', [ProjectController::class, 'storeModuleAjax'])->name('module.store.ajax');
+    Route::get('module/{module}/submodules', [ProjectController::class, 'getSubModules']);
+    Route::post('submodule/store-ajax', [ProjectController::class, 'storeSubmoduleAjax'])->name('submodule.store.ajax');
 
     Route::name('task.')->prefix('task')->group(function () {
         Route::get('/list', [TaskController::class, 'index'])->name('index');
@@ -2278,7 +2285,7 @@ Route::prefix('bandwidthcustomer')->name('bandwidthcustomer.')->namespace('Admin
     Route::name('bandwidthsaleinvoice.')->prefix('bandwidthsaleinvoice')->group(function () {
         Route::get('/list', [CustomerBandwidthSaleInvoiceController::class, 'index'])->name('index');
         Route::get('/dataProcessing', [CustomerBandwidthSaleInvoiceController::class, 'dataProcessing'])->name('dataProcessing');
-        
+
         Route::get('/invoice/{banseidthsaleinvoice:id}', [CustomerBandwidthSaleInvoiceController::class, 'invoice'])->name('invoice');
     });
     //Bandwidth Sale Invoice end
